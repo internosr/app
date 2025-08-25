@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Prontuário Eletrônico - Obstetrícia (PS)</title>
-  <style>
-    :root {
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Prontuário Eletrônico - Obstetrícia (PS)</title>
+    <style>
+      :root {
       --primary-color: #007AFF;
       --border-color: #D1D1D6;
       --background-color: #F2F2F7;
@@ -21,103 +21,89 @@
       --default-color: #8E8E93;
       --default-bg: #EFEFF4;
       --warning-color: #FF9500;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
       font-family: var(--font-family);
       background-color: var(--background-color);
       color: var(--text-color);
       line-height: 1.6;
-    }
-
-    .container { max-width: 960px; margin: 30px auto; padding: 20px; }
-
-    header { text-align: center; margin-bottom: 20px; }
-    header h1 { font-size: 26px; font-weight: 700; }
-    header p { color: var(--secondary-text-color); font-size: 13px; margin-top: 6px; }
-
-    .toolbar {
+      }
+      .container { max-width: 960px; margin: 30px auto; padding: 20px; }
+      header { text-align: center; margin-bottom: 20px; }
+      header h1 { font-size: 26px; font-weight: 700; }
+      header p { color: var(--secondary-text-color); font-size: 13px; margin-top: 6px; }
+      .toolbar {
       display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
       margin-bottom: 15px;
-    }
-    .btn {
+      }
+      .btn {
       appearance: none; border: 1px solid var(--border-color);
       background: #fff; color: var(--text-color);
       padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
-    }
-    .btn.primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
-    .btn:hover { filter: brightness(0.98); }
-    .btn:active { filter: brightness(0.95); }
-
-    .card {
+      }
+      .btn.primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+      .btn:hover { filter: brightness(0.98); }
+      .btn:active { filter: brightness(0.95); }
+      .card {
       background-color: var(--card-background-color);
       border-radius: var(--border-radius);
       padding: 22px; margin-bottom: 16px;
       box-shadow: var(--shadow);
       border: 1px solid var(--border-color);
-    }
-    
-    .card-header, .card-header-with-toggle { 
-        font-size: 18px; 
-        font-weight: 700; 
-        margin-bottom: 14px; 
-        padding-bottom: 8px;
-        border-bottom: 1px solid var(--border-color);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-
-    .section-subheader { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; }
-    .section-subheader h3 { font-size: 15px; font-weight: 700; }
-
-    .form-grid { display: grid;
+      }
+      .card-header, .card-header-with-toggle { 
+      font-size: 18px; 
+      font-weight: 700; 
+      margin-bottom: 14px; 
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      }
+      .section-subheader { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; }
+      .section-subheader h3 { font-size: 15px; font-weight: 700; }
+      .form-grid { display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
-    .grid-col-span-2 { grid-column: span 2; }
-    .grid-col-span-3 { grid-column: span 3; }
-    .grid-col-span-4 { grid-column: span 4; }
-    .grid-col-span-full { grid-column: 1 / -1; }
-
-    .form-group { display: flex; flex-direction: column; }
-    .form-group textarea { margin-bottom: 8px; }
-    .form-group label { font-size: 13px; font-weight: 600;
+      .grid-col-span-2 { grid-column: span 2; }
+      .grid-col-span-3 { grid-column: span 3; }
+      .grid-col-span-4 { grid-column: span 4; }
+      .grid-col-span-full { grid-column: 1 / -1; }
+      .form-group { display: flex; flex-direction: column; }
+      .form-group textarea { margin-bottom: 8px; }
+      .form-group label { font-size: 13px; font-weight: 600;
       margin-bottom: 6px; color: var(--secondary-text-color); }
-
-    .label-with-option { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .label-with-option label { margin-bottom: 0; }
-
-    .form-group input[type="text"],
-    .form-group input[type="date"],
-    .form-group input[type="datetime-local"],
-    .form-group input[type="number"],
-    .form-group textarea,
-    .form-group select {
+      .label-with-option { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+      .label-with-option label { margin-bottom: 0; }
+      .form-group input[type="text"],
+      .form-group input[type="date"],
+      .form-group input[type="datetime-local"],
+      .form-group input[type="number"],
+      .form-group textarea,
+      .form-group select {
       width: 100%;
       padding: 10px 12px; border: 1px solid var(--border-color);
       border-radius: var(--border-radius); font-size: 15px; font-family: var(--font-family); background: #fff;
       transition: border-color .2s, box-shadow .2s;
-    }
-    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      }
+      .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
       outline: none; border-color: var(--primary-color);
       box-shadow: 0 0 0 3px rgba(0,122,255,.25);
-    }
-    .form-group input:read-only, .form-group input:disabled { background: var(--disabled-color); cursor: not-allowed;
+      }
+      .form-group input:read-only, .form-group input:disabled { background: var(--disabled-color); cursor: not-allowed;
       border-color: #EAEAEB; }
-    .form-group textarea { resize: vertical; min-height: 90px; }
-
-    .checkbox-group, .radio-group, .select-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
-    
-    .medication-item { 
+      .form-group textarea { resize: vertical; min-height: 90px; }
+      .checkbox-group, .radio-group, .select-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .medication-item { 
       display: grid; 
       grid-template-columns: auto 1fr auto; 
       gap: 10px; 
       align-items: center; 
       margin-bottom: 10px;
-    }
-    .medication-item .dose-input { width: 100%; }
-    .medication-item .remove-btn { 
+      }
+      .medication-item .dose-input { width: 100%; }
+      .medication-item .remove-btn { 
       padding: 4px 8px; 
       font-size: 12px; 
       background: #e74c3c; 
@@ -125,24 +111,18 @@
       border: none; 
       border-radius: 4px; 
       cursor: pointer;
-    }
-
-    .conduta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-
-    .hidden-field { display: none; }
-    
-    .separator-label {
-        margin-top: 18px;
-    }
-
-    .submit-button { width: 100%; padding: 14px; background: var(--primary-color);
+      }
+      .conduta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .hidden-field { display: none; }
+      .separator-label {
+      margin-top: 18px;
+      }
+      .submit-button { width: 100%; padding: 14px; background: var(--primary-color);
       color: #fff; border: none; border-radius: var(--border-radius); font-size: 17px; font-weight: 700; cursor: pointer; transition: background-color .2s; margin-top: 6px; }
-    .submit-button:hover { background-color: #0056b3; }
-
-    .output-card textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      .submit-button:hover { background-color: #0056b3; }
+      .output-card textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
       min-height: 220px; }
-    
-    .tag-input-container {
+      .tag-input-container {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
@@ -150,9 +130,8 @@
       border: 1px solid var(--border-color);
       border-radius: var(--border-radius);
       background-color: #fff;
-    }
-
-    .tag {
+      }
+      .tag {
       background-color: var(--primary-color);
       color: white;
       padding: 4px 8px;
@@ -160,14 +139,14 @@
       display: flex;
       align-items: center;
       font-size: 14px;
-    }
-    .tag .remove-tag {
+      }
+      .tag .remove-tag {
       margin-left: 8px;
       cursor: pointer;
       font-weight: bold;
       color: rgba(255, 255, 255, 0.8);
-    }
-    .tag-input {
+      }
+      .tag-input {
       flex-grow: 1;
       border: none;
       padding: 0;
@@ -175,19 +154,18 @@
       min-width: 100px;
       background-color: transparent;
       outline: none;
-    }
-    
-    /* Reusing form-group for signatures */
-    .signature-item {
+      }
+      /* Reusing form-group for signatures */
+      .signature-item {
       display: flex;
       gap: 10px;
       align-items: center;
       margin-bottom: 10px;
-    }
-    .signature-item select, .signature-item input {
+      }
+      .signature-item select, .signature-item input {
       flex-grow: 1;
-    }
-    .signature-item .remove-btn {
+      }
+      .signature-item .remove-btn {
       padding: 4px 8px;
       font-size: 12px;
       background: #e74c3c;
@@ -195,18 +173,17 @@
       border: none;
       border-radius: 4px;
       cursor: pointer;
-    }
-
-    /* Toggle Switch Style */
-    .toggle {
+      }
+      /* Toggle Switch Style */
+      .toggle {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
-    .toggle input[type="radio"], .toggle input[type="checkbox"] {
+      }
+      .toggle input[type="radio"], .toggle input[type="checkbox"] {
       display: none;
-    }
-    .toggle-slider {
+      }
+      .toggle-slider {
       width: 44px;
       height: 24px;
       background-color: var(--border-color);
@@ -214,8 +191,8 @@
       position: relative;
       cursor: pointer;
       transition: background-color 0.2s;
-    }
-    .toggle-slider::before {
+      }
+      .toggle-slider::before {
       content: "";
       position: absolute;
       width: 20px;
@@ -225,1490 +202,1723 @@
       top: 2px;
       left: 2px;
       transition: transform 0.2s;
-    }
-    .toggle input:checked + .toggle-slider {
+      }
+      .toggle input:checked + .toggle-slider {
       background-color: var(--primary-color);
-    }
-    .toggle input:checked + .toggle-slider::before {
+      }
+      .toggle input:checked + .toggle-slider::before {
       transform: translateX(20px);
-    }
-    .toggle-label {
+      }
+      .toggle-label {
       font-weight: 600;
       color: var(--text-color);
       font-size: 14px;
       user-select: none;
-    }
-    
-    .toggle-group {
+      }
+      .toggle-group {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-    }
-    .toggle-group label {
+      }
+      .toggle-group label {
       margin: 0;
       color: var(--text-color);
-    }
-
-    /* Estilo para Toggles como Botões */
-    .toggle-group label.btn-toggle {
-        appearance: none;
-        border: 1px solid var(--border-color);
-        background-color: var(--card-background-color);
-        color: var(--text-color);
-        padding: 10px 14px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: background-color 0.2s, border-color 0.2s;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        white-space: nowrap;
-        font-size: 15px;
-    }
-    .toggle-group label.btn-toggle:hover {
-        filter: brightness(0.98);
-    }
-
-    /* Estilos globais para botões de toggle */
-    .toggle-group input[type="checkbox"]:checked + label.btn-toggle,
-    .toggle-group input[type="radio"]:checked + label.btn-toggle {
-        background-color: var(--primary-color);
-        color: #fff;
-        border-color: var(--primary-color);
-    }
-
-    .toggle-group input[type="checkbox"],
-    .toggle-group input[type="radio"],
-    .state-toggle-input {
-        display: none;
-    }
-
-    /* Estilos para Testes Rápidos */
-    .state-toggle-label.nao_realizado {
-        background-color: var(--default-bg) !important;
-        border-color: var(--default-bg) !important;
-        color: var(--default-color) !important;
-    }
-    
-    .state-toggle-label.nao_reagente {
-        background-color: var(--success-color) !important;
-        border-color: var(--success-color) !important;
-        color: #fff !important;
-    }
-
-    .state-toggle-label.reagente {
-        background-color: var(--error-color) !important;
-        border-color: var(--error-color) !important;
-        color: #fff !important;
-    }
-    
-    .toggle-group.testes-rapidos .btn-toggle {
-        min-width: 100px;
-    }
-
-    /* Estilos para os novos botões (Exame Físico) */
-    .toggle-group label.btn-toggle.style-green-orange {
-        background-color: var(--success-color) !important;
-        border-color: var(--success-color) !important;
-        color: #fff !important;
-        min-width: 100px;
-    }
-
-    .toggle-group input[type="checkbox"]:checked + label.btn-toggle.style-green-orange {
+      }
+      /* Estilo para Toggles como Botões */
+      .toggle-group label.btn-toggle {
+      appearance: none;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-background-color);
+      color: var(--text-color);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s, border-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      font-size: 15px;
+      }
+      .toggle-group label.btn-toggle:hover {
+      filter: brightness(0.98);
+      }
+      /* Estilos globais para botões de toggle */
+      .toggle-group input[type="checkbox"]:checked + label.btn-toggle,
+      .toggle-group input[type="radio"]:checked + label.btn-toggle {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+      }
+      .toggle-group input[type="checkbox"]:checked + label.toggle-alert {
         background-color: var(--warning-color) !important;
-        border-color: var(--warning-color) !important;
-    }
-
-
-    @media (max-width: 768px) {
+        border-color: var(--warning-color);
+      }
+      .toggle-group input[type="checkbox"],
+      .toggle-group input[type="radio"],
+      .state-toggle-input {
+      display: none;
+      }
+      /* Estilos para Testes Rápidos */
+      .state-toggle-label.nao_realizado {
+      background-color: var(--default-bg) !important;
+      border-color: var(--default-bg) !important;
+      color: var(--default-color) !important;
+      }
+      .state-toggle-label.nao_reagente {
+      background-color: var(--success-color) !important;
+      border-color: var(--success-color) !important;
+      color: #fff !important;
+      }
+      .state-toggle-label.reagente {
+      background-color: var(--error-color) !important;
+      border-color: var(--error-color) !important;
+      color: #fff !important;
+      }
+      .toggle-group.testes-rapidos .btn-toggle {
+      min-width: 100px;
+      }
+      /* Estilos para os novos botões (Exame Físico) */
+      .toggle-group label.btn-toggle.style-green-orange {
+      background-color: var(--success-color) !important;
+      border-color: var(--success-color) !important;
+      color: #fff !important;
+      min-width: 100px;
+      }
+      .toggle-group input[type="checkbox"]:checked + label.btn-toggle.style-green-orange {
+      background-color: var(--warning-color) !important;
+      border-color: var(--warning-color) !important;
+      }
+      @media (max-width: 768px) {
       .form-grid { grid-template-columns: 1fr 1fr; }
       .grid-col-span-full, .grid-col-span-2, .grid-col-span-3, .grid-col-span-4 { grid-column: 1 / -1; }
       .conduta-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-    @media (max-width: 480px) {
+      }
+      @media (max-width: 480px) {
       .form-grid { grid-template-columns: 1fr; }
       .conduta-grid { grid-template-columns: 1fr; }
       .medication-item { grid-template-columns: 1fr; }
       .medication-item .dose-input { width: 100%; }
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Prontuário de Atendimento - Obstetrícia</h1>
-      <p id="clock"></p>
-    </header>
-
-    <div class="toolbar">
-      <button class="btn" id="btn-clear">Limpar Tudo</button>
-      <button class="btn" id="btn-save">Salvar (Local)</button>
-      <button class="btn" id="btn-load">Carregar (Local)</button>
-    </div>
-
-    <form id="form-prontuario" autocomplete="off">
-      <section class="card">
-        <h2 class="card-header-with-toggle">
-          <span>Dados do Atendimento</span>
-          <label class="toggle">
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Prontuário de Atendimento - Obstetrícia</h1>
+        <p id="clock"></p>
+      </header>
+      <div class="toolbar">
+        <button class="btn" id="btn-clear">Limpar Tudo</button>
+        <button class="btn" id="btn-save">Salvar (Local)</button>
+        <button class="btn" id="btn-load">Carregar (Local)</button>
+      </div>
+      <form id="form-prontuario" autocomplete="off">
+        <section class="card">
+          <h2 class="card-header-with-toggle">
+            <span>Dados do Atendimento</span>
+            <label class="toggle">
+            <span class="toggle-label">Nuligesta</span>
             <input type="checkbox" id="nuligesta" name="nuligesta" />
             <span class="toggle-slider"></span>
-            <span class="toggle-label">Nuligesta</span>
-          </label>
-        </h2>
-        <div class="form-grid">
-          <div class="form-group grid-col-span-2">
-            <label for="nome">Nome</label>
-            <input type="text" id="nome" name="nome" />
-          </div>
-          <div class="form-group">
-            <label for="idade">Idade</label>
-            <input type="number" id="idade" name="idade" />
-          </div>
-          <div class="form-group">
-            <label for="procedencia">Procedência</label>
-            <input type="text" id="procedencia" name="procedencia" />
-          </div>
-        </div>
-
-        <div id="obstetrico-fields">
-          <div class="section-subheader">
-            <h3>Histórico Obstétrico</h3>
-          </div>
+            </label>
+          </h2>
           <div class="form-grid">
-            <div class="form-group">
-              <label for="gestacoes">Gestações (G)</label>
-              <input type="number" id="gestacoes" name="gestacoes" value="0" />
+            <div class="form-group grid-col-span-2">
+              <label for="nome">Nome</label>
+              <input type="text" id="nome" name="nome" />
             </div>
             <div class="form-group">
-              <label for="partos-normais">Partos Normais (P)</label>
-              <input type="number" id="partos-normais" name="partos-normais" value="0" />
+              <label for="idade">Idade</label>
+              <input type="number" id="idade" name="idade" />
             </div>
             <div class="form-group">
-              <label for="partos-cesarea">Partos Cesárea (P)</label>
-              <input type="number" id="partos-cesarea" name="partos-cesarea" value="0" />
+              <label for="procedencia">Procedência</label>
+              <input type="text" id="procedencia" name="procedencia" />
             </div>
             <div class="form-group">
-              <label for="abortos">Abortos (A)</label>
-              <input type="number" id="abortos" name="abortos" value="0" />
+              <label for="procedencia">Prontuário</label>
+              <input type="text" id="prontuario" name="prontuario" />
             </div>
           </div>
-        </div>
-
-        <div id="gestacao-atual-fields">
-          <div class="section-subheader">
-            <h3>Dados da Gestação Atual</h3>
-            <label class="toggle">
+          <div id="obstetrico-fields">
+            <div class="section-subheader">
+              <h3>Histórico Obstétrico</h3>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="gestacoes">Gestações (G)</label>
+                <input type="number" id="gestacoes" name="gestacoes" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="partos-normais">Partos Normais (P)</label>
+                <input type="number" id="partos-normais" name="partos-normais" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="partos-cesarea">Partos Cesárea (P)</label>
+                <input type="number" id="partos-cesarea" name="partos-cesarea" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="abortos">Abortos (A)</label>
+                <input type="number" id="abortos" name="abortos" value="0" />
+              </div>
+              <div class="form-group">
+                <label for="dup">Data do Último Parto</label>
+                <input type="date" id="dup" name="dup" />
+              </div>
+            </div>
+          </div>
+          <div id="gestacao-atual-fields">
+            <div class="section-subheader">
+              <h3>Dados da Gestação Atual</h3>
+              <label class="toggle">
+              <span class="toggle-label">DUM Incerta</span>
               <input type="checkbox" id="dum_incerta" name="dum_incerta" />
               <span class="toggle-slider"></span>
-              <span class="toggle-label">DUM Incerta</span>
-            </label>
+              </label>
+            </div>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="dum">DUM</label>
+                <input type="date" id="dum" name="dum" />
+              </div>
+              <div class="form-group">
+                <label for="ig-dum">IG DUM</label>
+                <input type="text" id="ig-dum" name="ig-dum" placeholder="Calculada..." readonly />
+              </div>
+              <div class="form-group">
+                <label for="data-usg">Data 1ª USG</label>
+                <input type="date" id="data-usg" name="data-usg" />
+              </div>
+              <div class="form-group">
+                <label for="ig-usg">IG 1ª USG</label>
+                <input type="text" id="ig-usg" name="ig-usg" placeholder="Ex: 8s 1d ou 8+1" />
+              </div>
+              <div class="form-group">
+                <label for="consultas">Consultas de Pré-Natal</label>
+                <input type="number" id="ig-usg" name="consultas"/>
+              </div>
+              <div class="form-group grid-col-span-2">
+                <label for="ig-usg-atual">IG USG Corrigida</label>
+                <input type="text" id="ig-usg-atual" name="ig-usg-atual" placeholder="Calculada..." readonly />
+              </div>
+              <div class="form-group grid-col-span-2">
+                <label for="dpp">DPP (Data Provável do Parto)</label>
+                <input type="text" id="dpp" name="dpp" placeholder="Calculada..." readonly />
+              </div>
+            </div>
+          </div>
+          <div class="section-subheader">
+            <h3>Sinais Vitais</h3>
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label for="dum">DUM</label>
-              <input type="date" id="dum" name="dum" />
+              <label>PA (mmHg)</label>
+              <input type="text" name="pa" placeholder="Ex: 120/80" />
             </div>
             <div class="form-group">
-              <label for="ig-dum">IG DUM</label>
-              <input type="text" id="ig-dum" name="ig-dum" placeholder="Calculada..." readonly />
+              <label>PA pós DLE</label>
+              <input type="text" name="pa_dle" placeholder="Ex: 110/70" />
             </div>
             <div class="form-group">
-              <label for="data-usg">Data 1ª USG</label>
-              <input type="date" id="data-usg" name="data-usg" />
+              <label>FC (bpm)</label>
+              <input type="number" name="fc" />
             </div>
             <div class="form-group">
-              <label for="ig-usg">IG 1ª USG</label>
-              <input type="text" id="ig-usg" name="ig-usg" placeholder="Ex: 8s 1d ou 8+1" />
+              <label>SpO2 (%)</label>
+              <input type="number" name="spo2" />
             </div>
-            <div class="form-group grid-col-span-2">
-              <label for="ig-usg-atual">IG USG Corrigida</label>
-              <input type="text" id="ig-usg-atual" name="ig-usg-atual" placeholder="Calculada..." readonly />
+            <div class="form-group">
+              <label>TAx (°C)</label>
+              <input type="text" name="tax" placeholder="Ex: 36.5" />
             </div>
-            <div class="form-group grid-col-span-2">
-              <label for="dpp">DPP (Data Provável do Parto)</label>
-              <input type="text" id="dpp" name="dpp" placeholder="Calculada..." readonly />
+            <div class="form-group">
+              <label for="proteinuria">Proteinúria</label>
+              <select id="proteinuria" name="proteinuria">
+                <option value="N.R">Não Realizado</option>
+                <option value="Ausente">Ausente</option>
+                <option value="Traços">Traços</option>
+                <option value="1+">1+</option>
+                <option value="2+">2+</option>
+                <option value="3+">3+</option>
+                <option value="4+">4+</option>
+              </select>
             </div>
           </div>
-        </div>
-
-        <div class="section-subheader">
-          <h3>Sinais Vitais</h3>
-        </div>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>PA (mmHg)</label>
-            <input type="text" name="pa" placeholder="Ex: 120/80" />
-          </div>
-          <div class="form-group">
-            <label>PA pós DLE</label>
-            <input type="text" name="pa_dle" placeholder="Ex: 110/70" />
-          </div>
-          <div class="form-group">
-            <label>FC (bpm)</label>
-            <input type="number" name="fc" />
-          </div>
-          <div class="form-group">
-            <label>SpO2 (%)</label>
-            <input type="number" name="spo2" />
-          </div>
-          <div class="form-group">
-            <label>TAx (°C)</label>
-            <input type="text" name="tax" placeholder="Ex: 36.5" />
-          </div>
-          <div class="form-group">
-            <label for="proteinuria">Proteinúria</label>
-            <select id="proteinuria" name="proteinuria">
-              <option value="nao_realizado">Não Realizado</option>
-              <option value="ausente">Ausente</option>
-              <option value="tracos">Traços</option>
-              <option value="1+">1+</option>
-              <option value="2+">2+</option>
-              <option value="3+">3+</option>
-              <option value="4+">4+</option>
-            </select>
-          </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-header">Dados Complementares</h2>
-        
-        <div class="form-group grid-col-span-full">
-            <label class="separator-label">Tipo Sanguíneo</label>
+        </section>
+        <section class="card">
+          <h2 class="card-header">Dados Complementares</h2>
+          <div class="form-group grid-col-span-full">
+            <label>Tipo Sanguíneo</label>
             <div class="toggle-group">
-                <input type="radio" name="tipo_sanguineo" id="ts_o_pos" value="O+"/>
-                <label for="ts_o_pos" class="btn-toggle">O+</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_o_neg" value="O-"/>
-                <label for="ts_o_neg" class="btn-toggle">O-</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_a_pos" value="A+"/>
-                <label for="ts_a_pos" class="btn-toggle">A+</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_a_neg" value="A-"/>
-                <label for="ts_a_neg" class="btn-toggle">A-</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_b_pos" value="B+"/>
-                <label for="ts_b_pos" class="btn-toggle">B+</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_b_neg" value="B-"/>
-                <label for="ts_b_neg" class="btn-toggle">B-</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_ab_pos" value="AB+"/>
-                <label for="ts_ab_pos" class="btn-toggle">AB+</label>
-        
-                <input type="radio" name="tipo_sanguineo" id="ts_ab_neg" value="AB-"/>
-                <label for="ts_ab_neg" class="btn-toggle">AB-</label>
-            </div>
-        </div>
-
-        <div class="form-group grid-col-span-full">
-            <label class="separator-label">Testes Rápidos (TR)</label>
-            <div class="toggle-group testes-rapidos">
-                <input type="hidden" name="tr_sifilis" value="nao_realizado" class="state-toggle-input" />
-                <label for="tr_sifilis" class="btn-toggle state-toggle-label nao_realizado">Sífilis Não Realizado</label>
-                
-                <input type="hidden" name="tr_hiv" value="nao_realizado" class="state-toggle-input" />
-                <label for="tr_hiv" class="btn-toggle state-toggle-label nao_realizado">Anti-HIV Não Realizado</label>
-                
-                <input type="hidden" name="tr_hepb" value="nao_realizado" class="state-toggle-input" />
-                <label for="tr_hepb" class="btn-toggle state-toggle-label nao_realizado">HepB Não Realizado</label>
-                
-                <input type="hidden" name="tr_hepc" value="nao_realizado" class="state-toggle-input" />
-                <label for="tr_hepc" class="btn-toggle state-toggle-label nao_realizado">HepC Não Realizado</label>
-            </div>
-        </div>
-
-        <div class="form-group grid-col-span-full">
-          <label class="separator-label">Alergias</label>
-          <div id="alergias-tags" class="tag-input-container">
-            <input type="text" id="alergias-input" class="tag-input" placeholder="Alergia a... (use vírgula para separar)" />
-          </div>
-        </div>
-
-        <div class="form-group grid-col-span-full">
-            <label class="separator-label">Vícios</label>
-            <div class="toggle-group">
-                <input type="checkbox" id="etilismo" name="etilismo" />
-                <label for="etilismo" class="btn-toggle">Etilismo</label>
-                <input type="checkbox" id="tabagismo" name="tabagismo" />
-                <label for="tabagismo" class="btn-toggle">Tabagismo</label>
-                <input type="checkbox" id="drogas" name="drogas" />
-                <label for="drogas" class="btn-toggle">Drogadição</label>
-            </div>
-            <div id="tabagismo-input" class="form-group hidden-field" style="margin-top: 10px;">
-                <label for="tabagismo_detalhe">Detalhes do Tabagismo</label>
-                <input type="text" id="tabagismo_detalhe" name="tabagismo_detalhe" placeholder="Ex: 20 maços/ano" />
-            </div>
-            <div id="drogas-input" class="form-group hidden-field" style="margin-top: 10px;">
-                <label for="drogas_detalhe">Detalhes da Drogadição</label>
-                <div id="drogas-tags" class="tag-input-container">
-                    <input type="text" id="drogas-input-field" class="tag-input" placeholder="Maconha, Cocaína, etc. (use vírgula para separar)" />
-                </div>
-            </div>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-header">Comorbidades e Medicações</h2>
-        <div class="form-group grid-col-span-full">
-          <label for="comorbidades-input" class="separator-label">Comorbidades</label>
-          <div id="comorbidades-tags" class="tag-input-container">
-            <input type="text" id="comorbidades-input" class="tag-input" placeholder="DM2, HAC, etc. (use vírgula para separar)" />
-          </div>
-        </div>
-        
-        <div class="form-group grid-col-span-full">
-          <label class="separator-label">Medicações em Uso</label>
-          <div id="medication-list">
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_folico" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Ácido Fólico</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_folico" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_ferroso" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Sulfato Ferroso</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_ferroso" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_calcio" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Carbonato de Cálcio</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_calcio" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_metildopa" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Metildopa</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_metildopa" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_aas" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">AAS</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_aas" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_nph" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Insulina NPH</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_nph" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-            <div class="medication-item">
-              <label class="toggle">
-                <input type="checkbox" name="med_regular" />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Insulina Regular</span>
-              </label>
-              <input class="dose-input" type="text" name="dose_regular" placeholder="Dose" />
-              <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
-            </div>
-          </div>
-          <button type="button" id="add-medication-btn" class="btn" style="margin-top: 10px;">Adicionar outra medicação</button>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-header">HDA (História da Doença Atual)</h2>
-        <div class="form-group">
-          <textarea id="hda" name="hda" placeholder="Resumo claro e objetivo do motivo da procura, início, evolução, fatores associados, sinais de alarme..."></textarea>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-header">Exame Físico</h2>
-        <div class="form-grid">
-          <div class="form-group">
-            <label>Altura Uterina (cm)</label>
-            <input type="number" name="altura_uterina" />
-          </div>
-          <div class="form-group">
-            <label>BCF (bpm)</label>
-            <input type="number" name="bcf" />
-          </div>
-          <div class="form-group">
-            <label>Mov. Fetal</label>
-            <div class="toggle-group">
-                <input type="checkbox" id="mov_fetal" name="mov_fetal" />
-                <label for="mov_fetal" class="btn-toggle style-green-orange" data-default="Presente" data-checked="Ausente">Presente</label>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Tônus Uterino</label>
-            <div class="toggle-group">
-                <input type="checkbox" id="tonus_uterino" name="tonus_uterino" />
-                <label for="tonus_uterino" class="btn-toggle style-green-orange" data-default="Normal" data-checked="Aumentado">Normal</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_desc" value="?"/>
+              <label for="ts_desc" class="btn-toggle">?</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_o_pos" value="O+"/>
+              <label for="ts_o_pos" class="btn-toggle">O+</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_o_neg" value="O-"/>
+              <label for="ts_o_neg" class="btn-toggle">O-</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_a_pos" value="A+"/>
+              <label for="ts_a_pos" class="btn-toggle">A+</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_a_neg" value="A-"/>
+              <label for="ts_a_neg" class="btn-toggle">A-</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_b_pos" value="B+"/>
+              <label for="ts_b_pos" class="btn-toggle">B+</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_b_neg" value="B-"/>
+              <label for="ts_b_neg" class="btn-toggle">B-</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_ab_pos" value="AB+"/>
+              <label for="ts_ab_pos" class="btn-toggle">AB+</label>
+              <input type="radio" name="tipo_sanguineo" id="ts_ab_neg" value="AB-"/>
+              <label for="ts_ab_neg" class="btn-toggle">AB-</label>
             </div>
           </div>
           <div class="form-group grid-col-span-full">
-            <div class="label-with-option">
-              <label for="dinamica_uterina">Dinâmica Uterina</label>
-              <label class="toggle">
+            <label class="separator-label">Testes Rápidos (TR)</label>
+            <div class="toggle-group testes-rapidos">
+              <input type="hidden" name="tr_sifilis" value="nao_realizado" class="state-toggle-input" />
+              <label for="tr_sifilis" class="btn-toggle state-toggle-label nao_realizado">Sífilis Não Realizado</label>
+              <input type="hidden" name="tr_hiv" value="nao_realizado" class="state-toggle-input" />
+              <label for="tr_hiv" class="btn-toggle state-toggle-label nao_realizado">Anti-HIV Não Realizado</label>
+              <input type="hidden" name="tr_hepb" value="nao_realizado" class="state-toggle-input" />
+              <label for="tr_hepb" class="btn-toggle state-toggle-label nao_realizado">HepB Não Realizado</label>
+              <input type="hidden" name="tr_hepc" value="nao_realizado" class="state-toggle-input" />
+              <label for="tr_hepc" class="btn-toggle state-toggle-label nao_realizado">HepC Não Realizado</label>
+            </div>
+          </div>
+          <div class="form-group grid-col-span-full">
+            <label class="separator-label">Alergias</label>
+            <div id="alergias-tags" class="tag-input-container">
+              <input type="text" id="alergias-input" class="tag-input" placeholder="Alergia a... (use vírgula para separar)" />
+            </div>
+          </div>
+          <div class="form-group grid-col-span-full">
+            <label class="separator-label">Vícios</label>
+            <div class="toggle-group">
+              <input type="checkbox" id="etilismo" name="etilismo" />
+              <label for="etilismo" class="btn-toggle toggle-alert">Etilismo</label>
+              <input type="checkbox" id="tabagismo" name="tabagismo" />
+              <label for="tabagismo" class="btn-toggle toggle-alert">Tabagismo</label>
+              <input type="checkbox" id="drogas" name="drogas" />
+              <label for="drogas" class="btn-toggle toggle-alert">Drogadição</label>
+            </div>
+            <div id="tabagismo-input" class="form-group hidden-field" style="margin-top: 10px;">
+              <label for="tabagismo_detalhe">Detalhes do Tabagismo</label>
+              <input type="text" id="tabagismo_detalhe" name="tabagismo_detalhe" placeholder="Ex: 20 maços/ano" />
+            </div>
+            <div id="drogas-input" class="form-group hidden-field" style="margin-top: 10px;">
+              <label for="drogas_detalhe">Detalhes da Drogadição</label>
+              <div id="drogas-tags" class="tag-input-container">
+                <input type="text" id="drogas-input-field" class="tag-input" placeholder="Maconha, Cocaína, etc. (use vírgula para separar)" />
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="card">
+          <h2 class="card-header">Comorbidades e Medicações</h2>
+          <div class="form-group grid-col-span-full">
+            <label for="comorbidades-input">Comorbidades</label>
+            <div id="comorbidades-tags" class="tag-input-container">
+              <input type="text" id="comorbidades-input" class="tag-input" placeholder="DM2, HAC, etc. (use vírgula para separar)" />
+            </div>
+          </div>
+          <div class="form-group grid-col-span-full">
+            <label class="separator-label">Medicações em Uso</label>
+            <div id="medication-list">
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_folico" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Ácido Fólico</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_folico" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_ferroso" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Sulfato Ferroso</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_ferroso" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_calcio" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Carbonato de Cálcio</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_calcio" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_metildopa" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Metildopa</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_metildopa" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_aas" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">AAS</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_aas" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_nph" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Insulina NPH</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_nph" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+              <div class="medication-item">
+                <label class="toggle">
+                <input type="checkbox" name="med_regular" />
+                <span class="toggle-slider"></span>
+                <span class="toggle-label">Insulina Regular</span>
+                </label>
+                <input class="dose-input" type="text" name="dose_regular" placeholder="Dose" />
+                <button type="button" class="btn remove-btn" style="visibility: hidden;">X</button>
+              </div>
+            </div>
+            <button type="button" id="add-medication-btn" class="btn" style="margin-top: 10px;">Adicionar outra medicação</button>
+          </div>
+        </section>
+        <section class="card">
+          <h2 class="card-header">HDA (História da Doença Atual)</h2>
+          <div class="form-group">
+            <textarea id="hda" name="hda" placeholder="Resumo claro e objetivo do motivo da procura, início, evolução, fatores associados, sinais de alarme..."></textarea>
+          </div>
+        </section>
+        <section class="card">
+          <h2 class="card-header">Exame Físico</h2>
+          <div class="form-grid">
+            <div class="form-group">
+              <label>Altura Uterina (cm)</label>
+              <input type="number" name="altura_uterina" />
+            </div>
+            <div class="form-group">
+              <label>BCF (bpm)</label>
+              <input type="number" name="bcf" />
+            </div>
+            <div class="form-group">
+              <label>Mov. Fetal</label>
+              <div class="toggle-group">
+                <input type="checkbox" id="mov_fetal" name="mov_fetal" />
+                <label for="mov_fetal" class="btn-toggle style-green-orange" data-default="Presente" data-checked="Ausente">Presente</label>
+              </div>
+
+            </div>
+            <div class="form-group">
+              <label>Tônus Uterino</label>
+              <div class="toggle-group">
+                <input type="checkbox" id="tonus_uterino" name="tonus_uterino" />
+                <label for="tonus_uterino" class="btn-toggle style-green-orange" data-default="Normal" data-checked="Aumentado">Normal</label>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Dorso</label>
+              <div class="toggle-group">
+                <input type="checkbox" id="dorso" name="dorso" />
+                <label for="dorso" class="btn-toggle style-green-orange" data-default="Esquerda" data-checked="Direita">Esquerda</label>
+              </div>
+            </div>
+            <div class="form-group grid-col-span-4">
+              <div class="label-with-option">
+                <label for="dinamica_uterina">Dinâmica Uterina</label>
+                <label class="toggle">
+                <span class="toggle-label">Ausente</span>
                 <input type="checkbox" id="dinamica_ausente" name="dinamica_ausente" checked />
                 <span class="toggle-slider"></span>
-                <span class="toggle-label">Ausente</span>
-              </label>
+                </label>
+              </div>
+              <input type="text" id="dinamica_uterina" name="dinamica_uterina" placeholder="Ex: 3 contrações / 10 min" disabled/>
             </div>
-            <input type="text" id="dinamica_uterina" name="dinamica_uterina" placeholder="Ex: 3 contrações / 10 min" disabled/>
-          </div>
-        </div>
-
-        <div class="section-subheader">
-          <h3>Toque Vaginal</h3>
-          <label class="toggle">
-            <input type="checkbox" id="toque_evitado" name="toque_evitado" />
-            <span class="toggle-slider"></span>
-            <span class="toggle-label">Evitado</span>
-          </label>
-        </div>
-        <div id="toque_fields" class="form-grid">
-          <div class="form-group">
-            <label>Dilatação (cm)</label>
-            <input type="number" name="dilatacao" />
-          </div>
-          <div class="form-group">
-            <label>Posição</label>
-            <select name="posicao">
-              <option value="">Selecione...</option>
-              <option value="Posterior">Posterior</option>
-              <option value="Médio">Médio</option>
-              <option value="Anterior">Anterior</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Espessura</label>
-            <select name="espessura">
-              <option value="">Selecione...</option>
-              <option value="Grosso">Grosso</option>
-              <option value="Médio">Médio</option>
-              <option value="Fino">Fino</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Bolsa</label>
-            <div class="toggle-group">
-                <input type="checkbox" id="bolsa" name="bolsa" />
-                <label for="bolsa" class="btn-toggle style-green-orange" data-default="Íntegra" data-checked="Rota">Íntegra</label>
+            <div class="form-group">
+              <label>Abdômen</label>
+              <div class="toggle-group">
+                <input type="checkbox" id="abd" name="abd" />
+                <label for="abd" class="btn-toggle style-green-orange" data-default="Globoso" data-checked="Plano">Globoso</label>
+              </div>
             </div>
           </div>
-          <div class="form-group">
-            <label>Sangramento</label>
-            <div class="toggle-group">
+          <div class="section-subheader">
+            <h3>Toque Vaginal</h3>
+            <label class="toggle">
+              <span class="toggle-label">Evitado</span>
+              <input type="checkbox" id="toque_evitado" name="toque_evitado" />
+              <span class="toggle-slider"></span>
+            </label>
+          </div>
+          <div id="toque_fields" class="form-grid">
+            <div class="form-group">
+              <label>Dilatação (cm)</label>
+              <input type="number" name="dilatacao" />
+            </div>
+            <div class="form-group">
+              <label>Posição</label>
+              <select name="posicao">
+                <option value="">Selecione...</option>
+                <option value="Posterior">Posterior</option>
+                <option value="Médio">Médio</option>
+                <option value="Anterior">Anterior</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Espessura</label>
+              <select name="espessura">
+                <option value="">Selecione...</option>
+                <option value="Grosso">Grosso</option>
+                <option value="Médio">Médio</option>
+                <option value="Fino">Fino</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Sangramento</label>
+              <div class="toggle-group">
                 <input type="checkbox" id="sangramento" name="sangramento" />
                 <label for="sangramento" class="btn-toggle style-green-orange" data-default="Ausente" data-checked="Presente">Ausente</label>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div id="bolsa_rota_fields" class="hidden-field">
-          <div class="form-grid" style="margin-top: 10px;">
-            <div class="form-group grid-col-span-2">
+          <div class="section-subheader" id="bolsa_fields">
+            <h3>Bolsa</h3>
+             <label class="toggle">
+              <label for="bolsa" class="toggle-label" data-default="integra" data-checked="Rota">Rota</label>
+              <input type="checkbox" name="bolsa" id="bolsa"/>
+              <span class="toggle-slider"></span>
+              </label>
+          </div>
+          <div class="form-grid hidden-field" id="bolsa_rota_fields">
+            <div class="form-group">
               <label for="hora_rompimento">Data e Hora do Rompimento</label>
               <input type="datetime-local" id="hora_rompimento" name="hora_rompimento" />
             </div>
-            <div class="form-group grid-col-span-2">
+            <div class="form-group">
               <label for="cor_liquido">Cor do Líquido</label>
               <select id="cor_liquido" name="cor_liquido">
                 <option value="">Selecione...</option>
-                <option value="claro">Claro</option>
-                <option value="esverdeado">Esverdeado</option>
-                <option value="meconial">Meconial</option>
+                <option value="Claro">Claro</option>
+                <option value="Esverdeado">Esverdeado</option>
+                <option value="Meconial">Meconial</option>
               </select>
             </div>
           </div>
-        </div>
-
-        <div class="section-subheader">
-          <h3>Exame Especular</h3>
-          <label class="toggle">
+          <div class="section-subheader">
+            <h3>Exame Especular</h3>
+            <label class="toggle">
+            <span class="toggle-label">Evitado</span>
             <input type="checkbox" id="especular_evitado" name="especular_evitado" checked />
             <span class="toggle-slider"></span>
-            <span class="toggle-label">Evitado</span>
-          </label>
-        </div>
-        <div id="especular_fields" class="form-group hidden-field">
-          <label>Descrição Especular</label>
-          <textarea name="desc_especular" id="desc_especular"></textarea>
-        </div>
-      </section>
-
-      <section class="card">
-        <h2 class="card-header">Hipótese Diagnóstica e Conduta</h2>
-        <div class="form-group">
-          <label for="exames_laboratoriais">Exames Laboratoriais</label>
-          <textarea id="exames_laboratoriais" name="exames_laboratoriais"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="exames_imagem">Exames de Imagem</label>
-          <textarea id="exames_imagem" name="exames_imagem"></textarea>
-        </div>
-        <div class="form-group">
-          <label for="hipotese-input">Hipótese Diagnóstica</label>
-          <div id="hipotese-tags" class="tag-input-container">
-            <input type="text" id="hipotese-input" class="tag-input" placeholder="Hipóteses... (use vírgula para separar)" />
+            </label>
           </div>
-        </div>
-        <div class="form-group">
-          <label>Conduta</label>
-          <div class="conduta-grid options-container">
-            <label class="toggle">
+          <div id="especular_fields" class="form-group hidden-field">
+            <label>Descrição Especular</label>
+            <textarea name="desc_especular" id="desc_especular"></textarea>
+          </div>
+        </section>
+        <section class="card">
+          <h2 class="card-header">Hipótese Diagnóstica e Conduta</h2>
+          <div class="form-group">
+            <label for="exames_laboratoriais">Exames Laboratoriais</label>
+            <textarea id="exames_laboratoriais" name="exames_laboratoriais"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="exames_imagem">Exames de Imagem</label>
+            <textarea id="exames_imagem" name="exames_imagem"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="hipotese-input">Hipótese Diagnóstica</label>
+            <div id="hipotese-tags" class="tag-input-container">
+              <input type="text" id="hipotese-input" class="tag-input" placeholder="Hipóteses... (use vírgula para separar)" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Conduta</label>
+            <div class="conduta-grid options-container">
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="Orientações Gerais" checked />
               <span class="toggle-slider"></span>
               <span class="toggle-label">Orientações Gerais</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="Rotina de PE" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">Rotina de PE</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="Rotina Infecciosa" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">Rotina Infecciosa</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="Internação" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">Internação</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="CTG" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">CTG</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="USG Obstétrica" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">USG Obstétrica</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="USG Transvaginal" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">USG Transvaginal</span>
-            </label>
-            <label class="toggle">
+              </label>
+              <label class="toggle">
               <input type="checkbox" name="conduta" value="Analgesia" />
               <span class="toggle-slider"></span>
               <span class="toggle-label">Analgesia</span>
-            </label>
+              </label>
+            </div>
+            <label for="condutas-input" class="separator-label">Outras Condutas</label>
+            <div id="condutas-tags" class="tag-input-container">
+              <input type="text" id="condutas-input" class="tag-input" placeholder="Condutas extras... (use vírgula para separar)" />
+            </div>
           </div>
-          <label for="condutas-input" class="separator-label">Outras Condutas</label>
-          <div id="condutas-tags" class="tag-input-container">
-            <input type="text" id="condutas-input" class="tag-input" placeholder="Condutas extras... (use vírgula para separar)" />
+        </section>
+        <section class="card">
+          <h2 class="card-header">Assinaturas</h2>
+          <div id="signatures-container">
+            <div class="signature-item">
+              <div class="form-group" style="flex-grow: 1;">
+                <label>Título</label>
+                <select name="signature_title">
+                  <option value="Ddo.">Ddo.</option>
+                  <option value="Dda.">Dda.</option>
+                  <option value="MR.">MR.</option>
+                  <option value="Dr.">Dr.</option>
+                  <option value="Dra.">Dra.</option>
+                </select>
+              </div>
+              <div class="form-group" style="flex-grow: 2;">
+                <label>Nome Completo</label>
+                <input type="text" name="signature_name" placeholder="Nome Completo" />
+              </div>
+              <button type="button" class="btn remove-signature-btn" style="align-self: flex-end; margin-bottom: 6px;">X</button>
+            </div>
           </div>
+          <button type="button" id="add-signature-btn" class="btn" style="width: 100%; margin-top: 10px;">Adicionar Assinatura</button>
+        </section>
+        <button type="submit" class="btn primary">Gerar Prontuário</button>
+        <button class="btn primary" id="btn-print-pdf">Gerar PDF de Internação</button>
+        <br><br>
+      </form>
+      <section class="card output-card">
+        <h2 class="card-header">Prontuário Gerado (texto)</h2>
+        <div class="form-group">
+          <textarea id="output" readonly placeholder="O texto gerado aparecerá aqui..."></textarea>
+        </div>
+        <div class="toolbar" style="justify-content: flex-end;">
+          <button class="btn" id="btn-copy">Copiar</button>
+          <button class="btn" id="btn-download">Baixar .txt</button>
         </div>
       </section>
-
-      <section class="card">
-        <h2 class="card-header">Assinaturas</h2>
-        <div id="signatures-container">
-          <div class="signature-item">
-            <div class="form-group" style="flex-grow: 1;">
-              <label>Título</label>
-              <select name="signature_title">
-                <option value="Ddo.">Ddo.</option>
-                <option value="Dda.">Dda.</option>
-                <option value="MR.">MR.</option>
-                <option value="Dr.">Dr.</option>
-                <option value="Dra.">Dra.</option>
-              </select>
-            </div>
-            <div class="form-group" style="flex-grow: 2;">
-              <label>Nome Completo</label>
-              <input type="text" name="signature_name" placeholder="Nome Completo" />
-            </div>
-            <button type="button" class="btn remove-signature-btn" style="align-self: flex-end; margin-bottom: 6px;">X</button>
-          </div>
-        </div>
-        <button type="button" id="add-signature-btn" class="btn" style="width: 100%; margin-top: 10px;">Adicionar Assinatura</button>
-      </section>
-
-      <button type="submit" class="submit-button">Gerar Prontuário</button>
-    </form>
-
-    <section class="card output-card">
-      <h2 class="card-header">Prontuário Gerado (texto)</h2>
-      <div class="form-group">
-        <textarea id="output" readonly placeholder="O texto gerado aparecerá aqui..."></textarea>
-      </div>
-      <div class="toolbar" style="justify-content: flex-end;">
-        <button class="btn" id="btn-copy">Copiar</button>
-        <button class="btn" id="btn-download">Baixar .txt</button>
-      </div>
-    </section>
-  </div>
-
-  <script>
-    // ===== Utilidades de Data e IG =====
-    const MS_PER_DAY = 24 * 60 * 60 * 1000;
-    const tzOffsetMinutes = new Date().getTimezoneOffset();
-
-    function startClock() {
-      const el = document.getElementById('clock');
-      const fmt = (n) => String(n).padStart(2, '0');
-      const tick = () => {
-        const now = new Date();
-        el.textContent = `Agora: ${fmt(now.getHours())}:${fmt(now.getMinutes())}`;
-      };
-      tick();
-      setInterval(tick, 30_000);
-    }
-
-    function toDateOnly(d) {
-      const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
-      return dt;
-    }
-
-    function diffDays(dateA, dateB) {
-      const a = toDateOnly(dateA);
-      const b = toDateOnly(dateB);
-      return Math.round((a - b) / MS_PER_DAY);
-    }
-
-    function addDays(date, days) {
-      const d = toDateOnly(date);
-      const r = new Date(d);
-      r.setDate(r.getDate() + days);
-      return r;
-    }
-
-    function formatDateBR(date) {
-      const d = toDateOnly(date);
-      const dd = String(d.getDate()).padStart(2, '0');
-      const mm = String(d.getMonth() + 1).padStart(2, '0');
-      const yyyy = d.getFullYear();
-      return `${dd}/${mm}/${yyyy}`;
-    }
-
-    function formatWeeksDays(totalDays) {
-      if (!Number.isFinite(totalDays)) return '';
-      const weeks = Math.floor(totalDays / 7);
-      const days = totalDays % 7;
-      return `${weeks}s${days}d`;
-    }
-
-    function parseIgString(str) {
-      if (!str) return null;
-      const s = String(str).trim().toLowerCase();
-      let w = 0, d = 0;
-      const plusMatch = s.match(/^(\d+)\s*[+ ]\s*(\d+)$/);
-      if (plusMatch) { w = parseInt(plusMatch[1]); d = parseInt(plusMatch[2]); return w * 7 + d; }
-      const fullMatch = s.match(/^(\d+)\s*s(?:emanas?)?\s*(\d+)?\s*d?/);
-      if (fullMatch) { w = parseInt(fullMatch[1]); d = fullMatch[2] ? parseInt(fullMatch[2]) : 0; return w * 7 + d; }
-      const simple = s.match(/^(\d+)\s*(\d+)?$/);
-      if (simple) { w = parseInt(simple[1]); d = simple[2] ? parseInt(simple[2]) : 0; return w * 7 + d; }
-      return null;
-    }
-
-    function calcIgByDUM(dumStr) {
-      if (!dumStr) return '';
-      const dum = new Date(dumStr);
-      if (isNaN(dum)) return '';
-      const today = new Date();
-      const days = diffDays(today, dum);
-      if (days < 0) return '';
-      return formatWeeksDays(days);
-    }
-
-    function calcDPP(dumStr) {
-      if (!dumStr) return '';
-      const dum = new Date(dumStr);
-      if (isNaN(dum)) return '';
-      const dpp = addDays(dum, 280);
-      return formatDateBR(dpp);
-    }
-    
-    function calcDPPFromUsg(usgDateStr, usgIgStr) {
-      if (!usgDateStr || !usgIgStr) return '';
-      const usgDate = new Date(usgDateStr);
-      const usgIgDays = parseIgString(usgIgStr);
-      if (isNaN(usgDate) || usgIgDays == null) return '';
-      const dppDays = 280 - usgIgDays;
-      const dpp = addDays(usgDate, dppDays);
-      return formatDateBR(dpp);
-    }
-
-    function calcIgUsgCorrigida(dataUsgStr, igUsgStr) {
-      if (!dataUsgStr || !igUsgStr) return '';
-      const data = new Date(dataUsgStr);
-      if (isNaN(data)) return '';
-      const baseDays = parseIgString(igUsgStr);
-      if (baseDays == null) return '';
-      const today = new Date();
-      const delta = diffDays(today, data);
-      const total = baseDays + Math.max(0, delta);
-      return formatWeeksDays(total);
-    }
-
-    // ===== Lógica de Tags (Comorbidades e Condutas) =====
-    function setupTagInput(containerId, inputId) {
-        const container = document.getElementById(containerId);
-        const input = document.getElementById(inputId);
-        
-        function addTag(text) {
-            if (!text.trim()) return;
-            const tag = document.createElement('span');
-            tag.className = 'tag';
-            tag.innerHTML = `${text.trim()} <span class="remove-tag">&times;</span>`;
-            container.insertBefore(tag, input);
-            tag.querySelector('.remove-tag').addEventListener('click', () => {
-                container.removeChild(tag);
-            });
-        }
-
-        input.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ',') {
-                e.preventDefault();
-                const tags = input.value.split(',').map(s => s.trim()).filter(s => s);
-                tags.forEach(addTag);
-                input.value = '';
-            }
-        });
-        input.addEventListener('paste', (e) => {
-            e.preventDefault();
-            const paste = (e.clipboardData || window.clipboardData).getData('text');
-            const tags = paste.split(',').map(s => s.trim()).filter(s => s);
-            tags.forEach(addTag);
-            input.value = '';
-        });
-
-        container.getTags = () => {
-            return Array.from(container.querySelectorAll('.tag')).map(el => el.textContent.replace(/\s*×$/, ''));
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+    <script>
+      // ===== Utilidades de Data e IG =====
+      const MS_PER_DAY = 24 * 60 * 60 * 1000;
+      const tzOffsetMinutes = new Date().getTimezoneOffset();
+      
+      function startClock() {
+        const el = document.getElementById('clock');
+        const fmt = (n) => String(n).padStart(2, '0');
+        const tick = () => {
+          const now = new Date();
+          el.textContent = `Agora: ${fmt(now.getHours())}:${fmt(now.getMinutes())}`;
         };
-
-        container.setTags = (tags) => {
-            Array.from(container.querySelectorAll('.tag')).forEach(tag => container.removeChild(tag));
-            tags.forEach(addTag);
-        }
-    }
-
-    // ===== Interações de UI =====
-    const form = document.getElementById('form-prontuario');
-    const dumInput = document.getElementById('dum');
-    const dumIncerta = document.getElementById('dum_incerta');
-    const igDum = document.getElementById('ig-dum');
-    const dpp = document.getElementById('dpp');
-    const dataUsg = document.getElementById('data-usg');
-    const igUsg = document.getElementById('ig-usg');
-    const igUsgAtual = document.getElementById('ig-usg-atual');
-    const bolsaToggle = document.getElementById('bolsa');
-    const bolsaRotaFields = document.getElementById('bolsa_rota_fields');
-    const toqueEvitado = document.getElementById('toque_evitado');
-    const toqueFields = document.getElementById('toque_fields');
-    const especularEvitado = document.getElementById('especular_evitado');
-    const especularFields = document.getElementById('especular_fields');
-    const output = document.getElementById('output');
-    const medicationList = document.getElementById('medication-list');
-    const addMedicationBtn = document.getElementById('add-medication-btn');
-    const signaturesContainer = document.getElementById('signatures-container');
-    const addSignatureBtn = document.getElementById('add-signature-btn');
-
-    const nuligestaToggle = document.getElementById('nuligesta');
-    const obstetricoFields = document.getElementById('obstetrico-fields');
-    const gestacaoAtualFields = document.getElementById('gestacao-atual-fields');
-
-    const dinamicaAusenteToggle = document.getElementById('dinamica_ausente');
-    const dinamicaInput = document.getElementById('dinamica_uterina');
-    
-    const etilismoCheckbox = document.getElementById('etilismo');
-    const tabagismoCheckbox = document.getElementById('tabagismo');
-    const drogasCheckbox = document.getElementById('drogas');
-    const tabagismoInputDiv = document.getElementById('tabagismo-input');
-    const drogasInputDiv = document.getElementById('drogas-input');
-
-    setupTagInput('alergias-tags', 'alergias-input');
-    setupTagInput('comorbidades-tags', 'comorbidades-input');
-    setupTagInput('condutas-tags', 'condutas-input');
-    setupTagInput('hipotese-tags', 'hipotese-input');
-    setupTagInput('drogas-tags', 'drogas-input-field');
-
-    tabagismoCheckbox.addEventListener('change', () => {
-        tabagismoInputDiv.style.display = tabagismoCheckbox.checked ? 'flex' : 'none';
-        if (!tabagismoCheckbox.checked) {
-            tabagismoInputDiv.querySelector('input').value = '';
-        }
-    });
-
-    drogasCheckbox.addEventListener('change', () => {
-        drogasInputDiv.style.display = drogasCheckbox.checked ? 'flex' : 'none';
-        if (!drogasCheckbox.checked) {
-            document.getElementById('drogas-tags').setTags([]);
-        }
-    });
-    
-    // Testes Rápidos State Logic
-    const trLabels = document.querySelectorAll('.testes-rapidos .state-toggle-label');
-    const trStates = ['nao_realizado', 'nao_reagente', 'reagente'];
-    const trLabelsMap = {
-        'tr_sifilis': {
-            'nao_realizado': 'Sífilis Não Realizado',
-            'nao_reagente': 'Sífilis Não Reagente',
-            'reagente': 'Sífilis Reagente',
-        },
-        'tr_hiv': {
-            'nao_realizado': 'Anti-HIV Não Realizado',
-            'nao_reagente': 'Anti-HIV Não Reagente',
-            'reagente': 'Anti-HIV Reagente',
-        },
-        'tr_hepb': {
-            'nao_realizado': 'HepB Não Realizado',
-            'nao_reagente': 'HepB Não Reagente',
-            'reagente': 'HepB Reagente',
-        },
-        'tr_hepc': {
-            'nao_realizado': 'HepC Não Realizado',
-            'nao_reagente': 'HepC Não Reagente',
-            'reagente': 'HepC Reagente',
-        },
-    };
-    
-    trLabels.forEach(label => {
-        const input = document.querySelector(`input[name="${label.htmlFor}"]`);
-        label.addEventListener('click', () => {
-            let currentIndex = trStates.indexOf(input.value);
-            let nextIndex = (currentIndex + 1) % trStates.length;
-            let nextState = trStates[nextIndex];
-            
-            input.value = nextState;
-            label.textContent = trLabelsMap[label.htmlFor][nextState];
-            
-            label.classList.remove(...trStates);
-            label.classList.add(nextState);
-        });
-    });
-
-    function refreshPregCalc() {
-      if (!dumIncerta.checked) {
-        igDum.value = calcIgByDUM(dumInput.value);
-        dpp.value = calcDPP(dumInput.value);
-        dumInput.disabled = false;
-      } else {
-        igDum.value = '';
-        dumInput.value = '';
-        dumInput.disabled = true;
-        dpp.value = calcDPPFromUsg(dataUsg.value, igUsg.value);
+        tick();
+        setInterval(tick, 30_000);
       }
-      igUsgAtual.value = calcIgUsgCorrigida(dataUsg.value, igUsg.value);
-    }
-    
-    function setObstetricFieldsDisabled(disabled) {
-      Array.from(obstetricoFields.querySelectorAll('input, select')).forEach(el => el.disabled = disabled);
-      Array.from(gestacaoAtualFields.querySelectorAll('input, select')).forEach(el => el.disabled = disabled);
-      if (disabled) {
-        gestacaoAtualFields.classList.add('hidden-field');
-        obstetricoFields.style.opacity = '0.5';
-        gestacaoAtualFields.style.opacity = '0.5';
-      } else {
-        gestacaoAtualFields.classList.remove('hidden-field');
-        obstetricoFields.style.opacity = '1';
-        gestacaoAtualFields.style.opacity = '1';
+      
+      function toDateOnly(d) {
+        const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        return dt;
       }
-    }
-
-    nuligestaToggle.addEventListener('change', (e) => {
-      setObstetricFieldsDisabled(e.target.checked);
-    });
-
-    dumInput.addEventListener('change', refreshPregCalc);
-    dumIncerta.addEventListener('change', refreshPregCalc);
-    dataUsg.addEventListener('change', refreshPregCalc);
-    igUsg.addEventListener('input', refreshPregCalc);
-
-    // Dynamic toggle labels
-    function updateToggleLabel(input) {
-      const label = document.querySelector(`label[for="${input.id}"]`);
-      if (label && label.dataset.default) {
-        label.textContent = input.checked ? label.dataset.checked : label.dataset.default;
+      
+      function diffDays(dateA, dateB) {
+        const a = toDateOnly(dateA);
+        const b = toDateOnly(dateB);
+        return Math.round((a - b) / MS_PER_DAY);
       }
-    }
-
-    document.querySelectorAll('.btn-toggle').forEach(label => {
-      const input = document.getElementById(label.getAttribute('for'));
-      if (input && label.dataset.default) {
-        label.textContent = input.checked ? label.dataset.checked : label.dataset.default;
+      
+      function addDays(date, days) {
+        const d = toDateOnly(date);
+        const r = new Date(d);
+        r.setDate(r.getDate() + days);
+        return r;
       }
-    });
-
-    document.querySelectorAll('.toggle-group input[type="checkbox"]').forEach(input => {
-      input.addEventListener('change', () => {
-        updateToggleLabel(input);
-      });
-    });
-
-    bolsaToggle.addEventListener('change', () => {
-      bolsaRotaFields.style.display = bolsaToggle.checked ? 'grid' : 'none';
-    });
-
-    toqueEvitado.addEventListener('change', () => {
-      toqueFields.style.display = toqueEvitado.checked ? 'none' : 'grid';
-    });
-    especularEvitado.addEventListener('change', () => {
-      especularFields.style.display = especularEvitado.checked ? 'none' : 'block';
-    });
-    dinamicaAusenteToggle.addEventListener('change', (e) => {
-      dinamicaInput.disabled = e.target.checked;
-      dinamicaInput.value = '';
-    });
-    
-    addMedicationBtn.addEventListener('click', () => {
-        const newItem = document.createElement('div');
-        newItem.className = 'medication-item';
-        newItem.innerHTML = `
-            <label class="toggle">
-                <input type="checkbox" name="med_outra" checked />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Outra</span>
-            </label>
-            <input class="dose-input" type="text" name="dose_outra" placeholder="Nome da medicação e dose" />
-            <button type="button" class="btn remove-btn">X</button>
-        `;
-        newItem.querySelector('.remove-btn').addEventListener('click', () => {
-            medicationList.removeChild(newItem);
-        });
-        medicationList.appendChild(newItem);
-    });
-
-    function addSignatureField(title = 'Ddo.', name = '') {
-      const newItem = document.createElement('div');
-      newItem.className = 'signature-item';
-      newItem.innerHTML = `
-        <div class="form-group" style="flex-grow: 1;">
-          <label>Título</label>
-          <select name="signature_title">
-            <option value="Ddo." ${title === 'Ddo.' ? 'selected' : ''}>Ddo.</option>
-            <option value="Dda." ${title === 'Dda.' ? 'selected' : ''}>Dda.</option>
-            <option value="MR.">MR.</option>
-            <option value="Dr.">Dr.</option>
-            <option value="Dra.">Dra.</option>
-          </select>
-        </div>
-        <div class="form-group" style="flex-grow: 2;">
-          <label>Nome Completo</label>
-          <input type="text" name="signature_name" placeholder="Nome Completo" value="${name}" />
-        </div>
-        <button type="button" class="btn remove-signature-btn" style="align-self: flex-end; margin-bottom: 6px;">X</button>
-      `;
-      signaturesContainer.appendChild(newItem);
-      newItem.querySelector('.remove-signature-btn').addEventListener('click', () => {
-          signaturesContainer.removeChild(newItem);
-      });
-    }
-
-    addSignatureBtn.addEventListener('click', () => {
-      addSignatureField();
-    });
-
-    const LS_KEY = 'prontuario_obstetrico_ps_v7';
-    function saveLocal() {
-      const data = {};
-      const formElements = form.elements;
-      for (let i = 0; i < formElements.length; i++) {
-        const el = formElements[i];
-        if (el.type === 'radio' && !el.checked) continue;
-        if (el.type === 'checkbox' && !el.checked) {
-            data[el.name] = false;
-        } else if (!el.name) {
-            continue;
-        } else {
-            if (!data[el.name]) {
-              data[el.name] = el.value;
-            } else {
-              if (Array.isArray(data[el.name])) {
-                data[el.name].push(el.value);
-              } else {
-                data[el.name] = [data[el.name], el.value];
+      
+      function formatDateBR(date) {
+        const d = toDateOnly(date);
+        const dd = String(d.getDate() + 1).padStart(2, '0');
+        const mm = String(d.getMonth() + 1).padStart(2, '0');
+        const yyyy = d.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+      }
+      
+      function formatWeeksDays(totalDays) {
+        if (!Number.isFinite(totalDays)) return '';
+        const weeks = Math.floor(totalDays / 7);
+        const days = totalDays % 7;
+        return `${weeks}s${days}d`;
+      }
+      
+          // Adicionar o campo DataBolsa formatado
+      function formateDateHoraBR(date) {
+         const d = new Date(date);
+      const hour = String(d.getHours()).padStart(2, '0');
+      const minute = String(d.getMinutes()).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      
+      return `${hour}:${minute} de ${day}/${month}`;
+          }
+      
+      function parseIgString(str) {
+        if (!str) return null;
+        const s = String(str).trim().toLowerCase();
+        let w = 0, d = 0;
+        const plusMatch = s.match(/^(\d+)\s*[+ ]\s*(\d+)$/);
+        if (plusMatch) { w = parseInt(plusMatch[1]); d = parseInt(plusMatch[2]); return w * 7 + d; }
+        const fullMatch = s.match(/^(\d+)\s*s(?:emanas?)?\s*(\d+)?\s*d?/);
+        if (fullMatch) { w = parseInt(fullMatch[1]); d = fullMatch[2] ? parseInt(fullMatch[2]) : 0; return w * 7 + d; }
+        const simple = s.match(/^(\d+)\s*(\d+)?$/);
+        if (simple) { w = parseInt(simple[1]); d = simple[2] ? parseInt(simple[2]) : 0; return w * 7 + d; }
+        return null;
+      }
+      
+      function calcIgByDUM(dumStr) {
+        if (!dumStr) return '';
+        const dum = new Date(dumStr);
+        if (isNaN(dum)) return '';
+        const today = new Date();
+        const days = diffDays(today, dum);
+        if (days < 0) return '';
+        return formatWeeksDays(days);
+      }
+      
+      function calcDPP(dumStr) {
+        if (!dumStr) return '';
+        const dum = new Date(dumStr);
+        if (isNaN(dum)) return '';
+        const dpp = addDays(dum, 280);
+        return formatDateBR(dpp);
+      }
+      
+      function calcDPPFromUsg(usgDateStr, usgIgStr) {
+        if (!usgDateStr || !usgIgStr) return '';
+        const usgDate = new Date(usgDateStr);
+        const usgIgDays = parseIgString(usgIgStr);
+        if (isNaN(usgDate) || usgIgDays == null) return '';
+        const dppDays = 280 - usgIgDays;
+        const dpp = addDays(usgDate, dppDays);
+        return formatDateBR(dpp);
+      }
+      
+      function calcIgUsgCorrigida(dataUsgStr, igUsgStr) {
+        if (!dataUsgStr || !igUsgStr) return '';
+        const data = new Date(dataUsgStr);
+        if (isNaN(data)) return '';
+        const baseDays = parseIgString(igUsgStr);
+        if (baseDays == null) return '';
+        const today = new Date();
+        const delta = diffDays(today, data);
+        const total = baseDays + Math.max(0, delta);
+        return formatWeeksDays(total);
+      }
+      
+      // ===== Lógica de Tags (Comorbidades e Condutas) =====
+      function setupTagInput(containerId, inputId) {
+          const container = document.getElementById(containerId);
+          const input = document.getElementById(inputId);
+          
+          function addTag(text) {
+              if (!text.trim()) return;
+              const tag = document.createElement('span');
+              tag.className = 'tag';
+              tag.innerHTML = `${text.trim()} <span class="remove-tag">&times;</span>`;
+              container.insertBefore(tag, input);
+              tag.querySelector('.remove-tag').addEventListener('click', () => {
+                  container.removeChild(tag);
+              });
+          }
+      
+          input.addEventListener('keydown', (e) => {
+              if (e.key === 'Enter' || e.key === ',') {
+                  e.preventDefault();
+                  const tags = input.value.split(',').map(s => s.trim()).filter(s => s);
+                  tags.forEach(addTag);
+                  input.value = '';
               }
-            }
-        }
+          });
+          input.addEventListener('paste', (e) => {
+              e.preventDefault();
+              const paste = (e.clipboardData || window.clipboardData).getData('text');
+              const tags = paste.split(',').map(s => s.trim()).filter(s => s);
+              tags.forEach(addTag);
+              input.value = '';
+          });
+      
+          container.getTags = () => {
+              return Array.from(container.querySelectorAll('.tag')).map(el => el.textContent.replace(/\s*×$/, ''));
+          };
+      
+          container.setTags = (tags) => {
+              Array.from(container.querySelectorAll('.tag')).forEach(tag => container.removeChild(tag));
+              tags.forEach(addTag);
+          }
       }
-
-      data.alergias_tags = document.getElementById('alergias-tags').getTags();
-      data.comorbidades_tags = document.getElementById('comorbidades-tags').getTags();
-      data.condutas_tags = document.getElementById('condutas-tags').getTags();
-      data.hipotese_tags = document.getElementById('hipotese-tags').getTags();
-      data.drogas_tags = document.getElementById('drogas-tags').getTags();
       
-      data.tabagismo_detalhe = tabagismoCheckbox.checked ? form.elements['tabagismo_detalhe'].value : '';
+      // ===== Interações de UI =====
+      const form = document.getElementById('form-prontuario');
+      const dumInput = document.getElementById('dum');
+      const dumIncerta = document.getElementById('dum_incerta');
+      const igDum = document.getElementById('ig-dum');
+      const dpp = document.getElementById('dpp');
+      const dataUsg = document.getElementById('data-usg');
+      const igUsg = document.getElementById('ig-usg');
+      const igUsgAtual = document.getElementById('ig-usg-atual');
+      const bolsaToggle = document.getElementById('bolsa');
+      const bolsaRotaFields = document.getElementById('bolsa_rota_fields');
+      const toqueEvitado = document.getElementById('toque_evitado');
+      const toqueFields = document.getElementById('toque_fields');
+      const especularEvitado = document.getElementById('especular_evitado');
+      const especularFields = document.getElementById('especular_fields');
+      const output = document.getElementById('output');
+      const medicationList = document.getElementById('medication-list');
+      const addMedicationBtn = document.getElementById('add-medication-btn');
+      const signaturesContainer = document.getElementById('signatures-container');
+      const addSignatureBtn = document.getElementById('add-signature-btn');
       
-      const customMeds = [];
-      document.querySelectorAll('#medication-list .medication-item input[name="med_outra"]').forEach(el => {
-          if (el.checked) {
-              const doseEl = el.parentElement.parentElement.querySelector('[name="dose_outra"]');
-              customMeds.push(doseEl.value);
+      const nuligestaToggle = document.getElementById('nuligesta');
+      const obstetricoFields = document.getElementById('obstetrico-fields');
+      const gestacaoAtualFields = document.getElementById('gestacao-atual-fields');
+      
+      const dinamicaAusenteToggle = document.getElementById('dinamica_ausente');
+      const dinamicaInput = document.getElementById('dinamica_uterina');
+      
+      const etilismoCheckbox = document.getElementById('etilismo');
+      const tabagismoCheckbox = document.getElementById('tabagismo');
+      const drogasCheckbox = document.getElementById('drogas');
+      const tabagismoInputDiv = document.getElementById('tabagismo-input');
+      const drogasInputDiv = document.getElementById('drogas-input');
+      
+      setupTagInput('alergias-tags', 'alergias-input');
+      setupTagInput('comorbidades-tags', 'comorbidades-input');
+      setupTagInput('condutas-tags', 'condutas-input');
+      setupTagInput('hipotese-tags', 'hipotese-input');
+      setupTagInput('drogas-tags', 'drogas-input-field');
+      
+      tabagismoCheckbox.addEventListener('change', () => {
+          tabagismoInputDiv.style.display = tabagismoCheckbox.checked ? 'flex' : 'none';
+          if (!tabagismoCheckbox.checked) {
+              tabagismoInputDiv.querySelector('input').value = '';
           }
       });
-      data.custom_meds = customMeds;
-
-      const signatures = [];
-      document.querySelectorAll('.signature-item').forEach(item => {
-        const title = item.querySelector('[name="signature_title"]').value;
-        const name = item.querySelector('[name="signature_name"]').value;
-        if (title && name) {
-          signatures.push({ title, name });
-        }
-      });
-      data.signatures = signatures;
-
-      data._timestamp = new Date().toISOString();
-      localStorage.setItem(LS_KEY, JSON.stringify(data));
-      alert('Salvo localmente.');
-    }
-    
-    function loadLocal() {
-      const raw = localStorage.getItem(LS_KEY);
-      if (!raw) { alert('Nada salvo.'); return; }
-      const data = JSON.parse(raw);
       
-      form.reset();
+      drogasCheckbox.addEventListener('change', () => {
+          drogasInputDiv.style.display = drogasCheckbox.checked ? 'flex' : 'none';
+          if (!drogasCheckbox.checked) {
+              document.getElementById('drogas-tags').setTags([]);
+          }
+      });
       
-      document.querySelectorAll('.signature-item').forEach(el => el.remove());
-      data.signatures?.forEach(sig => addSignatureField(sig.title, sig.name));
-      if (!signaturesContainer.children.length) {
-        addSignatureField();
-      }
-
-      document.querySelectorAll('#medication-list .medication-item').forEach((el, i) => {
-        if (el.querySelector('[name="med_outra"]')) el.remove();
+      // Testes Rápidos State Logic
+      const trLabels = document.querySelectorAll('.testes-rapidos .state-toggle-label');
+      const trStates = ['nao_realizado', 'nao_reagente', 'reagente'];
+      const trLabelsMap = {
+          'tr_sifilis': {
+              'nao_realizado': 'Sífilis Não Realizado',
+              'nao_reagente': 'Sífilis Não Reagente',
+              'reagente': 'Sífilis Reagente',
+          },
+          'tr_hiv': {
+              'nao_realizado': 'Anti-HIV Não Realizado',
+              'nao_reagente': 'Anti-HIV Não Reagente',
+              'reagente': 'Anti-HIV Reagente',
+          },
+          'tr_hepb': {
+              'nao_realizado': 'HepB Não Realizado',
+              'nao_reagente': 'HepB Não Reagente',
+              'reagente': 'HepB Reagente',
+          },
+          'tr_hepc': {
+              'nao_realizado': 'HepC Não Realizado',
+              'nao_reagente': 'HepC Não Reagente',
+              'reagente': 'HepC Reagente',
+          },
+      };
+      
+      trLabels.forEach(label => {
+          const input = document.querySelector(`input[name="${label.htmlFor}"]`);
+          label.addEventListener('click', () => {
+              let currentIndex = trStates.indexOf(input.value);
+              let nextIndex = (currentIndex + 1) % trStates.length;
+              let nextState = trStates[nextIndex];
+              
+              input.value = nextState;
+              label.textContent = trLabelsMap[label.htmlFor][nextState];
+              
+              label.classList.remove(...trStates);
+              label.classList.add(nextState);
+          });
       });
-      data.custom_meds?.forEach(med => {
-        const newItem = document.createElement('div');
-        newItem.className = 'medication-item';
-        newItem.innerHTML = `
-            <label class="toggle">
-                <input type="checkbox" name="med_outra" checked />
-                <span class="toggle-slider"></span>
-                <span class="toggle-label">Outra</span>
-            </label>
-            <input class="dose-input" type="text" name="dose_outra" placeholder="Nome da medicação e dose" value="${med}" />
-            <button type="button" class="btn remove-btn">X</button>
-        `;
-        medicationList.appendChild(newItem);
-        newItem.querySelector('.remove-btn').addEventListener('click', () => {
-            medicationList.removeChild(newItem);
-        });
-      });
-
-      Object.keys(data).forEach((k) => {
-        if (k.startsWith('_') || k === 'alergias_tags' || k === 'comorbidades_tags' || k === 'condutas_tags' || k === 'hipotese_tags' || k === 'drogas_tags' || k === 'custom_meds' || k === 'signatures' || k === 'tabagismo_detalhe') return;
-        const el = form.elements[k];
-        if (!el) return;
-        
-        if (el.type === 'checkbox' || el.type === 'radio') {
-            if (el.length) {
-                Array.from(el).forEach(e => {
-                    e.checked = e.value === data[k];
-                });
-            } else {
-                el.checked = (data[k] === 'true' || data[k] === true || data[k] === el.value);
-            }
-        } else if (el.type === 'hidden') {
-            el.value = data[k];
-            const label = document.querySelector(`label[for="${el.name}"]`);
-            if (label) {
-                label.classList.remove(...trStates);
-                label.classList.add(data[k]);
-                label.textContent = trLabelsMap[label.htmlFor][data[k]];
-            }
+      
+      function refreshPregCalc() {
+        if (!dumIncerta.checked) {
+          igDum.value = calcIgByDUM(dumInput.value);
+          dpp.value = calcDPP(dumInput.value);
+          dumInput.disabled = false;
         } else {
-            el.value = data[k];
+          igDum.value = '';
+          dumInput.value = '';
+          dumInput.disabled = true;
+          dpp.value = calcDPPFromUsg(dataUsg.value, igUsg.value);
         }
+        igUsgAtual.value = calcIgUsgCorrigida(dataUsg.value, igUsg.value);
+      }
+      
+      function setObstetricFieldsDisabled(disabled) {
+        Array.from(obstetricoFields.querySelectorAll('input, select')).forEach(el => el.disabled = disabled);
+        Array.from(gestacaoAtualFields.querySelectorAll('input, select')).forEach(el => el.disabled = disabled);
+        if (disabled) {
+          gestacaoAtualFields.classList.add('hidden-field');
+          obstetricoFields.style.opacity = '0.5';
+          gestacaoAtualFields.style.opacity = '0.5';
+        } else {
+          gestacaoAtualFields.classList.remove('hidden-field');
+          obstetricoFields.style.opacity = '1';
+          gestacaoAtualFields.style.opacity = '1';
+        }
+      }
+      
+      nuligestaToggle.addEventListener('change', (e) => {
+        setObstetricFieldsDisabled(e.target.checked);
       });
       
-      document.getElementById('alergias-tags').setTags(data.alergias_tags || []);
-      document.getElementById('comorbidades-tags').setTags(data.comorbidades_tags || []);
-      document.getElementById('condutas-tags').setTags(data.condutas_tags || []);
-      document.getElementById('hipotese-tags').setTags(data.hipotese_tags || []);
-      document.getElementById('drogas-tags').setTags(data.drogas_tags || []);
+      dumInput.addEventListener('change', refreshPregCalc);
+      dumIncerta.addEventListener('change', refreshPregCalc);
+      dataUsg.addEventListener('change', refreshPregCalc);
+      igUsg.addEventListener('input', refreshPregCalc);
       
-      tabagismoCheckbox.checked = !!data.tabagismo_detalhe;
-      drogasCheckbox.checked = (data.drogas_tags || []).length > 0;
-      if (tabagismoCheckbox.checked) form.elements['tabagismo_detalhe'].value = data.tabagismo_detalhe;
-
-      tabagismoCheckbox.dispatchEvent(new Event('change'));
-      drogasCheckbox.dispatchEvent(new Event('change'));
+      // Dynamic toggle labels
+      function updateToggleLabel(input) {
+        const label = document.querySelector(`label[for="${input.id}"]`);
+        if (label && label.dataset.default) {
+          label.textContent = input.checked ? label.dataset.checked : label.dataset.default;
+        }
+      }
       
       document.querySelectorAll('.btn-toggle').forEach(label => {
         const input = document.getElementById(label.getAttribute('for'));
-        if (input) {
-          updateToggleLabel(input);
+        if (input && label.dataset.default) {
+          label.textContent = input.checked ? label.dataset.checked : label.dataset.default;
         }
       });
       
-      setObstetricFieldsDisabled(document.getElementById('nuligesta').checked);
-      refreshPregCalc();
-      alert('Carregado.');
-    }
-    
-    function clearAll() {
-      form.reset();
-      document.querySelectorAll('.signature-item').forEach((el, i) => {
-        if (i > 0) el.remove();
-      });
-      document.querySelectorAll('#medication-list .medication-item').forEach((el, i) => {
-        if (el.querySelector('[name="med_outra"]')) el.remove();
-      });
-      document.getElementById('alergias-tags').setTags([]);
-      document.getElementById('comorbidades-tags').setTags([]);
-      document.getElementById('condutas-tags').setTags([]);
-      document.getElementById('hipotese-tags').setTags([]);
-      document.getElementById('drogas-tags').setTags([]);
-      
-      document.getElementById('nuligesta').checked = false;
-      document.getElementById('dinamica_ausente').checked = true;
-      document.getElementById('toque_evitado').checked = false;
-      document.getElementById('especular_evitado').checked = true;
-      
-      document.getElementById('mov_fetal').checked = false;
-      document.getElementById('tonus_uterino').checked = false;
-      document.getElementById('bolsa').checked = false;
-      document.getElementById('sangramento').checked = false;
-      
-      document.getElementById('tabagismo').checked = false;
-      document.getElementById('drogas').checked = false;
-      tabagismoCheckbox.dispatchEvent(new Event('change'));
-      drogasCheckbox.dispatchEvent(new Event('change'));
-      
-      document.querySelectorAll('.testes-rapidos .state-toggle-input').forEach(input => {
-          input.value = 'nao_realizado';
-      });
-      document.querySelectorAll('.testes-rapidos .state-toggle-label').forEach(label => {
-          label.textContent = trLabelsMap[label.htmlFor]['nao_realizado'];
-          label.classList.remove(...trStates);
-          label.classList.add('nao_realizado');
+      document.querySelectorAll('.toggle-group input[type="checkbox"]').forEach(input => {
+        input.addEventListener('change', () => {
+          updateToggleLabel(input);
+        });
       });
       
-      document.querySelectorAll('.btn-toggle').forEach(label => {
-          const input = document.getElementById(label.getAttribute('for'));
-          if (input) updateToggleLabel(input);
+      bolsaToggle.addEventListener('change', () => {
+        bolsaRotaFields.style.display = bolsaToggle.checked ? 'grid' : 'none';
       });
       
-      setObstetricFieldsDisabled(false);
-      refreshPregCalc();
-      output.value = '';
-    }
-
-    document.getElementById('btn-save').addEventListener('click', (e) => { e.preventDefault(); saveLocal(); });
-    document.getElementById('btn-load').addEventListener('click', (e) => { e.preventDefault(); loadLocal(); });
-    document.getElementById('btn-clear').addEventListener('click', (e) => { e.preventDefault(); clearAll(); });
-    
-    // ===== Gerador de Texto =====
-    function getCheckedValues(name) {
-      return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map(i => i.value);
-    }
-    
-    function getBinaryToggleValue(id) {
-        const input = document.getElementById(id);
-        if (!input) return '';
-        const label = document.querySelector(`label[for="${id}"]`);
-        if (!label) return '';
-        return input.checked ? label.dataset.checked : label.dataset.default;
-    }
-    
-    function getSelectValue(name) {
-      const select = form.elements[name];
-      return select ? select.value : '';
-    }
-    
-    function getMedList() {
-      const meds = [];
-      document.querySelectorAll('#medication-list .medication-item').forEach(item => {
-          const checkbox = item.querySelector('input[type="checkbox"]');
-          if (checkbox?.checked) {
-              const labelEl = item.querySelector('.toggle-label');
-              const doseInput = item.querySelector('.dose-input');
-              const dose = doseInput?.value?.trim();
-              if (doseInput.name === 'dose_outra') {
-                  meds.push(dose);
+      toqueEvitado.addEventListener('change', () => {
+        toqueFields.style.display = toqueEvitado.checked ? 'none' : 'grid';
+      });
+      especularEvitado.addEventListener('change', () => {
+        especularFields.style.display = especularEvitado.checked ? 'none' : 'block';
+      });
+      dinamicaAusenteToggle.addEventListener('change', (e) => {
+        dinamicaInput.disabled = e.target.checked;
+        dinamicaInput.value = '';
+      });
+      
+      addMedicationBtn.addEventListener('click', () => {
+          const newItem = document.createElement('div');
+          newItem.className = 'medication-item';
+          newItem.innerHTML = `
+              <label class="toggle">
+                  <input type="checkbox" name="med_outra" checked />
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-label">Outra</span>
+              </label>
+              <input class="dose-input" type="text" name="dose_outra" placeholder="Nome da medicação e dose" />
+              <button type="button" class="btn remove-btn">X</button>
+          `;
+          newItem.querySelector('.remove-btn').addEventListener('click', () => {
+              medicationList.removeChild(newItem);
+          });
+          medicationList.appendChild(newItem);
+      });
+      
+      function addSignatureField(title = 'Ddo.', name = '') {
+        const newItem = document.createElement('div');
+        newItem.className = 'signature-item';
+        newItem.innerHTML = `
+          <div class="form-group" style="flex-grow: 1;">
+            <label>Título</label>
+            <select name="signature_title">
+              <option value="Ddo." ${title === 'Ddo.' ? 'selected' : ''}>Ddo.</option>
+              <option value="Dda." ${title === 'Dda.' ? 'selected' : ''}>Dda.</option>
+              <option value="Acd.">Acd.</option>
+              <option value="MR.">MR.</option>
+              <option value="Dr.">Dr.</option>
+              <option value="Dra.">Dra.</option>
+            </select>
+          </div>
+          <div class="form-group" style="flex-grow: 2;">
+            <label>Nome Completo</label>
+            <input type="text" name="signature_name" placeholder="Nome Completo" value="${name}" />
+          </div>
+          <button type="button" class="btn remove-signature-btn" style="align-self: flex-end; margin-bottom: 6px;">X</button>
+        `;
+        signaturesContainer.appendChild(newItem);
+        newItem.querySelector('.remove-signature-btn').addEventListener('click', () => {
+            signaturesContainer.removeChild(newItem);
+        });
+      }
+      
+      addSignatureBtn.addEventListener('click', () => {
+        addSignatureField();
+      });
+      
+      const LS_KEY = 'prontuario_obstetrico_ps_v7';
+      function saveLocal() {
+        const data = {};
+        const formElements = form.elements;
+        for (let i = 0; i < formElements.length; i++) {
+          const el = formElements[i];
+          if (el.type === 'radio' && !el.checked) continue;
+          if (el.type === 'checkbox' && !el.checked) {
+              data[el.name] = false;
+          } else if (!el.name) {
+              continue;
+          } else {
+              if (!data[el.name]) {
+                data[el.name] = el.value;
               } else {
-                  meds.push(dose ? `${labelEl.textContent} ${dose}` : labelEl.textContent);
+                if (Array.isArray(data[el.name])) {
+                  data[el.name].push(el.value);
+                } else {
+                  data[el.name] = [data[el.name], el.value];
+                }
               }
           }
-      });
-      return meds;
-    }
-
-    function buildOutput() {
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2, '0');
-      const mm = String(now.getMinutes()).padStart(2, '0');
+        }
       
-      const nome = form.elements['nome'].value.trim();
-      const idade = form.elements['idade'].value.trim();
-      const procedencia = form.elements['procedencia'].value.trim();
+        data.alergias_tags = document.getElementById('alergias-tags').getTags();
+        data.comorbidades_tags = document.getElementById('comorbidades-tags').getTags();
+        data.condutas_tags = document.getElementById('condutas-tags').getTags();
+        data.hipotese_tags = document.getElementById('hipotese-tags').getTags();
+        data.drogas_tags = document.getElementById('drogas-tags').getTags();
+        
+        data.tabagismo_detalhe = tabagismoCheckbox.checked ? form.elements['tabagismo_detalhe'].value : '';
+        
+        const customMeds = [];
+        document.querySelectorAll('#medication-list .medication-item input[name="med_outra"]').forEach(el => {
+            if (el.checked) {
+                const doseEl = el.parentElement.parentElement.querySelector('[name="dose_outra"]');
+                customMeds.push(doseEl.value);
+            }
+        });
+        data.custom_meds = customMeds;
       
-      const tipoSanguineo = form.querySelector('input[name="tipo_sanguineo"]:checked')?.value || 'Não Informado';
-      const trMap = {
-          'tr_sifilis': 'Sífilis',
-          'tr_hiv': 'Anti-HIV',
-          'tr_hepb': 'HepB',
-          'tr_hepc': 'HepC'
-      };
-
-      const trResults = {};
-      document.querySelectorAll('.testes-rapidos .state-toggle-input').forEach(input => {
-          trResults[input.name] = input.value;
-      });
-
-      const reagentes = Object.keys(trResults).filter(k => trResults[k] === 'reagente').map(k => trMap[k]);
-      const naoReagentes = Object.keys(trResults).filter(k => trResults[k] === 'nao_reagente').map(k => trMap[k]);
-      const naoRealizados = Object.keys(trResults).filter(k => trResults[k] === 'nao_realizado').map(k => trMap[k]);
-
-      let trTxt = 'TR ';
-      const trParts = [];
-      if (reagentes.length > 0) trParts.push(`${reagentes.join(', ')} Reagente`);
-      if (naoReagentes.length > 0) {
-          const last = naoReagentes.pop();
-          const joined = naoReagentes.length > 0 ? `${naoReagentes.join(', ')} e ${last}` : last;
-          trParts.push(`${joined} Não Reagentes`);
+        const signatures = [];
+        document.querySelectorAll('.signature-item').forEach(item => {
+          const title = item.querySelector('[name="signature_title"]').value;
+          const name = item.querySelector('[name="signature_name"]').value;
+          if (title && name) {
+            signatures.push({ title, name });
+          }
+        });
+        data.signatures = signatures;
+      
+        data._timestamp = new Date().toISOString();
+        localStorage.setItem(LS_KEY, JSON.stringify(data));
+        alert('Salvo localmente.');
       }
-      if (naoRealizados.length > 0) trParts.push(`${naoRealizados.join(', ')} Não Realizados`);
-      trTxt += trParts.join(', ') + '.';
-      if (trParts.length === 0) trTxt = 'TR não realizados.';
       
-      const nuligesta = form.elements['nuligesta'].checked;
-      const g = form.elements['gestacoes'].value || '0';
-      const pn = Number(form.elements['partos-normais'].value || '0');
-      const pc = Number(form.elements['partos-cesarea'].value || '0');
-      const ab = Number(form.elements['abortos'].value || '0');
-      const p = pn + pc;
-      const paridade = `G${g}P${p}A${ab}`;
-
-      const dumStr = form.elements['dum'].value;
-      const dumInc = form.elements['dum_incerta'].checked;
-      const igdum = document.getElementById('ig-dum').value;
-      const dppStr = document.getElementById('dpp').value;
-
-      const dataUsgStr = form.elements['data-usg'].value;
-      const igUsgStr = form.elements['ig-usg'].value;
-      const igUsgCorr = document.getElementById('ig-usg-atual').value;
+      function loadLocal() {
+        const raw = localStorage.getItem(LS_KEY);
+        if (!raw) { alert('Nada salvo.'); return; }
+        const data = JSON.parse(raw);
+        
+        form.reset();
+        
+        document.querySelectorAll('.signature-item').forEach(el => el.remove());
+        data.signatures?.forEach(sig => addSignatureField(sig.title, sig.name));
+        if (!signaturesContainer.children.length) {
+          addSignatureField();
+        }
       
-      const pa = form.elements['pa'].value;
-      const pa_dle = form.elements['pa_dle'].value;
-      const fc = form.elements['fc'].value;
-      const spo2 = form.elements['spo2'].value;
-      const tax = form.elements['tax'].value;
-      const proteinuria = getSelectValue('proteinuria');
-
-      const etilismo = form.elements['etilismo'].checked;
-      const tabagismo = form.elements['tabagismo'].checked;
-      const tabagismoDetalhe = form.elements['tabagismo_detalhe'].value.trim();
-      const drogadicacao = form.elements['drogas'].checked;
-      const drogasTags = document.getElementById('drogas-tags').getTags();
-
-      const viciosComAfixo = [];
-      const viciosSemAfixo = [];
-
-      if (etilismo) viciosSemAfixo.push('Etilismo'); else viciosComAfixo.push('Etilismo');
-      if (tabagismo) viciosSemAfixo.push('Tabagismo'); else viciosComAfixo.push('Tabagismo');
-      if (drogadicacao) viciosSemAfixo.push('Drogadição'); else viciosComAfixo.push('Drogadição');
-
-      let viciosTxt = '';
-      if (viciosComAfixo.length === 3) {
-          viciosTxt += `Nega etilismo, tabagismo e uso de drogas.`;
-      } else if (viciosComAfixo.length > 0) {
-          const negados = viciosComAfixo.join(', ').replace(/,([^,]*)$/, ' e$1');
-          viciosTxt += `Nega ${negados}.`;
-      }
-
-      if (viciosSemAfixo.length > 0) {
-          const afirmados = [];
-          if (etilismo) afirmados.push('Etilista');
-          if (tabagismo) afirmados.push(tabagismoDetalhe ? `Tabagista (${tabagismoDetalhe})` : `Tabagista`);
-          if (drogadicacao && drogasTags.length > 0) afirmados.push(`Usuária de drogas (${drogasTags.join(', ')})`);
+        document.querySelectorAll('#medication-list .medication-item').forEach((el, i) => {
+          if (el.querySelector('[name="med_outra"]')) el.remove();
+        });
+        data.custom_meds?.forEach(med => {
+          const newItem = document.createElement('div');
+          newItem.className = 'medication-item';
+          newItem.innerHTML = `
+              <label class="toggle">
+                  <input type="checkbox" name="med_outra" checked />
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-label">Outra</span>
+              </label>
+              <input class="dose-input" type="text" name="dose_outra" placeholder="Nome da medicação e dose" value="${med}" />
+              <button type="button" class="btn remove-btn">X</button>
+          `;
+          medicationList.appendChild(newItem);
+          newItem.querySelector('.remove-btn').addEventListener('click', () => {
+              medicationList.removeChild(newItem);
+          });
+        });
+      
+        Object.keys(data).forEach((k) => {
+          if (k.startsWith('_') || k === 'alergias_tags' || k === 'comorbidades_tags' || k === 'condutas_tags' || k === 'hipotese_tags' || k === 'drogas_tags' || k === 'custom_meds' || k === 'signatures' || k === 'tabagismo_detalhe') return;
+          const el = form.elements[k];
+          if (!el) return;
           
-          if (viciosTxt.length > 0) viciosTxt += ' '
-          viciosTxt += afirmados.join(', ');
+          if (el.type === 'checkbox' || el.type === 'radio') {
+              if (el.length) {
+                  Array.from(el).forEach(e => {
+                      e.checked = e.value === data[k];
+                  });
+              } else {
+                  el.checked = (data[k] === 'true' || data[k] === true || data[k] === el.value);
+              }
+          } else if (el.type === 'hidden') {
+              el.value = data[k];
+              const label = document.querySelector(`label[for="${el.name}"]`);
+              if (label) {
+                  label.classList.remove(...trStates);
+                  label.classList.add(data[k]);
+                  label.textContent = trLabelsMap[label.htmlFor][data[k]];
+              }
+          } else {
+              el.value = data[k];
+          }
+        });
+        
+        document.getElementById('alergias-tags').setTags(data.alergias_tags || []);
+        document.getElementById('comorbidades-tags').setTags(data.comorbidades_tags || []);
+        document.getElementById('condutas-tags').setTags(data.condutas_tags || []);
+        document.getElementById('hipotese-tags').setTags(data.hipotese_tags || []);
+        document.getElementById('drogas-tags').setTags(data.drogas_tags || []);
+        
+        tabagismoCheckbox.checked = !!data.tabagismo_detalhe;
+        drogasCheckbox.checked = (data.drogas_tags || []).length > 0;
+        if (tabagismoCheckbox.checked) form.elements['tabagismo_detalhe'].value = data.tabagismo_detalhe;
+      
+        tabagismoCheckbox.dispatchEvent(new Event('change'));
+        drogasCheckbox.dispatchEvent(new Event('change'));
+        
+        document.querySelectorAll('.btn-toggle').forEach(label => {
+          const input = document.getElementById(label.getAttribute('for'));
+          if (input) {
+            updateToggleLabel(input);
+          }
+        });
+        
+        setObstetricFieldsDisabled(document.getElementById('nuligesta').checked);
+        refreshPregCalc();
+        alert('Carregado.');
       }
-      if (viciosTxt.length === 0) viciosTxt = 'Nega etilismo, tabagismo e uso de drogas.';
-
-
-      const alergias = document.getElementById('alergias-tags').getTags();
-      const comorb = document.getElementById('comorbidades-tags').getTags();
-      const meds = getMedList();
-
-      const hda = form.elements['hda'].value.trim();
       
-      const au = form.elements['altura_uterina'].value;
-      const bcf = form.elements['bcf'].value;
-      const mov = getBinaryToggleValue('mov_fetal');
-      const tonus = getBinaryToggleValue('tonus_uterino');
-      const dinamAusente = form.elements['dinamica_ausente'].checked;
-      const dinam = form.elements['dinamica_uterina'].value;
+      function clearAll() {
+        form.reset();
+        document.querySelectorAll('.signature-item').forEach((el, i) => {
+          if (i > 0) el.remove();
+        });
+        document.querySelectorAll('#medication-list .medication-item').forEach((el, i) => {
+          if (el.querySelector('[name="med_outra"]')) el.remove();
+        });
+        document.getElementById('alergias-tags').setTags([]);
+        document.getElementById('comorbidades-tags').setTags([]);
+        document.getElementById('condutas-tags').setTags([]);
+        document.getElementById('hipotese-tags').setTags([]);
+        document.getElementById('drogas-tags').setTags([]);
+        
+        document.getElementById('nuligesta').checked = false;
+        document.getElementById('dinamica_ausente').checked = true;
+        document.getElementById('toque_evitado').checked = false;
+        document.getElementById('especular_evitado').checked = true;
+        
+        document.getElementById('mov_fetal').checked = false;
+        document.getElementById('tonus_uterino').checked = false;
+        document.getElementById('bolsa').checked = false;
+        document.getElementById('sangramento').checked = false;
+        
+        document.getElementById('tabagismo').checked = false;
+        document.getElementById('drogas').checked = false;
+        tabagismoCheckbox.dispatchEvent(new Event('change'));
+        drogasCheckbox.dispatchEvent(new Event('change'));
+        
+        document.querySelectorAll('.testes-rapidos .state-toggle-input').forEach(input => {
+            input.value = 'nao_realizado';
+        });
+        document.querySelectorAll('.testes-rapidos .state-toggle-label').forEach(label => {
+            label.textContent = trLabelsMap[label.htmlFor]['nao_realizado'];
+            label.classList.remove(...trStates);
+            label.classList.add('nao_realizado');
+        });
+        
+        document.querySelectorAll('.btn-toggle').forEach(label => {
+            const input = document.getElementById(label.getAttribute('for'));
+            if (input) updateToggleLabel(input);
+        });
+        
+        setObstetricFieldsDisabled(false);
+        refreshPregCalc();
+        output.value = '';
+      }
       
-      const toqueAvoid = form.elements['toque_evitado'].checked;
-      const dil = form.elements['dilatacao'].value;
-      const pos = getSelectValue('posicao');
-      const esp = getSelectValue('espessura');
-      const bolsa = getBinaryToggleValue('bolsa');
-      const sang = getBinaryToggleValue('sangramento');
+      document.getElementById('btn-save').addEventListener('click', (e) => { e.preventDefault(); saveLocal(); });
+      document.getElementById('btn-load').addEventListener('click', (e) => { e.preventDefault(); loadLocal(); });
+      document.getElementById('btn-clear').addEventListener('click', (e) => { e.preventDefault(); clearAll(); });
       
-      const horaRomp = form.elements['hora_rompimento'].value;
-      const corLiq = getSelectValue('cor_liquido');
+      // ===== Gerador de Texto =====
+      function getCheckedValues(name) {
+        return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map(i => i.value);
+      }
       
-      const especAvoid = form.elements['especular_evitado'].checked;
-      const especDesc = form.elements['desc_especular'].value.trim();
+      function getBinaryToggleValue(id) {
+          const input = document.getElementById(id);
+          if (!input) return '';
+          const label = document.querySelector(`label[for="${id}"]`);
+          if (!label) return '';
+          return input.checked ? label.dataset.checked : label.dataset.default;
+      }
       
-      const labs = form.elements['exames_laboratoriais'].value.trim();
-      const img = form.elements['exames_imagem'].value.trim();
-      const hip = document.getElementById('hipotese-tags').getTags();
+      function getSelectValue(name) {
+        const select = form.elements[name];
+        return select ? select.value : '';
+      }
+      
+      function getMedList() {
+        const meds = [];
+        document.querySelectorAll('#medication-list .medication-item').forEach(item => {
+            const checkbox = item.querySelector('input[type="checkbox"]');
+            if (checkbox?.checked) {
+                const labelEl = item.querySelector('.toggle-label');
+                const doseInput = item.querySelector('.dose-input');
+                const dose = doseInput?.value?.trim();
+                if (doseInput.name === 'dose_outra') {
+                    meds.push(dose);
+                } else {
+                    meds.push(dose ? `${labelEl.textContent} ${dose}` : labelEl.textContent);
+                }
+            }
+        });
+        return meds;
+      }
+      
+      function buildOutput() {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        
+        const nome = form.elements['nome'].value.trim();
+        const idade = form.elements['idade'].value.trim();
+        const procedencia = form.elements['procedencia'].value.trim();
+        
+        const tipoSanguineo = form.querySelector('input[name="tipo_sanguineo"]:checked')?.value || 'Não Informado';
+        const trMap = {
+            'tr_sifilis': 'Sífilis',
+            'tr_hiv': 'Anti-HIV',
+            'tr_hepb': 'HepB',
+            'tr_hepc': 'HepC'
+        };
+      
+        const trResults = {};
+        document.querySelectorAll('.testes-rapidos .state-toggle-input').forEach(input => {
+            trResults[input.name] = input.value;
+        });
+      
+        const reagentes = Object.keys(trResults).filter(k => trResults[k] === 'reagente').map(k => trMap[k]);
+        const naoReagentes = Object.keys(trResults).filter(k => trResults[k] === 'nao_reagente').map(k => trMap[k]);
+        const naoRealizados = Object.keys(trResults).filter(k => trResults[k] === 'nao_realizado').map(k => trMap[k]);
+      
+        let trTxt = 'TR ';
+        const trParts = [];
+        if (reagentes.length > 0) trParts.push(`${reagentes.join(', ')} Reagente`);
+        if (naoReagentes.length > 0) {
+            const last = naoReagentes.pop();
+            const joined = naoReagentes.length > 0 ? `${naoReagentes.join(', ')} e ${last}` : last;
+            trParts.push(`${joined} Não Reagentes`);
+        }
+        if (naoRealizados.length > 0) trParts.push(`${naoRealizados.join(', ')} Não Realizados`);
+        trTxt += trParts.join(', ') + '.';
+        if (trParts.length === 0) trTxt = 'TR não realizados.';
+        
+        const nuligesta = form.elements['nuligesta'].checked;
+        const g = form.elements['gestacoes'].value || '0';
+        const pn = Number(form.elements['partos-normais'].value || '0');
+        const pc = Number(form.elements['partos-cesarea'].value || '0');
+        const ab = Number(form.elements['abortos'].value || '0');
+        const p = pn + pc;
+        const paridade = `G${g}P${p}A${ab}`;
+      
+        const dumStr = form.elements['dum'].value;
+        const dumInc = form.elements['dum_incerta'].checked;
+        const igdum = document.getElementById('ig-dum').value;
+        const dppStr = document.getElementById('dpp').value;
+      
+        const dataUsgStr = form.elements['data-usg'].value;
+        const igUsgStr = form.elements['ig-usg'].value;
+        const igUsgCorr = document.getElementById('ig-usg-atual').value;
+        
+        const pa = form.elements['pa'].value;
+        const pa_dle = form.elements['pa_dle'].value;
+        const fc = form.elements['fc'].value;
+        const spo2 = form.elements['spo2'].value;
+        const tax = form.elements['tax'].value;
+        const proteinuria = getSelectValue('proteinuria');
+      
+        const etilismo = form.elements['etilismo'].checked;
+        const tabagismo = form.elements['tabagismo'].checked;
+        const tabagismoDetalhe = form.elements['tabagismo_detalhe'].value.trim();
+        const drogadicacao = form.elements['drogas'].checked;
+        const drogasTags = document.getElementById('drogas-tags').getTags();
+      
+        const viciosComAfixo = [];
+        const viciosSemAfixo = [];
+      
+        if (etilismo) viciosSemAfixo.push('Etilismo'); else viciosComAfixo.push('Etilismo');
+        if (tabagismo) viciosSemAfixo.push('Tabagismo'); else viciosComAfixo.push('Tabagismo');
+        if (drogadicacao) viciosSemAfixo.push('Drogadição'); else viciosComAfixo.push('Drogadição');
+      
+        let viciosTxt = '';
+        if (viciosComAfixo.length === 3) {
+            viciosTxt += `Nega etilismo, tabagismo e uso de drogas.`;
+        } else if (viciosComAfixo.length > 0) {
+            const negados = viciosComAfixo.join(', ').replace(/,([^,]*)$/, ' e$1');
+            viciosTxt += `Nega ${negados}.`;
+        }
+      
+        if (viciosSemAfixo.length > 0) {
+            const afirmados = [];
+            if (etilismo) afirmados.push('Etilista');
+            if (tabagismo) afirmados.push(tabagismoDetalhe ? `Tabagista (${tabagismoDetalhe})` : `Tabagista`);
+            if (drogadicacao && drogasTags.length > 0) afirmados.push(`Usuária de drogas (${drogasTags.join(', ')})`);
+            
+            if (viciosTxt.length > 0) viciosTxt += ' '
+            viciosTxt += afirmados.join(', ');
+        }
+        if (viciosTxt.length === 0) viciosTxt = 'Nega etilismo, tabagismo e uso de drogas.';
+      
+      
+        const alergias = document.getElementById('alergias-tags').getTags();
+        const comorb = document.getElementById('comorbidades-tags').getTags();
+        const meds = getMedList();
+      
+        const hda = form.elements['hda'].value.trim();
+        
+        const au = form.elements['altura_uterina'].value;
+        const bcf = form.elements['bcf'].value;
+        const mov = getBinaryToggleValue('mov_fetal');
+        const tonus = getBinaryToggleValue('tonus_uterino');
+        const dinamAusente = form.elements['dinamica_ausente'].checked;
+        const dinam = form.elements['dinamica_uterina'].value;
+        
+        const toqueAvoid = form.elements['toque_evitado'].checked;
+        const dil = form.elements['dilatacao'].value;
+        const pos = getSelectValue('posicao');
+        const esp = getSelectValue('espessura');
+        const bolsa = getBinaryToggleValue('bolsa');
+        const sang = getBinaryToggleValue('sangramento');
+        
+        const horaRomp = form.elements['hora_rompimento'].value;
+        const corLiq = getSelectValue('cor_liquido');
+        
+        const especAvoid = form.elements['especular_evitado'].checked;
+        const especDesc = form.elements['desc_especular'].value.trim();
+        
+        const labs = form.elements['exames_laboratoriais'].value.trim();
+        const img = form.elements['exames_imagem'].value.trim();
+        const hip = document.getElementById('hipotese-tags').getTags();
+        const conds = getCheckedValues('conduta');
+        const outrasConds = document.getElementById('condutas-tags').getTags();
+        
+        const allCondutas = [...conds, ...outrasConds];
+        
+        const signatures = Array.from(signaturesContainer.querySelectorAll('.signature-item')).map(item => {
+            const title = item.querySelector('[name="signature_title"]').value;
+            const name = item.querySelector('[name="signature_name"]').value.trim();
+            return name ? `${title} ${name}` : null;
+        }).filter(Boolean);
+      
+        const header = `# SR às ${hh}:${mm} #`;
+        const ident = `${nome || 'Paciente'}, ${idade || '?'} anos, procedente de ${procedencia || '?'}`;
+        
+        let obstetrico;
+        if (nuligesta) {
+          obstetrico = 'Nuligesta.';
+        } else {
+          const obsParts = [
+            `${paridade} | ${dumInc ? `DUM incerta` : `DUM ${formatDateBR(new Date(dumStr))} | IG DUM ${igdum}`}`
+          ].filter(Boolean);
+          const gestacaoParts = [
+            igUsgCorr ? `IG USG ${igUsgCorr}` : null,
+            (igUsgStr && dataUsgStr) ? ` (${igUsgStr.replace('s', 's').replace('d', 'd')} em ${formatDateBR(new Date(dataUsgStr))})` : null,
+            dppStr ? ` | DPP ${dppStr}` : null,
+          ].filter(Boolean).join('');
+          
+          obstetrico = `${obsParts.join('\n')} \n${gestacaoParts}`;
+        }
+      
+        const complementaresTxt = `TS: ${tipoSanguineo} | ${trTxt}`;
+        const alergiasTxt = `# Alergias\n${(alergias.length ? alergias : ['Nega']).map(a=>`- ${a}`).join('\n')}`;
+        const viciosSectionTxt = `# Vícios\n- ${viciosTxt}`;
+        const comorbTxt = `# Comorbidades\n${(comorb.length ? comorb : ['Nega']).map(c=>`- ${c}`).join('\n')}`;
+        const medsTxt = `# Em uso de\n${(meds.length ? meds : ['Nega']).map(m=>`- ${m}`).join('\n')}`;
+        const hdaTxt = `# HDA\n${hda}`;
+        
+        const vitais = [
+            pa ? `PA ${pa} mmHg` : null,
+            pa_dle ? `PA pós DLE ${pa_dle} mmHg` : null,
+            fc ? `FC ${fc} bpm` : null,
+            spo2 ? `SpO2 ${spo2}%` : null,
+            tax ? `TAx ${tax}°C` : null,
+            proteinuria !== 'nao_realizado' ? `Proteinúria: ${proteinuria}` : null
+        ].filter(Boolean);
+        
+        const efParts = [
+            au ? `AU ${au} cm` : null,
+            bcf ? `BCF ${bcf} bpm` : null,
+            mov ? `MF ${mov}` : null,
+            tonus ? `TU ${tonus}` : null,
+            dinamAusente ? `DU Ausente` : (dinam ? `DU ${dinam}` : null),
+        ].filter(Boolean).join(' | ');
+        
+        let toqueTxt = '';
+        if (toqueAvoid) {
+            toqueTxt = 'TV: evitado';
+        } else {
+            const toqueDetails = [];
+            if (esp) toqueDetails.push(esp);
+            if (pos) toqueDetails.push(pos);
+            if (dil) toqueDetails.push(`pérvio para ${dil} cm`);
+            if (bolsa) {
+                if (bolsa === 'Rota') {
+                    const dataRomp = horaRomp ? `às ${new Date(horaRomp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} de ${new Date(horaRomp).toLocaleDateString('pt-BR')}` : '';
+                    toqueDetails.push(`bolsa rota ${dataRomp}`);
+                    if (corLiq) toqueDetails.push(`líquido ${corLiq}`);
+                } else {
+                    toqueDetails.push(`bolsa ${bolsa.toLowerCase()}`);
+                }
+            }
+            if (sang) {
+                const sangramentoText = sang === 'Presente' ? 'com sangramento em dedo de luva' : 'sem sangramento em dedo de luva';
+                toqueDetails.push(sangramentoText);
+            }
+      
+            if (toqueDetails.length > 0) {
+                toqueTxt = `TV: ${toqueDetails.join(', ')}.`;
+            } else {
+                toqueTxt = 'TV: não realizado';
+            }
+        }
+      
+        const especularTxt = especAvoid ? 'EE: evitado' : `EE: ${especDesc || 'não descrito'}`;
+      
+        const efTxt = `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
+      
+        const labsTxt = `# Exames Laboratoriais\n${labs || '—'}`;
+        const imgTxt = `# Exames de Imagem\n${img || '—'}`;
+      
+        const hipTxt = `# Hipótese Diagnóstica\n${(hip.length ? hip : ['—']).map(c=>`- ${c}`).join('\n')}`;
+        const condTxt = `# Conduta\n${(allCondutas.length ? allCondutas : ['—']).map(c=>`- ${c}`).join('\n')}`;
+        
+        const assTxt = signatures.length ? signatures.join(' + ') : '';
+      
+        return [header, '', ident, obstetrico, complementaresTxt, '', alergiasTxt, '', viciosSectionTxt, '', comorbTxt, '', medsTxt, '', hdaTxt, '', efTxt, '', labsTxt, '', imgTxt, '', hipTxt, '', condTxt, '', assTxt].filter(Boolean).join('\n\n');
+      }
+      
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (!form.elements['nome'].value.trim()) {
+          alert('Preencha o nome da paciente.');
+          return;
+        }
+        output.value = buildOutput();
+        output.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+      
+      document.getElementById('btn-copy').addEventListener('click', () => {
+        if (!output.value) { alert('Nada para copiar.'); return; }
+        output.select();
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+      });
+      
+      document.getElementById('btn-download').addEventListener('click', () => {
+        if (!output.value) { alert('Nada para baixar.'); return; }
+        const blob = new Blob([output.value], { type: 'text/plain;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'prontuario_obstetricia.txt';
+        document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      });
+      
+      // Inicialização
+      startClock();
+      setObstetricFieldsDisabled(nuligestaToggle.checked);
+      refreshPregCalc();
+      especularEvitado.dispatchEvent(new Event('change'));
+      bolsaToggle.dispatchEvent(new Event('change'));
+      toqueEvitado.dispatchEvent(new Event('change'));
+      document.querySelectorAll('.signature-item .remove-signature-btn').forEach(btn => {
+        btn.addEventListener('click', () => btn.parentElement.remove());
+      });
+      
+      // Gerar Ficha de Internação
+      
+      // Este código assume que as funções auxiliares `getSelectValue()`, `getBinaryToggleValue()`,
+      // `getCheckedValues()`, `formatDateBR()`, `getMedList()`, `form`, `calcDPPFromUsg()`,
+      // `parseIgString()` e `addDays()` já estão definidas no seu arquivo HTML.
+      // Também assume que a biblioteca PDF-LIB já foi carregada.
+      
+      const btnPrintPdf = document.getElementById('btn-print-pdf');
+      
+      /**
+      * Função auxiliar para obter os valores dos campos de tags (Hipóteses, Comorbidades, etc.).
+      * @param {string} containerId - O ID do container das tags.
+      * @returns {string} Uma string formatada com os textos das tags, separados por vírgula.
+      */
+      function getTagValues(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return '';
+      const tags = [];
+      container.querySelectorAll('.tag').forEach(tagElement => {
+          const text = tagElement.textContent.trim();
+          if (text && text !== '×') {
+              tags.push(text.replace('×', '').trim());
+          }
+      });
+      return tags.join(', ');
+      }
+      
+      /**
+      * Função auxiliar para obter os valores dos checkboxes e tags de Conduta.
+      * @returns {string} Uma string formatada com as condutas selecionadas.
+      */
+      function getCondutaValues() {
       const conds = getCheckedValues('conduta');
       const outrasConds = document.getElementById('condutas-tags').getTags();
-      
       const allCondutas = [...conds, ...outrasConds];
-      
-      const signatures = Array.from(signaturesContainer.querySelectorAll('.signature-item')).map(item => {
-          const title = item.querySelector('[name="signature_title"]').value;
-          const name = item.querySelector('[name="signature_name"]').value.trim();
-          return name ? `${title} ${name}` : null;
-      }).filter(Boolean);
-
-      const header = `# SR às ${hh}:${mm} #`;
-      const ident = `${nome || 'Paciente'}, ${idade || '?'} anos, procedente de ${procedencia || '?'}`;
-      
-      let obstetrico;
-      if (nuligesta) {
-        obstetrico = 'Nuligesta.';
-      } else {
-        const obsParts = [
-          `${paridade} | ${dumInc ? `DUM incerta` : `DUM ${formatDateBR(new Date(dumStr))} | IG DUM ${igdum}`}`
-        ].filter(Boolean);
-        const gestacaoParts = [
-          igUsgCorr ? `IG USG ${igUsgCorr}` : null,
-          (igUsgStr && dataUsgStr) ? ` (${igUsgStr.replace('s', 's').replace('d', 'd')} em ${formatDateBR(new Date(dataUsgStr))})` : null,
-          dppStr ? ` | DPP ${dppStr}` : null,
-        ].filter(Boolean).join('');
-        
-        obstetrico = `${obsParts.join('\n')} \n${gestacaoParts}`;
+      return allCondutas.join(', ');
       }
+      
+      
+      /**
+      * Preenche o PDF com os dados do formulário, mapeando para campos específicos.
+      * Esta função assume que o PDF de destino possui os campos de texto com os
+      * nomes utilizados na função 'fieldMapping'.
+      */
+      async function fillAndPrintPDF() {
+      const formUrl = './ficha_digital.pdf';
+      
+      try {
+          const formPdfBytes = await fetch(formUrl).then(res => res.arrayBuffer());
+          const pdfDoc = await PDFLib.PDFDocument.load(formPdfBytes);
+          const formFields = pdfDoc.getForm();
+      
+          // Loga todos os campos de formulário encontrados no PDF para depuração
+          console.log("--- Campos de Formulário Encontrados no PDF ---");
+          const allFields = formFields.getFields();
+          if (allFields.length === 0) {
+              console.log("Nenhum campo de formulário encontrado.");
+          } else {
+              allFields.forEach(field => {
+                  const fieldName = field.getName();
+                  const fieldType = field.constructor.name;
+                  console.log(`Nome: "${fieldName}" | Tipo: "${fieldType}"`);
+              });
+          }
+          console.log("-----------------------------------------------");
+          
+          const today = new Date();
+          
+          // Coletando dados do formulário
+          const data = {};
+          const formData = new FormData(document.getElementById('form-prontuario'));
+          for (let [key, value] of formData.entries()) {
+              data[key] = value;
+          }
+          console.log("Ai vai a data:");
+          console.log(data);
+          console.log("Ai foi a data:");
 
-      const complementaresTxt = `TS: ${tipoSanguineo} | ${trTxt}`;
-      const alergiasTxt = `# Alergias\n${(alergias.length ? alergias : ['Nega']).map(a=>`- ${a}`).join('\n')}`;
-      const viciosSectionTxt = `# Vícios\n- ${viciosTxt}`;
-      const comorbTxt = `# Comorbidades\n${(comorb.length ? comorb : ['Nega']).map(c=>`- ${c}`).join('\n')}`;
-      const medsTxt = `# Em uso de\n${(meds.length ? meds : ['Nega']).map(m=>`- ${m}`).join('\n')}`;
-      const hdaTxt = `# HDA\n${hda}`;
       
-      const vitais = [
-          pa ? `PA ${pa} mmHg` : null,
-          pa_dle ? `PA pós DLE ${pa_dle} mmHg` : null,
-          fc ? `FC ${fc} bpm` : null,
-          spo2 ? `SpO2 ${spo2}%` : null,
-          tax ? `TAx ${tax}°C` : null,
-          proteinuria !== 'nao_realizado' ? `Proteinúria: ${proteinuria}` : null
-      ].filter(Boolean);
+          const dumStr = form.elements['dum'].value;
+          const igdum = document.getElementById('ig-dum').value;
+          const dppStr = document.getElementById('dpp').value;
+          const dataUsgStr = form.elements['data-usg'].value;
+          const igUsgStr = document.getElementById('ig-usg').value;
+          const igUsgCorr = document.getElementById('ig-usg-atual').value;
+          const dataBolsaStr = document.getElementById('hora_rompimento').value;
+
+        const dinamAusente = form.elements['dinamica_ausente'].checked;
+        const dinam = form.elements['dinamica_uterina'].value;
       
-      const efParts = [
-          au ? `AU ${au} cm` : null,
-          bcf ? `BCF ${bcf} bpm` : null,
-          mov ? `MF ${mov}` : null,
-          tonus ? `TU ${tonus}` : null,
-          dinamAusente ? `DU Ausente` : (dinam ? `DU ${dinam}` : null),
-      ].filter(Boolean).join(' | ');
+          
+          // Mapeamento dos campos do formulário HTML para os campos de texto do PDF.
+          const fieldMapping = {
+              Data: today.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }),
+              Prontuario: data.prontuario || '',
+              Consultas: data.consultas || '',
+              Nome: data.nome || '',
+              Motivo: getTagValues('hipotese-tags'),
+              Medicacoes: getMedList() || '',
+              G: data.gestacoes || '0',
+              A: data.abortos || '0',
+              P: parseInt(data['partos-normais'] || 0) + parseInt(data['partos-cesarea'] || 0),
+              V: data['partos-normais'] || '0',
+              C: data['partos-cesarea'] || '0',
+              Idade: data.idade || '',
+              DUP: data.dup ? formatDateBR(new Date(data.dup)) : '',
+              DUM: dumStr ? formatDateBR(new Date(dumStr)) : 'Incerta',
+              DPP: dppStr || '',
+              IGDUM: igdum || '',
+              DataUSG: dataUsgStr ? formatDateBR(new Date(dataUsgStr)) : '',
+              IGUSG: igUsgCorr || '', // Corrigido para usar a IG atualizada
+              DPPUSG: calcDPPFromUsg(dataUsgStr, igUsgStr), // Agora usando a função existente
+              PA: data.pa || '',
+              DLE: data.pa_dle || '',
+              Prot: getSelectValue('proteinuria'),
+              Temp: data.tax || '',
+              FC: data.fc || '',
+              Dorso: getBinaryToggleValue('dorso'),
+              BCF: data.bcf || '',
+              AU: data.altura_uterina ? `${data.altura_uterina}cm` : '',
+              DU: dinamAusente ? `Ausente` : (dinam ? `DU ${dinam}` : null),
+              Tonus: getBinaryToggleValue('tonus_uterino'),
+              Dilatacao: data.dilatacao || '',
+              Posicao: getSelectValue('posicao'),
+              Espessura: getSelectValue('espessura'),
+              DataBolsa: dataBolsaStr ? formateDateHoraBR(dataBolsaStr) : '',
+              Liquido: getSelectValue('cor_liquido'),
+              Especular: data['especular_evitado'] ? 'Evitado' : (data['desc_especular'] || ''),
+              Ddx: getTagValues('hipotese-tags') || '',
+              CD: getCondutaValues() || '',
+              Docente: '',
+              Ddo: '',
+              Acd: '', 
+              MR: ''  
+          };
       
-      let toqueTxt = '';
-      if (toqueAvoid) {
-          toqueTxt = 'TV: evitado';
-      } else {
-          const toqueDetails = [];
-          if (esp) toqueDetails.push(esp);
-          if (pos) toqueDetails.push(pos);
-          if (dil) toqueDetails.push(`pérvio para ${dil} cm`);
-          if (bolsa) {
-              if (bolsa === 'Rota') {
-                  const dataRomp = horaRomp ? `às ${new Date(horaRomp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })} de ${new Date(horaRomp).toLocaleDateString('pt-BR')}` : '';
-                  toqueDetails.push(`bolsa rota ${dataRomp}`);
-                  if (corLiq) toqueDetails.push(`líquido ${corLiq}`);
-              } else {
-                  toqueDetails.push(`bolsa ${bolsa.toLowerCase()}`);
+          // Lógica de recuperação e separação de assinaturas de Docentes, Alunos, Acadêmicos e Médicos Residentes.
+          const signatureItems = document.querySelectorAll('.signature-item');
+          if (signatureItems.length === 0) {
+              console.log("AVISO: Nenhum elemento '.signature-item' foi encontrado no formulário. Os campos de assinatura no PDF permanecerão em branco.");
+          } else {
+              signatureItems.forEach(item => {
+                  // Usando os seletores específicos que você forneceu
+                  const titleElement = item.querySelector('[name="signature_title"]');
+                  const nameElement = item.querySelector('[name="signature_name"]');
+                  
+                  if (titleElement && nameElement) {
+                      const title = titleElement.value;
+                      const name = nameElement.value.trim();
+                      
+                      // Log para depuração
+                      console.log(`Assinatura encontrada: Título="${title}", Nome="${name}"`);
+                      
+                      if (name) {
+                          if (title.startsWith('Dr')) {
+                              fieldMapping.Docente += (fieldMapping.Docente ? ', ' : '') + name; // Alterado para o singular
+                          } else if (title.startsWith('Ddo')) {
+                              fieldMapping.Ddo += (fieldMapping.Ddo ? ', ' : '') + name;
+                          } else if (title.startsWith('Acd')) {
+                              fieldMapping.Acd += (fieldMapping.Acd ? ', ' : '') + name;
+                          } else if (title.startsWith('MR')) {
+                              fieldMapping.MR += (fieldMapping.MR ? ', ' : '') + name;
+                          }
+                      }
+                  } else {
+                      console.log("AVISO: Elemento '.signature-item' encontrado, mas com campos de nome ou título ausentes.");
+                  }
+              });
+          }
+          
+          console.log(`Nomes coletados: Docente: "${fieldMapping.Docente}", Alunos/Ddo: "${fieldMapping.Ddo}", Acd: "${fieldMapping.Acd}", MR: "${fieldMapping.MR}"`);
+      
+          // Loga o objeto de mapeamento no console para inspeção.
+          console.log("Mapeamento dos campos para o PDF:", fieldMapping);
+      
+          // Preenche todos os campos de texto mapeados
+          for (const fieldName in fieldMapping) {
+              try {
+                  const textField = formFields.getTextField(fieldName);
+                  if (textField) {
+                      textField.setText(String(fieldMapping[fieldName]));
+                  }
+              } catch (e) {
+                  console.error(`Campo "${fieldName}" não encontrado no PDF ou erro ao preencher.`, e);
               }
           }
-          if (sang) {
-              const sangramentoText = sang === 'Presente' ? 'Com sangramento em dedo de luva' : 'Sem sangramento em dedo de luva';
-              toqueDetails.push(sangramentoText);
-          }
-
-          if (toqueDetails.length > 0) {
-              toqueTxt = `TV: ${toqueDetails.join(', ')}.`;
-          } else {
-              toqueTxt = 'TV: não realizado';
-          }
-      }
-
-      const especularTxt = especAvoid ? 'EE: evitado' : `EE: ${especDesc || 'não descrito'}`;
-
-      const efTxt = `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
-
-      const labsTxt = `# Exames Laboratoriais\n${labs || '—'}`;
-      const imgTxt = `# Exames de Imagem\n${img || '—'}`;
-
-      const hipTxt = `# Hipótese Diagnóstica\n${(hip.length ? hip : ['—']).map(c=>`- ${c}`).join('\n')}`;
-      const condTxt = `# Conduta\n${(allCondutas.length ? allCondutas : ['—']).map(c=>`- ${c}`).join('\n')}`;
       
-      const assTxt = signatures.length ? signatures.join(' + ') : '';
-
-      return [header, '', ident, obstetrico, complementaresTxt, '', alergiasTxt, '', viciosSectionTxt, '', comorbTxt, '', medsTxt, '', hdaTxt, '', efTxt, '', labsTxt, '', imgTxt, '', hipTxt, '', condTxt, '', assTxt].filter(Boolean).join('\n\n');
-    }
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!form.elements['nome'].value.trim()) {
-        alert('Preencha o nome da paciente.');
-        return;
+          // AQUI SÃO TRATADOS OS CAMPOS RADIO.
+          try {
+              formFields.getRadioGroup('Bolsa_MJR5').select(getBinaryToggleValue('bolsa'));
+              
+          } catch (e) {
+              console.error(`Campo Bolsa_MJR5 não encontrado no PDF ou erro ao preencher.`, e);
+          }
+      
+          try {
+              formFields.getRadioGroup('Angulo_0WXA').select('>90');
+          } catch (e) {
+              console.error(`Campo Angulo_0WXA não encontrado ou erro ao preencher.`, e);
+          }
+      
+          try {
+              formFields.getRadioGroup('Promontorio_LQMK').select('inatingivel');
+          } catch (e) {
+              console.error(`Campo Promontorio_LQMK não encontrado ou erro ao preencher.`, e);
+          }
+      
+          try {
+              formFields.getRadioGroup('Espinhas_1G3U').select('planas');
+          } catch (e) {
+              console.error(`Campo Espinhas_1G3U não encontrado ou erro ao preencher.`, e);
+          }
+      
+          // Salva e exibe o PDF preenchido
+          const pdfBytes = await pdfDoc.save();
+          const pdfBlob = new Blob([pdfBytes], { type: 'application/pdf' });
+          const pdfUrl = URL.createObjectURL(pdfBlob);
+          window.open(pdfUrl);
+      
+      } catch (error) {
+          console.error('Erro ao gerar o PDF:', error);
       }
-      output.value = buildOutput();
-      output.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-    
-    document.getElementById('btn-copy').addEventListener('click', () => {
-      if (!output.value) { alert('Nada para copiar.'); return; }
-      output.select();
-      document.execCommand('copy');
-      window.getSelection().removeAllRanges();
-    });
-    
-    document.getElementById('btn-download').addEventListener('click', () => {
-      if (!output.value) { alert('Nada para baixar.'); return; }
-      const blob = new Blob([output.value], { type: 'text/plain;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = 'prontuario_obstetricia.txt';
-      document.body.appendChild(a); a.click(); document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    });
-    
-    // Inicialização
-    startClock();
-    setObstetricFieldsDisabled(nuligestaToggle.checked);
-    refreshPregCalc();
-    especularEvitado.dispatchEvent(new Event('change'));
-    bolsaToggle.dispatchEvent(new Event('change'));
-    toqueEvitado.dispatchEvent(new Event('change'));
-    document.querySelectorAll('.signature-item .remove-signature-btn').forEach(btn => {
-      btn.addEventListener('click', () => btn.parentElement.remove());
-    });
-  </script>
-</body>
+      }
+      
+      // Adiciona o event listener para o novo botão
+      if (btnPrintPdf) {
+      btnPrintPdf.addEventListener('click', fillAndPrintPDF);
+      }
+      
+    </script>
+  </body>
 </html>
