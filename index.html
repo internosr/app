@@ -1884,9 +1884,13 @@
           } catch (e) {
               console.error(`Campo Bolsa_MJR5 não encontrado no PDF ou erro ao preencher.`, e);
           }
-      
+        
+        const toqueAvoid = form.elements['toque_evitado'].checked;
+
+          if(!toqueAvoid){
+
           try {
-              formFields.getRadioGroup('Angulo_0WXA').select('>90');
+              formFields.getRadioGroup('Angulo_0WXA').select('<90');
           } catch (e) {
               console.error(`Campo Angulo_0WXA não encontrado ou erro ao preencher.`, e);
           }
@@ -1901,6 +1905,7 @@
               formFields.getRadioGroup('Espinhas_1G3U').select('planas');
           } catch (e) {
               console.error(`Campo Espinhas_1G3U não encontrado ou erro ao preencher.`, e);
+          }
           }
       
           // Salva e exibe o PDF preenchido
