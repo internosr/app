@@ -865,7 +865,7 @@
       
       function formatDateBR(date) {
         const d = toDateOnly(date);
-        const dd = String(d.getDate() + 1).padStart(2, '0');
+        const dd = String(d.getDate()).padStart(2, '0');
         const mm = String(d.getMonth() + 1).padStart(2, '0');
         const yyyy = d.getFullYear();
         return `${dd}/${mm}/${yyyy}`;
@@ -1474,7 +1474,7 @@
         const pc = Number(form.elements['partos-cesarea'].value || '0');
         const ab = Number(form.elements['abortos'].value || '0');
         const p = pn + pc;
-        const paridade = `G${g}P${p}A${ab}`;
+        const paridade = `G${g}P${pn}v${pc}cA${ab}`;
       
         const dumStr = form.elements['dum'].value;
         const dumInc = form.elements['dum_incerta'].checked;
@@ -1764,11 +1764,7 @@
           for (let [key, value] of formData.entries()) {
               data[key] = value;
           }
-          console.log("Ai vai a data:");
-          console.log(data);
-          console.log("Ai foi a data:");
 
-      
           const dumStr = form.elements['dum'].value;
           const igdum = document.getElementById('ig-dum').value;
           const dppStr = document.getElementById('dpp').value;
@@ -1807,6 +1803,7 @@
               Prot: getSelectValue('proteinuria'),
               Temp: data.tax || '',
               FC: data.fc || '',
+              Abd:
               Dorso: getBinaryToggleValue('dorso'),
               BCF: data.bcf || '',
               AU: data.altura_uterina ? `${data.altura_uterina}cm` : '',
