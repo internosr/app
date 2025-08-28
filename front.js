@@ -33,12 +33,13 @@ function startClock() {
 }
 
 /**
- * Cria um novo objeto Date com apenas a data (sem a parte de tempo).
+ * Cria um novo objeto Date com apenas a data (sem a parte de tempo),
+ * usando o fuso horário UTC para garantir consistência.
  * @param {Date} d O objeto Date original.
- * @returns {Date} Um novo objeto Date com a hora zerada.
+ * @returns {Date} Um novo objeto Date com a hora zerada em UTC.
  */
 function toDateOnly(d) {
-    const dt = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+    const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     return dt;
 }
 
@@ -51,7 +52,7 @@ function toDateOnly(d) {
 function diffDays(dateA, dateB) {
     const a = toDateOnly(dateA);
     const b = toDateOnly(dateB);
-    return Math.round((a - b) / MS_PER_DAY);
+    return (Math.floor((a - b) / MS_PER_DAY) - 1);
 }
 
 /**
@@ -643,6 +644,35 @@ function getCheckedValues(name) {
 }
 
 /**
+ * Obtém os valores dos campos de tags e os formata como uma string separada por vírgulas.
+ * @param {string} containerId O ID do elemento container das tags.
+ * @returns {string} Uma string formatada com os textos das tags.
+ */
+function getTagValues(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) return '';
+    const tags = [];
+    container.querySelectorAll('.tag').forEach((tagElement) => {
+        const text = tagElement.textContent.trim();
+        if (text && text !== '×') {
+            tags.push(text.replace('×', '').trim());
+        }
+    });
+    return tags.join(', ');
+}
+
+/**
+ * Obtém os valores de condutas e os formata como uma string separada por vírgulas.
+ * @returns {string} Uma string formatada com as condutas selecionadas.
+ */
+function getCondutaValues() {
+  const conds = getCheckedValues('conduta');
+  const outrasConds = document.getElementById('condutas-tags').getTags();
+  const allCondutas = [...conds, ...outrasConds];
+  return allCondutas.join(', ');
+}
+
+/**
  * Obtém o valor de um campo de alternância (toggle) com base no estado `checked`.
  * @param {string} id O ID do campo de entrada.
  * @returns {string} O valor `data-checked` ou `data-default` do label.
@@ -731,7 +761,28 @@ function buildOutput() {
     const pn = Number(data['partos-normais'] || '0');
     const pc = Number(data['partos-cesarea'] || '0');
     const ab = Number(data.abortos || '0');
-    const paridade = `G${g}P${pn}v${pc}cA${ab}`;
+    const paridade = ((g, pn, pc, ab) => {
+  // Lógica para determinar a parte de Partos (P)
+  let partos = '';
+  const totalPartos = pn + pc;
+
+  if (totalPartos === 0) {
+    // Se não há partos normais ou cesáreas, a paridade é P0
+    partos = 'P0';
+  } else if (pn === 0) {
+    // Se há apenas cesáreas (pn = 0 e pc >= 1), exibe P<pc>c
+    partos = `P${pc}c`;
+  } else if (pc === 0) {
+    // Se há apenas partos normais (pc = 0 e pn >= 1), exibe P<pn>v
+    partos = `P${pn}v`;
+  } else {
+    // Se há ambos, exibe o formato completo
+    partos = `P${pn}v${pc}c`;
+  }
+
+  // Combina todas as partes da string de paridade
+  return `G${g}${partos}A${ab}`;
+})(g, pn, pc, ab);
 
     const dumInc = data.dum_incerta === 'on';
     const igdum = data['ig-dum'];
