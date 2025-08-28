@@ -1213,7 +1213,7 @@ function initListeners() {
     });
     bolsaToggle.addEventListener('change', () => bolsaRotaFields.style.display = bolsaToggle.checked ? 'grid' : 'none');
     toqueEvitado.addEventListener('change', () => toqueFields.style.display = toqueEvitado.checked ? 'none' : 'grid');
-    especularEvitado.addEventListener('change', ()ato => especularFields.style.display = especularEvitado.checked ? 'none' : 'block');
+    especularEvitado.addEventListener('change', () => especularFields.style.display = especularEvitado.checked ? 'none' : 'block');
     dinamicaAusenteToggle.addEventListener('change', (e) => {
         dinamicaInput.disabled = e.target.checked;
         dinamicaInput.value = '';
