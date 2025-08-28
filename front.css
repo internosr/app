@@ -1,0 +1,297 @@
+
+      :root {
+      --primary-color: #007AFF;
+      --border-color: #D1D1D6;
+      --background-color: #F2F2F7;
+      --card-background-color: #FFFFFF;
+      --text-color: #1D1D1F;
+      --secondary-text-color: #6E6E73;
+      --disabled-color: #EAEAEB;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --border-radius: 8px;
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      --success-color: #34C759;
+      --error-color: #FF3B30;
+      --default-color: #8E8E93;
+      --default-bg: #EFEFF4;
+      --warning-color: #FF9500;
+      }
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+      font-family: var(--font-family);
+      background-color: var(--background-color);
+      color: var(--text-color);
+      line-height: 1.6;
+      }
+      .container { max-width: 960px; margin: 30px auto; padding: 20px; }
+      header { text-align: center; margin-bottom: 20px; }
+      header h1 { font-size: 26px; font-weight: 700; }
+      header p { color: var(--secondary-text-color); font-size: 13px; margin-top: 6px; }
+      .toolbar {
+      display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+      margin-bottom: 15px;
+      }
+      .btn {
+      appearance: none; border: 1px solid var(--border-color);
+      background: #fff; color: var(--text-color);
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: 600; transition: 0.2s;
+      }
+      .btn.primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
+      .btn:hover { filter: brightness(0.98); }
+      .btn:active { filter: brightness(0.95); }
+      .card {
+      background-color: var(--card-background-color);
+      border-radius: var(--border-radius);
+      padding: 22px; margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border-color);
+      }
+      .card-header, .card-header-with-toggle { 
+      font-size: 18px; 
+      font-weight: 700; 
+      margin-bottom: 14px; 
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      }
+      .section-subheader { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; }
+      .section-subheader h3 { font-size: 15px; font-weight: 700; }
+      .form-grid { display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; }
+      .grid-col-span-2 { grid-column: span 2; }
+      .grid-col-span-3 { grid-column: span 3; }
+      .grid-col-span-4 { grid-column: span 4; }
+      .grid-col-span-full { grid-column: 1 / -1; }
+      .form-group { display: flex; flex-direction: column; }
+      .form-group textarea { margin-bottom: 8px; }
+      .form-group label { font-size: 13px; font-weight: 600;
+      margin-bottom: 6px; color: var(--secondary-text-color); }
+      .label-with-option { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+      .label-with-option label { margin-bottom: 0; }
+      .form-group input[type="text"],
+      .form-group input[type="date"],
+      .form-group input[type="datetime-local"],
+      .form-group input[type="number"],
+      .form-group textarea,
+      .form-group select {
+      width: 100%;
+      padding: 10px 12px; border: 1px solid var(--border-color);
+      border-radius: var(--border-radius); font-size: 15px; font-family: var(--font-family); background: #fff;
+      transition: border-color .2s, box-shadow .2s;
+      }
+      .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none; border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(0,122,255,.25);
+      }
+      .form-group input:read-only, .form-group input:disabled { background: var(--disabled-color); cursor: not-allowed;
+      border-color: #EAEAEB; }
+      .form-group textarea { resize: vertical; min-height: 90px; }
+      .checkbox-group, .radio-group, .select-group { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+      .medication-item { 
+      display: grid; 
+      grid-template-columns: auto 1fr auto; 
+      gap: 10px; 
+      align-items: center; 
+      margin-bottom: 10px;
+      }
+      .medication-item .dose-input { width: 100%; }
+      .medication-item .remove-btn { 
+      padding: 4px 8px; 
+      font-size: 12px; 
+      background: #e74c3c; 
+      color: white; 
+      border: none; 
+      border-radius: 4px; 
+      cursor: pointer;
+      }
+      .conduta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+      .hidden-field { display: none; }
+      .separator-label {
+      margin-top: 18px;
+      }
+      .submit-button { width: 100%; padding: 14px; background: var(--primary-color);
+      color: #fff; border: none; border-radius: var(--border-radius); font-size: 17px; font-weight: 700; cursor: pointer; transition: background-color .2s; margin-top: 6px; }
+      .submit-button:hover { background-color: #0056b3; }
+      .output-card textarea { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      min-height: 220px; }
+      .tag-input-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: var(--border-radius);
+      background-color: #fff;
+      }
+      .tag {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      }
+      .tag .remove-tag {
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.8);
+      }
+      .tag-input {
+      flex-grow: 1;
+      border: none;
+      padding: 0;
+      font-size: 15px;
+      min-width: 100px;
+      background-color: transparent;
+      outline: none;
+      }
+      /* Reusing form-group for signatures */
+      .signature-item {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 10px;
+      }
+      .signature-item select, .signature-item input {
+      flex-grow: 1;
+      }
+      .signature-item .remove-btn {
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #e74c3c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      }
+      /* Toggle Switch Style */
+      .toggle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      }
+      .toggle input[type="radio"], .toggle input[type="checkbox"] {
+      display: none;
+      }
+      .toggle-slider {
+      width: 44px;
+      height: 24px;
+      background-color: var(--border-color);
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      }
+      .toggle-slider::before {
+      content: "";
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background-color: white;
+      top: 2px;
+      left: 2px;
+      transition: transform 0.2s;
+      }
+      .toggle input:checked + .toggle-slider {
+      background-color: var(--primary-color);
+      }
+      .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px);
+      }
+      .toggle-label {
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 14px;
+      user-select: none;
+      }
+      .toggle-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      }
+      .toggle-group label {
+      margin: 0;
+      color: var(--text-color);
+      }
+      /* Estilo para Toggles como Botões */
+      .toggle-group label.btn-toggle {
+      appearance: none;
+      border: 1px solid var(--border-color);
+      background-color: var(--card-background-color);
+      color: var(--text-color);
+      padding: 7px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background-color 0.2s, border-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      white-space: nowrap;
+      font-size: 15px;
+      }
+      .toggle-group label.btn-toggle:hover {
+      filter: brightness(0.98);
+      }
+      /* Estilos globais para botões de toggle */
+      .toggle-group input[type="checkbox"]:checked + label.btn-toggle,
+      .toggle-group input[type="radio"]:checked + label.btn-toggle {
+      background-color: var(--primary-color);
+      color: #fff;
+      border-color: var(--primary-color);
+      }
+      .toggle-group input[type="checkbox"]:checked + label.toggle-alert {
+        background-color: var(--warning-color) !important;
+        border-color: var(--warning-color);
+      }
+      .toggle-group input[type="checkbox"],
+      .toggle-group input[type="radio"],
+      .state-toggle-input {
+      display: none;
+      }
+      /* Estilos para Testes Rápidos */
+      .state-toggle-label.nao_realizado {
+      background-color: var(--default-bg) !important;
+      border-color: var(--default-bg) !important;
+      color: var(--default-color) !important;
+      }
+      .state-toggle-label.nao_reagente {
+      background-color: var(--success-color) !important;
+      border-color: var(--success-color) !important;
+      color: #fff !important;
+      }
+      .state-toggle-label.reagente {
+      background-color: var(--error-color) !important;
+      border-color: var(--error-color) !important;
+      color: #fff !important;
+      }
+      .toggle-group.testes-rapidos .btn-toggle {
+      min-width: 100px;
+      }
+      /* Estilos para os novos botões (Exame Físico) */
+      .toggle-group label.btn-toggle.style-green-orange {
+      background-color: var(--success-color) !important;
+      border-color: var(--success-color) !important;
+      color: #fff !important;
+      min-width: 100px;
+      }
+      .toggle-group input[type="checkbox"]:checked + label.btn-toggle.style-green-orange {
+      background-color: var(--warning-color) !important;
+      border-color: var(--warning-color) !important;
+      }
+      @media (max-width: 768px) {
+      .form-grid { grid-template-columns: 1fr 1fr; }
+      .grid-col-span-full, .grid-col-span-2, .grid-col-span-3, .grid-col-span-4 { grid-column: 1 / -1; }
+      .conduta-grid { grid-template-columns: repeat(2, 1fr); }
+      }
+      @media (max-width: 480px) {
+      .form-grid { grid-template-columns: 1fr; }
+      .conduta-grid { grid-template-columns: 1fr; }
+      .medication-item { grid-template-columns: 1fr; }
+      .medication-item .dose-input { width: 100%; }
+      }
