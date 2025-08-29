@@ -437,14 +437,14 @@ const trLabelsMap = {
         reagente: 'Anti-HIV Reagente',
     },
     tr_hepb: {
-        nao_realizado: 'HepB Não Realizado',
-        nao_reagente: 'HepB Não Reagente',
-        reagente: 'HepB Reagente',
+        nao_realizado: 'HBsAg Não Realizado',
+        nao_reagente: 'HBsAg Não Reagente',
+        reagente: 'HBsAg Reagente',
     },
     tr_hepc: {
-        nao_realizado: 'HepC Não Realizado',
-        nao_reagente: 'HepC Não Reagente',
-        reagente: 'HepC Reagente',
+        nao_realizado: 'Anti-HCV Não Realizado',
+        nao_reagente: 'Anti-HCV Não Reagente',
+        reagente: 'Anti-HCV Reagente',
     },
 };
 
@@ -1669,15 +1669,16 @@ async function initSerproAuth() {
         const url = new URL('http://localhost:3000/auth');
         url.searchParams.append('code_challenge', codeChallenge);
         url.searchParams.append('code_challenge_method', 'S256');
-        url.searchParams.append('state', codeVerifier); // Passando o verifier como 'state'
+        url.searchParams.append('state', codeVerifier);
 
-        const authWindow = window.open(url.toString(), 'SerproID Auth', 'width=600,height=800,scrollbars=yes,resizable=yes');
+        // ABRINDO O POP-UP COM AS DIMENSÕES ESPECIFICADAS
+        const authWindow = window.open(url.toString(), 'SerproID Auth', 'popup=true');
 
         const checkWindow = setInterval(() => {
             if (!authWindow || authWindow.closed) {
                 clearInterval(checkWindow);
                 console.log('Janela de autenticação fechada.');
-                showNotification('O processo de autenticação foi cancelado.', 'error');
+                showNotification('O processo de autenticação foi cancelado.');
             }
         }, 1000);
     } catch (error) {
@@ -1685,7 +1686,6 @@ async function initSerproAuth() {
         showNotification('Erro ao iniciar a autenticação. Verifique o console.', 'error');
     }
 }
-
 /**
  * Envia o PDF para ser assinado pelo backend e exibe o resultado.
  */
