@@ -17,6 +17,8 @@
 // =====================================
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
+let autoSaveTimer;
+const AUTO_SAVE_DELAY = 2000; // Salva após 2 segundos de inatividade
 
 /**
  * Inicia um relógio na interface para exibir a hora atual.
@@ -285,6 +287,8 @@ const medicationList = document.getElementById('medication-list');
 const addMedicationBtn = document.getElementById('add-medication-btn');
 const signaturesContainer = document.getElementById('signatures-container');
 const addSignatureBtn = document.getElementById('add-signature-btn');
+const usgContainer = document.getElementById('usg-container');
+const addUsgBtn = document.getElementById('add-usg-btn');
 
 const nuligestaToggle = document.getElementById('nuligesta');
 const gestacaoInicalToggle = document.getElementById('gestacao_inicial');
@@ -318,6 +322,11 @@ const trLabelsMap = {
     tr_hepb: {
         nao_realizado: 'HepB Não Realizado',
         nao_reagente: 'HepB Não Reagente',
+        reagente: 'HepB Reagente',
+    },
+    tr_hepc: {
+        nao_realizado: 'HepC Não Realizado',
+        nao_reagente: 'HepC Não Reagente',
         reagente: 'HepC Reagente',
     },
 };
@@ -427,11 +436,165 @@ function addSignatureField(title = 'Ddo.', name = '') {
     });
 }
 
+/**
+ * Cria um novo bloco de USG, incluindo a data, tipo e um concepto inicial.
+ * @param {object} [data] Dados para pré-preenchimento.
+ * @param {number} index O índice do USG.
+ */
+function createUsgBlock(data = {}, index = 0) {
+  const usgItem = document.createElement('div');
+  usgItem.className = 'usg-item';
+  usgItem.dataset.usgIndex = index;
+  usgItem.innerHTML = `
+    <div class="form-grid">
+    
+      <button type="button" class="remove-usg-btn">X</button>
+      <div class="form-group">
+        <label for="usg_data_${index}">Data da USG</label>
+        <input type="date" id="usg_data_${index}" name="usg_data_${index}" value="${data.date || ''}" />
+      </div>
+      <div class="form-group">
+        <label for="usg_tipo_${index}">Tipo de USG</label>
+        <select id="usg_tipo_${index}" name="usg_tipo_${index}">
+          <option value="">Selecione...</option>
+          <option value="Transvaginal" ${data.type === 'Transvaginal' ? 'selected' : ''}>Transvaginal</option>
+          <option value="Obstétrica" ${data.type === 'Obstétrica' ? 'selected' : ''}>Obstétrica</option>
+          <option value="Morfológica" ${data.type === 'Morfológica' ? 'selected' : ''}>Morfológica</option>
+        </select>
+      </div>
+    </div>
+    <div id="concepto-container-${index}"></div>
+    <div style="text-align: right; margin-top: 10px;">
+      <button type="button" class="btn add-concepto-btn" data-usg-index="${index}">Adicionar Concepto</button>
+    </div>
+  `;
+
+  const conceptoContainer = usgItem.querySelector(`#concepto-container-${index}`);
+  const conceptosData = data.conceptos && data.conceptos.length > 0 ? data.conceptos : [{}];
+  conceptosData.forEach((conceptoData, cIndex) => {
+    createConceptoBlock(conceptoContainer, conceptoData, cIndex);
+  });
+
+  usgItem.querySelector('.remove-usg-btn').addEventListener('click', () => {
+    usgItem.remove();
+  });
+
+  usgItem.querySelector('.add-concepto-btn').addEventListener('click', (e) => {
+    const parentUsgIndex = e.target.dataset.usgIndex;
+    const newConceptoIndex = conceptoContainer.children.length;
+    createConceptoBlock(conceptoContainer, {}, newConceptoIndex);
+  });
+
+  usgContainer.appendChild(usgItem);
+}
+
+/**
+ * Cria um novo bloco de concepto (feto e placenta).
+ * @param {HTMLElement} container O container pai (concepto-container).
+ * @param {object} [data] Dados para pré-preenchimento.
+ * @param {number} index O índice do concepto.
+ */
+function createConceptoBlock(container, data = {}, index = 0) {
+  const parentUsgIndex = container.closest('.usg-item').dataset.usgIndex;
+  const conceptoItem = document.createElement('div');
+  conceptoItem.className = 'concepto-item';
+  conceptoItem.dataset.conceptoIndex = index;
+  conceptoItem.innerHTML = `
+    <div class="concepto-header">
+      <h4>Placenta #${index + 1}</h4>
+      <button type="button" class="btn remove-concepto-btn" ${index === 0 ? 'style="display:none;"' : ''}>X</button>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="placenta_localizacao_${parentUsgIndex}_${index}">Localização da Placenta</label>
+        <select id="placenta_localizacao_${parentUsgIndex}_${index}" name="placenta_localizacao_${parentUsgIndex}_${index}">
+          <option value="">Selecione...</option>
+          <option value="Posterior" ${data.placenta_localizacao === 'Posterior' ? 'selected' : ''}>Posterior</option>
+          <option value="Anterior" ${data.placenta_localizacao === 'Anterior' ? 'selected' : ''}>Anterior</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="placenta_grau_${parentUsgIndex}_${index}">Grau da Placenta</label>
+        <select id="placenta_grau_${parentUsgIndex}_${index}" name="placenta_grau_${parentUsgIndex}_${index}">
+          <option value="">Selecione...</option>
+          <option value="0" ${data.placenta_grau === '0' ? 'selected' : ''}>0</option>
+          <option value="I" ${data.placenta_grau === 'I' ? 'selected' : ''}>I</option>
+          <option value="II" ${data.placenta_grau === 'II' ? 'selected' : ''}>II</option>
+          <option value="III" ${data.placenta_grau === 'III' ? 'selected' : ''}>III</option>
+        </select>
+      </div>
+    </div>
+    <div class="section-subheader">
+      <h4>Feto #${index + 1}</h4>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label for="feto_situacao_${parentUsgIndex}_${index}">Situação</label>
+        <select id="feto_situacao_${parentUsgIndex}_${index}" name="feto_situacao_${parentUsgIndex}_${index}">
+          <option value="">Selecione...</option>
+          <option value="Longitudinal" ${data.feto_situacao === 'Longitudinal' ? 'selected' : ''}>Longitudinal</option>
+          <option value="Transverso" ${data.feto_situacao === 'Transverso' ? 'selected' : ''}>Transverso</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="feto_apresentacao_${parentUsgIndex}_${index}">Apresentação</label>
+        <select id="feto_apresentacao_${parentUsgIndex}_${index}" name="feto_apresentacao_${parentUsgIndex}_${index}">
+          <option value="">Selecione...</option>
+          <option value="Cefálica" ${data.feto_apresentacao === 'Cefálica' ? 'selected' : ''}>Cefálica</option>
+          <option value="Pélvica" ${data.feto_apresentacao === 'Pélvica' ? 'selected' : ''}>Pélvica</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="feto_dorso_${parentUsgIndex}_${index}">Dorso</label>
+        <select id="feto_dorso_${parentUsgIndex}_${index}" name="feto_dorso_${parentUsgIndex}_${index}">
+          <option value="">Selecione...</option>
+          <option value="Esquerda" ${data.feto_dorso === 'Esquerda' ? 'selected' : ''}>Esquerda</option>
+          <option value="Direita" ${data.feto_dorso === 'Direita' ? 'selected' : ''}>Direita</option>
+          <option value="Anterior" ${data.feto_dorso === 'Anterior' ? 'selected' : ''}>Anterior</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="feto_peso_${parentUsgIndex}_${index}">Peso Fetal Estimado (g)</label>
+        <input type="number" id="feto_peso_${parentUsgIndex}_${index}" name="feto_peso_${parentUsgIndex}_${index}" value="${data.feto_peso || ''}" />
+      </div>
+      <div class="form-group">
+        <label for="feto_percentil_${parentUsgIndex}_${index}">Percentil</label>
+        <input type="number" id="feto_percentil_${parentUsgIndex}_${index}" name="feto_percentil_${parentUsgIndex}_${index}" placeholder="Ex: P10, P50" value="${data.feto_percentil || ''}" />
+      </div>
+      <div class="form-group">
+        <label for="feto_bcf_${parentUsgIndex}_${index}">BCF (bpm)</label>
+        <input type="number" id="feto_bcf_${parentUsgIndex}_${index}" name="feto_bcf_${parentUsgIndex}_${index}" value="${data.feto_bcf || ''}" />
+      </div>
+      <div class="form-group">
+        <label for="feto_ila_${parentUsgIndex}_${index}">ILA (mm)</label>
+        <input type="number" id="feto_ila_${parentUsgIndex}_${index}" name="feto_ila_${parentUsgIndex}_${index}" value="${data.feto_ila || ''}" />
+      </div>
+      <div class="form-group">
+        <label for="feto_mbv_${parentUsgIndex}_${index}">MBV (mm)</label>
+        <input type="number" id="feto_mbv_${parentUsgIndex}_${index}" name="feto_mbv_${parentUsgIndex}_${index}" value="${data.feto_mbv || ''}" />
+      </div>
+    </div>
+    <div class="form-group grid-col-span-full">
+      <label for="feto_observacoes_${parentUsgIndex}_${index}">Observações Adicionais</label>
+      <textarea id="feto_observacoes_${parentUsgIndex}_${index}" name="feto_observacoes_${parentUsgIndex}_${index}">${data.feto_observacoes || ''}</textarea>
+    </div>
+  `;
+
+  conceptoItem.querySelector('.remove-concepto-btn').addEventListener('click', () => {
+    conceptoItem.remove();
+  });
+
+  container.appendChild(conceptoItem);
+}
+
 // ======================================
 // ===== Salvar, Carregar e Limpar Localmente =====
 // ======================================
 
-const LS_KEY = 'prontuario_obstetrico_ps_v7';
+const LS_KEY = 'prontuarios_salvos';
+const savedList = document.getElementById('saved-atendimentos-list');
+const savedTableBody = document.getElementById('saved-atendimentos-table').querySelector('tbody');
+
 
 /**
  * Coleta todos os dados do formulário em um único objeto.
@@ -492,33 +655,73 @@ function getFormData() {
     data.signatures = signatures;
     data._timestamp = new Date().toISOString();
 
-    return data;
+     const usgData = [];
+       document.querySelectorAll('.usg-item').forEach((usgItem) => {
+    const usgBlock = {
+      usg_data: usgItem.querySelector('input[name^="usg_data_"]').value,
+      usg_tipo: usgItem.querySelector('select[name^="usg_tipo_"]').value,
+      conceptos: []
+    };
+
+    usgItem.querySelectorAll('.concepto-item').forEach((conceptoItem) => {
+      usgBlock.conceptos.push({
+        placenta_localizacao: conceptoItem.querySelector('select[name^="placenta_localizacao_"]').value,
+        placenta_grau: conceptoItem.querySelector('select[name^="placenta_grau_"]').value,
+        feto_situacao: conceptoItem.querySelector('select[name^="feto_situacao_"]').value,
+        feto_apresentacao: conceptoItem.querySelector('select[name^="feto_apresentacao_"]').value,
+        feto_dorso: conceptoItem.querySelector('select[name^="feto_dorso_"]').value,
+        feto_peso: conceptoItem.querySelector('input[name^="feto_peso_"]').value,
+        feto_percentil: conceptoItem.querySelector('input[name^="feto_percentil_"]').value,
+        feto_bcf: conceptoItem.querySelector('input[name^="feto_bcf_"]').value,
+        feto_ila: conceptoItem.querySelector('input[name^="feto_ila_"]').value, // Novo campo ILA
+        feto_mbv: conceptoItem.querySelector('input[name^="feto_mbv_"]').value, // Novo campo MBV
+        feto_observacoes: conceptoItem.querySelector('textarea[name^="feto_observacoes_"]').value
+      });
+    });
+    usgData.push(usgBlock);
+  });
+  data.ultrassonografias = usgData;
+
+  return data;
 }
 
 /**
- * Salva os dados do formulário no `localStorage`.
+ * Salva o prontuário atual em uma lista no localStorage.
+ * O identificador é o número do prontuário ou o nome da paciente.
  */
 function saveLocal() {
     const data = getFormData();
-    localStorage.setItem(LS_KEY, JSON.stringify(data));
-    alert('Salvo localmente.');
+
+    // Determina o identificador do prontuário
+    const identifier = data.prontuario?.trim() || data.nome?.trim();
+    if (!identifier) {
+        alert('Por favor, preencha o número do prontuário ou o nome da paciente para salvar.');
+        return;
+    }
+
+    let savedData = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    savedData[identifier] = data;
+    localStorage.setItem(LS_KEY, JSON.stringify(savedData));
+    renderSavedAtendimentos(); // Atualiza a lista após salvar
 }
 
 /**
- * Carrega os dados do formulário a partir do `localStorage`.
+ * Carrega um prontuário específico a partir do localStorage.
+ * @param {string} identifier O identificador (prontuário ou nome) do atendimento a ser carregado.
  */
-function loadLocal() {
-    const raw = localStorage.getItem(LS_KEY);
-    if (!raw) {
-        alert('Nada salvo.');
+function loadLocal(identifier) {
+    const savedData = JSON.parse(localStorage.getItem(LS_KEY));
+    if (!savedData || !savedData[identifier]) {
+        alert('Dados não encontrados.');
         return;
     }
-    const data = JSON.parse(raw);
+    const data = savedData[identifier];
     form.reset();
 
-    // Remove campos dinâmicos existentes
+    // Restaura campos dinâmicos existentes
     document.querySelectorAll('.signature-item').forEach((el) => el.remove());
     document.querySelectorAll('#medication-list .medication-item input[name="dose_outra"]').forEach((el) => el.closest('.medication-item').remove());
+    document.querySelectorAll('.usg-item').forEach(el => el.remove());
 
     // Restaura assinaturas
     data.signatures?.forEach((sig) => addSignatureField(sig.title, sig.name));
@@ -533,19 +736,32 @@ function loadLocal() {
         lastMedication.querySelector('[name="dose_outra"]').value = med;
     });
 
+    // Restaura ultrassonografias
+    if (data.ultrassonografias && data.ultrassonografias.length > 0) {
+        data.ultrassonografias.forEach((usg, usgIndex) => {
+            createUsgBlock({
+                date: usg.usg_data,
+                type: usg.usg_tipo,
+                conceptos: usg.conceptos
+            }, usgIndex);
+        });
+    } else {
+        createUsgBlock({}, 0); // Cria um bloco USG vazio por padrão
+    }
+
     // Restaura campos principais e de toggles
     Object.keys(data).forEach((k) => {
-        if (k.startsWith('_') || k.includes('_tags') || k === 'custom_meds' || k === 'signatures' || k === 'tabagismo_detalhe') return;
+        if (k.startsWith('_') || k.includes('_tags') || k === 'custom_meds' || k === 'signatures' || k === 'ultrassonografias') return;
         const el = form.elements[k];
         if (!el) return;
 
-        if (el.type === 'checkbox' || el.type === 'radio') {
+        if (el.type === 'checkbox') {
+            el.checked = data[k];
+        } else if (el.type === 'radio') {
             if (el.length) {
                 Array.from(el).forEach((e) => {
                     e.checked = e.value === data[k];
                 });
-            } else {
-                el.checked = (data[k] === 'true' || data[k] === true || data[k] === el.value);
             }
         } else if (el.type === 'hidden') {
             el.value = data[k];
@@ -582,8 +798,74 @@ function loadLocal() {
 
     setObstetricFieldsDisabled(document.getElementById('nuligesta').checked);
     refreshPregCalc();
-    alert('Carregado.');
+    alert(`Atendimento de "${identifier}" carregado.`);
 }
+
+/**
+ * Renderiza a lista de atendimentos salvos em uma tabela na interface.
+ */
+function renderSavedAtendimentos() {
+  savedTableBody.innerHTML = '';
+  const savedData = JSON.parse(localStorage.getItem(LS_KEY));
+
+  if (!savedData || Object.keys(savedData).length === 0) {
+    const emptyRow = document.createElement('tr');
+    emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">Nenhum atendimento salvo.</td>`;
+    savedTableBody.appendChild(emptyRow);
+    return;
+  }
+
+  Object.keys(savedData).forEach(key => {
+    const data = savedData[key];
+    const newRow = document.createElement('tr');
+    newRow.dataset.key = key;
+
+    const date = data._timestamp ? new Date(data._timestamp).toLocaleDateString('pt-BR') : 'N/A';
+    const time = data._timestamp ? new Date(data._timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
+    const name = data.nome?.trim() || 'Sem nome';
+    const igUsg = data['ig-usg-atual'] || 'N/A';
+    
+    // Concatena as comorbidades de toggle e de tags
+    const comorbToggles = [];
+    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
+    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
+    if (data.comorbidade_hag) comorbToggles.push('HAG');
+    if (data.comorbidade_has) comorbToggles.push('HAS');
+    const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
+    const comorbidades = allComorbidades.length > 0 ? allComorbidades.join(', ') : 'Nenhum';
+    const prontuario = data.prontuario?.trim() || 'N/A';
+
+    newRow.innerHTML = `
+      <td>${date} às ${time}</td>
+      <td>${name}</td>
+      <td>${igUsg}</td>
+      <td>${prontuario}</td>
+      <td>${comorbidades}</td>
+      <td>
+        <button class="btn btn-sm load-btn">Carregar</button>
+        <button class="btn btn-sm delete-btn">Apagar</button>
+      </td>
+    `;
+
+    // Adiciona o evento de clique para o botão "Carregar"
+    newRow.querySelector('.load-btn').addEventListener('click', () => {
+      loadLocal(key);
+    });
+
+    // Adiciona o evento de clique para o botão "Apagar"
+    newRow.querySelector('.delete-btn').addEventListener('click', () => {
+      if (confirm(`Tem certeza que deseja apagar o prontuário de "${key}"?`)) {
+        delete savedData[key];
+        localStorage.setItem(LS_KEY, JSON.stringify(savedData));
+        renderSavedAtendimentos(); // Atualiza a tabela
+      }
+    });
+
+    savedTableBody.appendChild(newRow);
+  });
+}
+
+
 
 /**
  * Limpa todos os campos do formulário e retorna ao estado inicial.
@@ -784,6 +1066,53 @@ function buildOutput() {
   return `G${g}${partos}A${ab}`;
 })(g, pn, pc, ab);
 
+
+ // --- Lógica para formatar os dados das USGs ---
+  let usgTxt = data.ultrassonografias && data.ultrassonografias.length > 0 ? '' : '—';
+  if (data.ultrassonografias && data.ultrassonografias.length > 0) {
+    const formattedUsgs = data.ultrassonografias.map(usg => {
+      if (!usg.usg_data) return null; // Ignora USGs sem data
+
+      const usgHeader = `- (${formatDateBR(new Date(usg.usg_data))}) USG ${usg.usg_tipo || ''}:`;
+
+      const conceptosList = usg.conceptos.map(concepto => {
+        const details = [];
+        if (concepto.feto_situacao) details.push(`situação ${concepto.feto_situacao.toLowerCase()}`);
+        if (concepto.feto_apresentacao) details.push(`apresentação ${concepto.feto_apresentacao.toLowerCase()}`);
+        if (concepto.feto_dorso) details.push(`dorso à ${concepto.feto_dorso.toLowerCase()}`);
+        if (concepto.feto_bcf) details.push(`BCF ${concepto.feto_bcf}bpm`);
+        
+        let pfeTxt = '';
+        if (concepto.feto_peso) {
+          pfeTxt = `PFE ${concepto.feto_peso}g`;
+          if (concepto.feto_percentil) pfeTxt += ` (p${concepto.feto_percentil})`;
+          details.push(pfeTxt);
+        }
+        
+        let placentaTxt = '';
+        if (concepto.placenta_localizacao) {
+          placentaTxt = `Placenta ${concepto.placenta_localizacao.toLowerCase()}`;
+          if (concepto.placenta_grau) placentaTxt += `, grau ${concepto.placenta_grau}`;
+          details.push(placentaTxt);
+        }
+
+        if (concepto.feto_ila) details.push(`ILA ${concepto.feto_ila}cm`);
+        if (concepto.feto_mbv) details.push(`MBV ${concepto.feto_mbv}cm`);
+        
+        const obs = concepto.feto_observacoes?.trim();
+        const obsTxt = obs ? `${obs}` : '';
+
+        return `${details.join(', ')} ${obsTxt}`.trim();
+
+      }).filter(Boolean); // Filtra conceitos vazios
+
+      return `${usgHeader} ${conceptosList.join('\n')}`;
+    }).filter(Boolean); // Filtra USGs sem data
+
+    usgTxt = formattedUsgs.length > 0 ? formattedUsgs.join('\n') : '—';
+  }
+  // --- Fim da lógica para formatar os dados das USGs ---
+
     const dumInc = data.dum_incerta === 'on';
     const igdum = data['ig-dum'];
     const dppStr = data.dpp;
@@ -845,10 +1174,19 @@ function buildOutput() {
         obstetrico = `${obsParts.join('\n')} \n${gestacaoParts}`;
     }
 
+     // Nova lógica para coletar e formatar as comorbidades de toggle
+    const comorbToggles = [];
+    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
+    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
+    if (data.comorbidade_hag) comorbToggles.push('HAG');
+    if (data.comorbidade_has) comorbToggles.push('HAS');
+
+    const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
+    const comorbTxt = `# Comorbidades\n${(allComorbidades.length ? allComorbidades : ['Nega']).map(c => `- ${c}`).join('\n')}`;
+
     const complementaresTxt = `TS: ${tipoSanguineo} | ${trTxt}`;
     const alergiasTxt = `# Alergias\n${(data.alergias_tags.length ? data.alergias_tags : ['Nega']).map(a => `- ${a}`).join('\n')}`;
     const viciosSectionTxt = `# Vícios\n- ${viciosTxt}`;
-    const comorbTxt = `# Comorbidades\n${(data.comorbidades_tags.length ? data.comorbidades_tags : ['Nega']).map(c => `- ${c}`).join('\n')}`;
     const medsTxt = `# Em uso de\n${(data.custom_meds.length ? data.custom_meds : ['Nega']).map(m => `- ${m}`).join('\n')}`;
     const hdaTxt = `# HDA\n${hda || '—'}`;
 
@@ -897,7 +1235,7 @@ function buildOutput() {
 
     const efTxt = `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
     const labsTxt = `# Exames Laboratoriais\n${data.exames_laboratoriais?.trim() || '—'}`;
-    const imgTxt = `# Exames de Imagem\n${data.exames_imagem?.trim() || '—'}`;
+    const imgTxt = `# Exames de Imagem\n${usgTxt || '—'}\n${data.exames_imagem?.trim() || ''}`.trim();
     const hipTxt = `# Hipótese Diagnóstica\n${(data.hipotese_tags.length ? data.hipotese_tags : ['—']).map(c => `- ${c}`).join('\n')}`;
     const condTxt = `# Conduta\n${(allCondutas.length ? allCondutas : ['—']).map(c => `- ${c}`).join('\n')}`;
     const assTxt = signatures.length ? signatures.join(' + ') : '';
@@ -1270,18 +1608,30 @@ function initListeners() {
         dinamicaInput.value = '';
     });
 
+    // Listener para o card colapsável
+document.querySelectorAll('.collapsible-card .collapsible-header').forEach(header => {
+    header.addEventListener('click', () => {
+        const cardContent = header.nextElementSibling;
+        header.classList.toggle('active');
+        if (header.classList.contains('active')) {
+            cardContent.style.display = 'block';
+        } else {
+            cardContent.style.display = 'none';
+        }
+    });
+});
+
     // Listeners para botões dinâmicos
     addMedicationBtn.addEventListener('click', addMedicationField);
     addSignatureBtn.addEventListener('click', () => addSignatureField());
+    addUsgBtn.addEventListener('click', () => {
+  createUsgBlock({}, usgContainer.children.length);
+});
 
     // Listeners para botões de controle local
     document.getElementById('btn-save').addEventListener('click', (e) => {
         e.preventDefault();
         saveLocal();
-    });
-    document.getElementById('btn-load').addEventListener('click', (e) => {
-        e.preventDefault();
-        loadLocal();
     });
     document.getElementById('btn-clear').addEventListener('click', (e) => {
         e.preventDefault();
@@ -1368,6 +1718,14 @@ function initListeners() {
             }
         }
     });
+    // Listener para o salvamento automático
+    form.addEventListener('input', () => {
+        clearTimeout(autoSaveTimer); // Limpa o timer anterior
+        autoSaveTimer = setTimeout(() => {
+            saveLocal(); // Chama a função de salvar após o atraso
+            console.log('Salvamento automático realizado.');
+        }, AUTO_SAVE_DELAY);
+    });
 }
 
 /**
@@ -1376,6 +1734,7 @@ function initListeners() {
 async function initPage() {
     startClock();
     initListeners();
+    renderSavedAtendimentos();
     try {
         await openDB();
     } catch (e) {
