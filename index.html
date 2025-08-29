@@ -140,7 +140,7 @@
     <h2 class="card-header collapsible-header">Ultrassonografias</h2>
     <div class="card-content">
     <div class="section-subheader">
-    <button type="button" id="add-usg-btn" class="btn">Adicionar Ultrassonografia</button>
+      <button type="button" id="add-usg-btn" class="btn">Adicionar Ultrassonografia</button>
     </div>
     <div id="usg-container">
     </div>
@@ -373,6 +373,17 @@
     <label for="abd" class="btn-toggle style-green-orange" data-default="Globoso" data-checked="Plano">Globoso</label>
     </div>
     </div>
+       <div class="form-group">
+        <label>Apresentação Fetal</label>
+        <div class="toggle-group">
+          <input type="radio" name="apresentacao" id="apresentacao_cefalica" value="Cefálica" checked/>
+          <label for="apresentacao_cefalica" class="btn-toggle">Cefálica</label>
+          <input type="radio" name="apresentacao" id="apresentacao_pelvica" value="Pélvica" />
+          <label for="apresentacao_pelvica" class="btn-toggle">Pélvica</label>
+          <input type="radio" name="apresentacao" id="apresentacao_outra" value="Outra" />
+          <label for="apresentacao_outra" class="btn-toggle">Outra (Transversa/Obliqua)</label>
+      </div>
+    </div>
     </div>
     <div class="section-subheader">
     <h3>Toque Vaginal</h3>
@@ -558,6 +569,19 @@
     <label for="consultas">Consultas de Pré-Natal</label>
     <input type="number" id="consultas" name="consultas"/>
     </div>
+
+        <div class="form-group grid-col-span-2">
+            <label>Caráter da Internação</label>
+            <div class="toggle-group">
+                <input type="radio" name="carater_internacao" id="carater_cesarea" value="Cesárea" checked/>
+                <label for="carater_cesarea" class="btn-toggle">Cesárea</label>
+                <input type="radio" name="carater_internacao" id="carater_inducao_normal" value="Indução ou Normal" />
+                <label for="carater_inducao_normal" class="btn-toggle">Indução ou Normal</label>
+                <input type="radio" name="carater_internacao" id="carater_tratamento_clinico" value="Tratamento Clínico" />
+                <label for="carater_tratamento_clinico" class="btn-toggle">Tratamento Clínico</label>
+            </div>
+
+        </div>
     </div>
     </section>
     <section class="card">

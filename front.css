@@ -38,7 +38,7 @@
       }
       .btn.disabled {background: var(--disabled-color); border: var(--disabled-color);}
       .btn.primary { background: var(--primary-color); color: #fff; border-color: var(--primary-color); }
-      .btn:hover { filter: brightness(0.98); }
+      .btn:hover { filter: brightness(0.95); }
       .btn:active { filter: brightness(0.95); }
       .card {
       background-color: var(--card-background-color);

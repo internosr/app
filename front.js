@@ -204,6 +204,86 @@ function calcIgUsgCorrigida(dataUsgStr, igUsgStr) {
     return formatWeeksDays(total);
 }
 
+/**
+ * Classifica a paciente em um dos 10 grupos de Robson com base nos dados do formulário.
+ * @param {object} data Os dados coletados do formulário.
+ * @returns {number|null} O número do grupo (1 a 10) ou null se não houver correspondência.
+ */
+function classifyRobson(data) {
+    const gestacoes = parseInt(data.gestacoes || 0);
+    const partosNormais = parseInt(data['partos-normais'] || 0);
+    const partosCesarea = parseInt(data['partos-cesarea'] || 0);
+    const abortos = parseInt(data.abortos || 0);
+    const isNuligesta = gestacoes === 0 || (gestacoes === 1 && partosNormais === 0 && partosCesarea === 0 && abortos === 0);
+    const isMultipara = !isNuligesta;
+    const temCesareaAnterior = (partosCesarea > 0);
+    const igTotalDias = parseIgString(data['ig-usg-atual']) || parseIgString(data['ig-dum']);
+    const isIgTermo = igTotalDias !== null && igTotalDias >= (37 * 7);
+    const isIgPreTermo = igTotalDias !== null && igTotalDias < (37 * 7);
+    const isSpontaneous = data.carater_internacao === 'Indução ou Normal';
+    const isInduced = data.carater_internacao === 'Indução ou Normal';
+    const isCesareaPreLabor = data.carater_internacao === 'Cesárea';
+    const apresentacaoFetal = data.apresentacao;
+    const isUnica = data.gemelaridade !== 'on'; // Assumindo que você terá um campo de gemelaridade
+
+    // A nova lógica de prioridade
+    
+    // Grupo 8: Gestação Múltipla
+    if (!isUnica) {
+        return 8;
+    }
+
+    // Grupo 10: Feto Pré-termo
+    if (isIgPreTermo) {
+        return 10;
+    }
+    
+    // Grupo 9: Feto Transverso ou Oblíquo
+    if (apresentacaoFetal === 'Outra') {
+        return 9;
+    }
+
+    // Grupos 6 e 7: Apresentação Pélvica
+    if (apresentacaoFetal === 'Pélvica') {
+        if (isMultipara) {
+            return 7;
+        } else {
+            return 6;
+        }
+    }
+    
+    // Grupos 1 a 5 (apenas para apresentação Cefálica e a termo)
+    if (apresentacaoFetal === 'Cefálica' && isIgTermo) {
+        
+        // Grupo 1: Nulípara, espontâneo
+        if (isNuligesta && isSpontaneous) {
+            return 1;
+        }
+
+        // Grupo 2: Nulípara, indução ou cesárea antes do TP
+        if (isNuligesta && (isInduced || isCesareaPreLabor)) {
+            return 2;
+        }
+        
+        // Grupo 3: Multípara sem cesárea anterior, espontâneo
+        if (isMultipara && !temCesareaAnterior && isSpontaneous) {
+            return 3;
+        }
+
+        // Grupo 4: Multípara sem cesárea anterior, indução ou cesárea antes do TP
+        if (isMultipara && !temCesareaAnterior && (isInduced || isCesareaPreLabor)) {
+            return 4;
+        }
+        
+        // Grupo 5: Multípara com cesárea anterior
+        if (isMultipara && temCesareaAnterior) {
+            return 5;
+        }
+    }
+
+    return null; // Caso nenhum critério seja atendido
+}
+
 // ===========================================
 // ===== Lógica de Tags (Comorbidades e Condutas) =====
 // ===========================================
@@ -455,10 +535,10 @@ function addSignatureField(title = 'Ddo.', name = '') {
             <select name="signature_title">
                 <option value="Ddo." ${title === 'Ddo.' ? 'selected' : ''}>Ddo.</option>
                 <option value="Dda." ${title === 'Dda.' ? 'selected' : ''}>Dda.</option>
-                <option value="Acd.">Acd.</option>
-                <option value="MR.">MR.</option>
-                <option value="Dr.">Dr.</option>
-                <option value="Dra.">Dra.</option>
+                <option value="Acd." ${title === 'Acd.' ? 'selected' : ''}>Acd.</option>
+                <option value="MR." ${title === 'MR.' ? 'selected' : ''}>MR.</option>
+                <option value="Dr." ${title === 'Dr.' ? 'selected' : ''}>Dr.</option>
+                <option value="Dra." ${title === 'Dra.' ? 'selected' : ''}>Dra.</option>
             </select>
         </div>
         <div class="form-group" style="flex-grow: 2;">
@@ -1309,6 +1389,8 @@ function collectFormDataAndMapping() {
     const dataBolsaStr = document.getElementById('hora_rompimento').value;
     const dinamAusente = form.elements['dinamica_ausente'].checked;
     const dinam = form.elements['dinamica_uterina'].value;
+    const caraterInternacao = form.elements['carater_internacao']?.value;
+
 
     const fieldMapping = {
         Data: today.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }),
@@ -1344,15 +1426,22 @@ function collectFormDataAndMapping() {
         Dilatacao: data.dilatacao || '',
         Posicao: getSelectValue('posicao'),
         Espessura: getSelectValue('espessura'),
-        DataBolsa: dataBolsaStr ? formateDateHoraBR(dataBolsaStr) : '',
-        Liquido: getSelectValue('cor_liquido'),
+        DataBolsa: getBinaryToggleValue('bolsa') == "Rota" && dataBolsaStr ? formateDateHoraBR(dataBolsaStr) : '',
+        Liquido: getBinaryToggleValue('bolsa') == "Rota" && dataBolsaStr ? getSelectValue('cor_liquido') : '',
         Especular: data['especular_evitado'] ? 'Evitado' : (data['desc_especular'] || ''),
         Ddx: getTagValues('hipotese-tags') || '',
         CD: getCondutaValues() || '',
         Docente: '',
         Ddo: '',
         Acd: '',
-        MR: ''
+        MR: '',
+        Bolsa_MJR5: getBinaryToggleValue('bolsa'),
+        trSifilis: trLabelsMap.tr_sifilis[data.tr_sifilis],
+        trHIV: trLabelsMap.tr_hiv[data.tr_hiv],
+        trHepB: trLabelsMap.tr_hepb[data.tr_hepb],
+        trHepC: trLabelsMap.tr_hepc[data.tr_hepc],
+        Robson: String(classifyRobson(data))
+
     };
 
     const signatureItems = document.querySelectorAll('.signature-item');
@@ -1380,19 +1469,51 @@ function collectFormDataAndMapping() {
 }
 
 /**
- * Preenche os campos do PDF com base no mapeamento fornecido.
+ * Preenche os campos do PDF com base no mapeamento fornecido e lista todos os campos encontrados.
  * @param {PDFLib.PDFForm} formFields O objeto de formulário do PDF.
  * @param {object} fieldMapping O objeto de mapeamento de dados.
  */
 function fillPDFFields(formFields, fieldMapping) {
+    // --- CÓDIGO DE DEPURAÇÃO (MANTIDO) ---
+    console.log('--- CAMPOS ENCONTRADOS NO PDF ---');
+    const pdfFieldsList = formFields.getFields().map(field => field.getName());
+    console.log(pdfFieldsList);
+    console.log('---------------------------------');
+    // --- FIM DO CÓDIGO DE DEPURAÇÃO ---
+
     for (const fieldName in fieldMapping) {
         try {
-            const textField = formFields.getTextField(fieldName);
-            if (textField) {
-                textField.setText(String(fieldMapping[fieldName]));
+            // Tenta obter o campo como um tipo genérico primeiro
+            const field = formFields.getField(fieldName);
+            
+            if (field) {
+                // Checa se o campo é um campo de texto pelo método `setText`
+                if (typeof field.setText === 'function') {
+                    field.setText(String(fieldMapping[fieldName]));
+                    console.log(`Campo de texto "${fieldName}" preenchido com o valor: ${fieldMapping[fieldName]}`);
+                } 
+                // Checa se o campo é um grupo de rádio pelo método `select`
+                else if (typeof field.select === 'function') {
+                    field.select(String(fieldMapping[fieldName]));
+                    console.log(`Campo de rádio "${fieldName}" preenchido com o valor: ${fieldMapping[fieldName]}`);
+                } 
+                // Checa se o campo é um checkbox pelo método `check`
+                else if (typeof field.check === 'function') {
+                    if (fieldMapping[fieldName] === true || fieldMapping[fieldName] === 'true' || fieldMapping[fieldName] === 'on') {
+                        field.check();
+                        console.log(`Checkbox "${fieldName}" marcado.`);
+                    } else {
+                        field.uncheck();
+                        console.log(`Checkbox "${fieldName}" desmarcado.`);
+                    }
+                } else {
+                    console.warn(`Tipo de campo "${fieldName}" não reconhecido.`);
+                }
+            } else {
+                console.warn(`Campo "${fieldName}" não encontrado.`);
             }
         } catch (e) {
-            console.error(`Campo "${fieldName}" não encontrado no PDF ou erro ao preencher.`, e);
+            console.error(`Erro ao preencher o campo "${fieldName}":`, e);
         }
     }
 }
@@ -1488,9 +1609,18 @@ async function generateAndDisplayPDF() {
         showNotification('Por favor, preencha o nome da paciente antes de gerar o PDF.', 'error');
         return;
     }
-    const formUrl = './ficha_digital.pdf';
-
+// Coleta o caráter da internação
+    const caraterInternacao = form.elements['carater_internacao']?.value;
+    
+    // Escolhe o nome do arquivo PDF com base no caráter da internação
+    let formUrl = '';
+    if (caraterInternacao === 'Cesárea') {
+        formUrl = './ficha_cesarea.pdf';
+    } else {
+        formUrl = './ficha_digital.pdf'; // Para "Indução ou Normal" e "Tratamento Clínico"
+    }
     try {
+        console.log("preenchendo...");
         const formPdfBytes = await fetch(formUrl).then((res) => res.arrayBuffer());
         const pdfDoc = await PDFLib.PDFDocument.load(formPdfBytes);
         const formFields = pdfDoc.getForm();
@@ -1498,11 +1628,12 @@ async function generateAndDisplayPDF() {
             fieldMapping,
             toqueAvoid
         } = collectFormDataAndMapping();
+        console.log(fieldMapping);
         fillPDFFields(formFields, fieldMapping);
 
         if (!toqueAvoid) {
             try {
-                formFields.getRadioGroup('Angulo_0WXA').select('<90');
+                formFields.getRadioGroup('Angulo_0WXA').select('>90');
                 formFields.getRadioGroup('Promontorio_LQMK').select('inatingivel');
                 formFields.getRadioGroup('Espinhas_1G3U').select('planas');
             } catch (e) {
@@ -1688,18 +1819,27 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         clearAll();
     });
 
-    // Listeners para geração de conteúdo
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!form.elements['nome'].value.trim()) {
-            showNotification('Preencha o nome da paciente.', 'error');
+            showNotification('Preencha o nome da paciente.');
             return;
         }
+
+        // Gera o texto do prontuário
         output.value = buildOutput();
         output.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
         });
+
+        // Copia o texto para a área de transferência
+        output.select();
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+
+        // Notifica o usuário
+        showNotification('Prontuário gerado e copiado para a área de transferência.');
     });
 
     document.getElementById('btn-copy').addEventListener('click', () => {
