@@ -267,6 +267,43 @@ function setupTagInput(containerId, inputId) {
 // ===== Manipulação de Formulário e UI =====
 // ==============================================
 
+// ===================================
+// ===== Sistema de Notificação =====
+// ===================================
+
+/**
+ * Exibe uma notificação moderna no canto superior direito.
+ * @param {string} message A mensagem a ser exibida.
+ * @param {string} [type='info'] O tipo da notificação ('success', 'error', 'info').
+ * @param {number} [duration=3000] Duração em milissegundos antes de desaparecer.
+ */
+function showNotification(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('notification-container');
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+
+    container.appendChild(notification);
+
+    // Exibe a notificação com um pequeno atraso para a animação
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+
+    // Remove a notificação após a duração
+    setTimeout(() => {
+        notification.classList.remove('show');
+        notification.classList.add('hide');
+        
+        // Remove o elemento do DOM após a animação de saída
+        notification.addEventListener('transitionend', () => {
+            notification.remove();
+        });
+    }, duration);
+
+    console.log(type);
+}
+
 // Referências a elementos do DOM
 const form = document.getElementById('form-prontuario');
 const dumInput = document.getElementById('dum');
@@ -695,7 +732,7 @@ function saveLocal() {
     // Determina o identificador do prontuário
     const identifier = data.prontuario?.trim() || data.nome?.trim();
     if (!identifier) {
-        alert('Por favor, preencha o número do prontuário ou o nome da paciente para salvar.');
+        showNotification('Por favor, preencha o número do prontuário ou o nome da paciente para salvar.', 'error');
         return;
     }
 
@@ -712,7 +749,7 @@ function saveLocal() {
 function loadLocal(identifier) {
     const savedData = JSON.parse(localStorage.getItem(LS_KEY));
     if (!savedData || !savedData[identifier]) {
-        alert('Dados não encontrados.');
+        showNotification('Dados não encontrados.', 'error');
         return;
     }
     const data = savedData[identifier];
@@ -745,8 +782,21 @@ function loadLocal(identifier) {
                 conceptos: usg.conceptos
             }, usgIndex);
         });
+        
+        // Adiciona a lógica para expandir o card de USGs
+        const usgCardHeader = document.querySelector('.collapsible-card .collapsible-header');
+        const usgCardContent = usgCardHeader.nextElementSibling;
+        
+        usgCardHeader.classList.add('active');
+        usgCardContent.style.display = 'block';
+        
     } else {
         createUsgBlock({}, 0); // Cria um bloco USG vazio por padrão
+        const usgCardHeader = document.querySelector('.collapsible-card .collapsible-header');
+        const usgCardContent = usgCardHeader.nextElementSibling;
+        
+        usgCardHeader.classList.remove('active');
+        usgCardContent.style.display = 'none';
     }
 
     // Restaura campos principais e de toggles
@@ -798,7 +848,7 @@ function loadLocal(identifier) {
 
     setObstetricFieldsDisabled(document.getElementById('nuligesta').checked);
     refreshPregCalc();
-    alert(`Atendimento de "${identifier}" carregado.`);
+    showNotification(`Atendimento de "${identifier}" carregado.`);
 }
 
 /**
@@ -1435,7 +1485,7 @@ function getFileFromDB(key) {
  */
 async function generateAndDisplayPDF() {
     if (!form.elements['nome'].value.trim()) {
-        alert('Por favor, preencha o nome da paciente antes de gerar o PDF.');
+        showNotification('Por favor, preencha o nome da paciente antes de gerar o PDF.', 'error');
         return;
     }
     const formUrl = './ficha_digital.pdf';
@@ -1470,10 +1520,10 @@ async function generateAndDisplayPDF() {
         await saveFileInDB('prontuarioPdf', pdfBlob);
         btnSignPdf.disabled = false;
 
-        alert('PDF gerado com sucesso! Você pode visualizá-lo e, se estiver correto, prosseguir com a assinatura.');
+        showNotification('PDF gerado com sucesso! Você pode visualizá-lo e, se estiver correto, prosseguir com a assinatura.', 'success');
     } catch (error) {
-        console.error('Erro ao gerar o PDF:', error);
-        alert('Erro ao gerar o PDF.');
+        console.error('Erro ao gerar o PDF:');
+        showNotification('Erro ao gerar o PDF.', error);
     }
 }
 
@@ -1496,12 +1546,12 @@ async function initSerproAuth() {
             if (!authWindow || authWindow.closed) {
                 clearInterval(checkWindow);
                 console.log('Janela de autenticação fechada.');
-                alert('O processo de autenticação foi cancelado.');
+                showNotification('O processo de autenticação foi cancelado.', 'error');
             }
         }, 1000);
     } catch (error) {
         console.error('Erro ao iniciar a autenticação:', error);
-        alert('Erro ao iniciar a autenticação. Verifique o console.');
+        showNotification('Erro ao iniciar a autenticação. Verifique o console.', 'error');
     }
 }
 
@@ -1539,11 +1589,11 @@ async function signPDF(pdfBlob, accessToken) {
             window.open(signedPdfUrl, '_blank');
         } else {
             console.error('Erro na assinatura:', result.error);
-            alert('Erro na assinatura: ' + result.error);
+            showNotification('Erro na assinatura: ' + result.error, 'error');
         }
     } catch (error) {
         console.error('Erro na comunicação com o backend:', error);
-        alert('Erro na comunicação com o backend.');
+        showNotification('Erro na comunicação com o backend.', error);
     }
 }
 
@@ -1642,7 +1692,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
     form.addEventListener('submit', (e) => {
         e.preventDefault();
         if (!form.elements['nome'].value.trim()) {
-            alert('Preencha o nome da paciente.');
+            showNotification('Preencha o nome da paciente.', 'error');
             return;
         }
         output.value = buildOutput();
@@ -1654,7 +1704,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
 
     document.getElementById('btn-copy').addEventListener('click', () => {
         if (!output.value) {
-            alert('Nada para copiar.');
+            showNotification('Nada para copiar.', 'error');
             return;
         }
         output.select();
@@ -1664,7 +1714,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
 
     document.getElementById('btn-download').addEventListener('click', () => {
         if (!output.value) {
-            alert('Nada para baixar.');
+            showNotification('Nada para baixar.',  'error');
             return;
         }
         const blob = new Blob([output.value], {
@@ -1692,11 +1742,11 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
             if (storedPdfBlob) {
                 initSerproAuth();
             } else {
-                alert('Por favor, gere o PDF primeiro.');
+                showNotification('Por favor, gere o PDF primeiro.');
             }
         } catch (error) {
             console.error('Erro ao verificar o PDF no IndexedDB:', error);
-            alert('Ocorreu um erro ao verificar o PDF. Tente gerar novamente.');
+            showNotification('Ocorreu um erro ao verificar o PDF. Tente gerar novamente.', 'error');
         }
     });
 
@@ -1714,7 +1764,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
             if (storedPdfBlob) {
                 await signPDF(storedPdfBlob, accessToken);
             } else {
-                alert('Erro: PDF não encontrado para a assinatura. Por favor, gere o PDF novamente.');
+                showNotification('Erro: PDF não encontrado para a assinatura. Por favor, gere o PDF novamente.', 'error');
             }
         }
     });
