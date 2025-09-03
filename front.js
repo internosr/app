@@ -401,6 +401,7 @@ const toqueFields = document.getElementById('toque_fields');
 const especularEvitado = document.getElementById('especular_evitado');
 const especularFields = document.getElementById('especular_fields');
 const output = document.getElementById('output');
+const outputAih = document.getElementById('output-aih');
 const medicationList = document.getElementById('medication-list');
 const addMedicationBtn = document.getElementById('add-medication-btn');
 const signaturesContainer = document.getElementById('signatures-container');
@@ -713,7 +714,6 @@ const LS_KEY = 'prontuarios_salvos';
 const savedList = document.getElementById('saved-atendimentos-list');
 const savedTableBody = document.getElementById('saved-atendimentos-table').querySelector('tbody');
 
-
 /**
  * Coleta todos os dados do formulário em um único objeto.
  * Essa função é a fonte única de dados para salvar, gerar texto e PDF.
@@ -744,61 +744,14 @@ function getFormData() {
 
     data.alergias_tags = document.getElementById('alergias-tags').getTags();
     data.comorbidades_tags = document.getElementById('comorbidades-tags').getTags();
-    data.condutas_tags = document.getElementById('condutas-tags').getTags();
+    data.custom_meds = getMedList();
+    data.ultrassonografias = getUsg();
     data.hipotese_tags = document.getElementById('hipotese-tags').getTags();
+    data.condutas_tags = document.getElementById('condutas-tags').getTags();
     data.drogas_tags = document.getElementById('drogas-tags').getTags();
-
+    data.signatures = getSignatures();
     data.tabagismo_detalhe = tabagismoCheckbox.checked ? form.elements['tabagismo_detalhe'].value : '';
-
-    const customMeds = [];
-    document.querySelectorAll('#medication-list .medication-item input[name="med_outra"]').forEach((el) => {
-        if (el.checked) {
-            const doseEl = el.parentElement.parentElement.querySelector('[name="dose_outra"]');
-            customMeds.push(doseEl.value);
-        }
-    });
-    data.custom_meds = customMeds;
-
-    const signatures = [];
-    document.querySelectorAll('.signature-item').forEach((item) => {
-        const title = item.querySelector('[name="signature_title"]').value;
-        const name = item.querySelector('[name="signature_name"]').value;
-        if (title && name) {
-            signatures.push({
-                title,
-                name
-            });
-        }
-    });
-    data.signatures = signatures;
     data._timestamp = new Date().toISOString();
-
-     const usgData = [];
-       document.querySelectorAll('.usg-item').forEach((usgItem) => {
-    const usgBlock = {
-      usg_data: usgItem.querySelector('input[name^="usg_data_"]').value,
-      usg_tipo: usgItem.querySelector('select[name^="usg_tipo_"]').value,
-      conceptos: []
-    };
-
-    usgItem.querySelectorAll('.concepto-item').forEach((conceptoItem) => {
-      usgBlock.conceptos.push({
-        placenta_localizacao: conceptoItem.querySelector('select[name^="placenta_localizacao_"]').value,
-        placenta_grau: conceptoItem.querySelector('select[name^="placenta_grau_"]').value,
-        feto_situacao: conceptoItem.querySelector('select[name^="feto_situacao_"]').value,
-        feto_apresentacao: conceptoItem.querySelector('select[name^="feto_apresentacao_"]').value,
-        feto_dorso: conceptoItem.querySelector('select[name^="feto_dorso_"]').value,
-        feto_peso: conceptoItem.querySelector('input[name^="feto_peso_"]').value,
-        feto_percentil: conceptoItem.querySelector('input[name^="feto_percentil_"]').value,
-        feto_bcf: conceptoItem.querySelector('input[name^="feto_bcf_"]').value,
-        feto_ila: conceptoItem.querySelector('input[name^="feto_ila_"]').value, // Novo campo ILA
-        feto_mbv: conceptoItem.querySelector('input[name^="feto_mbv_"]').value, // Novo campo MBV
-        feto_observacoes: conceptoItem.querySelector('textarea[name^="feto_observacoes_"]').value
-      });
-    });
-    usgData.push(usgBlock);
-  });
-  data.ultrassonografias = usgData;
 
   return data;
 }
@@ -1131,6 +1084,51 @@ function getMedList() {
     return meds;
 }
 
+function getUsg() {
+    const usgData = [];
+       document.querySelectorAll('.usg-item').forEach((usgItem) => {
+    const usgBlock = {
+      usg_data: usgItem.querySelector('input[name^="usg_data_"]').value,
+      usg_tipo: usgItem.querySelector('select[name^="usg_tipo_"]').value,
+      conceptos: []
+    };
+
+    usgItem.querySelectorAll('.concepto-item').forEach((conceptoItem) => {
+      usgBlock.conceptos.push({
+        placenta_localizacao: conceptoItem.querySelector('select[name^="placenta_localizacao_"]').value,
+        placenta_grau: conceptoItem.querySelector('select[name^="placenta_grau_"]').value,
+        feto_situacao: conceptoItem.querySelector('select[name^="feto_situacao_"]').value,
+        feto_apresentacao: conceptoItem.querySelector('select[name^="feto_apresentacao_"]').value,
+        feto_dorso: conceptoItem.querySelector('select[name^="feto_dorso_"]').value,
+        feto_peso: conceptoItem.querySelector('input[name^="feto_peso_"]').value,
+        feto_percentil: conceptoItem.querySelector('input[name^="feto_percentil_"]').value,
+        feto_bcf: conceptoItem.querySelector('input[name^="feto_bcf_"]').value,
+        feto_ila: conceptoItem.querySelector('input[name^="feto_ila_"]').value, // Novo campo ILA
+        feto_mbv: conceptoItem.querySelector('input[name^="feto_mbv_"]').value, // Novo campo MBV
+        feto_observacoes: conceptoItem.querySelector('textarea[name^="feto_observacoes_"]').value
+      });
+    });
+    usgData.push(usgBlock);
+  });
+    return usgData;
+}
+
+function getSignatures() 
+{
+    const signatures = [];
+    document.querySelectorAll('.signature-item').forEach((item) => {
+        const title = item.querySelector('[name="signature_title"]').value;
+        const name = item.querySelector('[name="signature_name"]').value;
+        if (title && name) {
+            signatures.push({
+                title,
+                name
+            });
+        }
+    });
+    return signatures;
+}
+
 /**
  * Constrói o texto final do prontuário com base nos dados do formulário.
  * @returns {string} O texto formatado do prontuário.
@@ -1373,6 +1371,246 @@ function buildOutput() {
     const assTxt = signatures.length ? signatures.join(' + ') : '';
 
     return [header, '', ident, obstetrico, complementaresTxt, '', alergiasTxt, '', viciosSectionTxt, '', comorbTxt, '', medsTxt, '', hdaTxt, '', efTxt, '', labsTxt, '', imgTxt, '', hipTxt, '', condTxt, '', assTxt].filter(Boolean).join('\n\n');
+}
+
+/**
+ * Constrói o texto final do prontuário com base nos dados do formulário.
+ * @returns {string} O texto formatado do prontuário.
+ */
+function buildAIHOutput() {
+    const data = getFormData();
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+
+    const nome = data.nome?.trim() || '';
+    const idade = data.idade?.trim() || '';
+    const procedencia = data.procedencia?.trim() || '';
+    const tipoSanguineo = data.tipo_sanguineo || 'Não Informado';
+
+    const trMap = {
+        tr_sifilis: 'Sífilis',
+        tr_hiv: 'Anti-HIV',
+        tr_hepb: 'HepB',
+        tr_hepc: 'HepC'
+    };
+    const trResults = {
+        tr_sifilis: data.tr_sifilis,
+        tr_hiv: data.tr_hiv,
+        tr_hepb: data.tr_hepb,
+        tr_hepc: data.tr_hepc
+    };
+    const reagentes = Object.keys(trResults).filter(k => trResults[k] === 'reagente').map(k => trMap[k]);
+    const naoReagentes = Object.keys(trResults).filter(k => trResults[k] === 'nao_reagente').map(k => trMap[k]);
+    const naoRealizados = Object.keys(trResults).filter(k => trResults[k] === 'nao_realizado').map(k => trMap[k]);
+
+    let trTxt = 'TR ';
+    const trParts = [];
+    if (reagentes.length > 0) trParts.push(`${reagentes.join(', ')} Reagente`);
+    if (naoReagentes.length > 0) trParts.push(`${naoReagentes.join(', ')} Não Reagentes`);
+    if (naoRealizados.length > 0) trParts.push(`${naoRealizados.join(', ')} Não Realizados`);
+    trTxt += trParts.join(', ') + '.';
+    if (trParts.length === 0) trTxt = 'TR não realizados.';
+
+    const nuligesta = data.nuligesta === 'on';
+    const g = data.gestacoes || '0';
+    const pn = Number(data['partos-normais'] || '0');
+    const pc = Number(data['partos-cesarea'] || '0');
+    const ab = Number(data.abortos || '0');
+    const paridade = ((g, pn, pc, ab) => {
+  // Lógica para determinar a parte de Partos (P)
+  let partos = '';
+  const totalPartos = pn + pc;
+
+  if (totalPartos === 0) {
+    // Se não há partos normais ou cesáreas, a paridade é P0
+    partos = 'P0';
+  } else if (pn === 0) {
+    // Se há apenas cesáreas (pn = 0 e pc >= 1), exibe P<pc>c
+    partos = `P${pc}c`;
+  } else if (pc === 0) {
+    // Se há apenas partos normais (pc = 0 e pn >= 1), exibe P<pn>v
+    partos = `P${pn}v`;
+  } else {
+    // Se há ambos, exibe o formato completo
+    partos = `P${pn}v${pc}c`;
+  }
+
+  // Combina todas as partes da string de paridade
+  return `G${g}${partos}A${ab}`;
+})(g, pn, pc, ab);
+
+
+ // --- Lógica para formatar os dados das USGs ---
+  let usgTxt = data.ultrassonografias && data.ultrassonografias.length > 0 ? '' : '—';
+  if (data.ultrassonografias && data.ultrassonografias.length > 0) {
+    const formattedUsgs = data.ultrassonografias.map(usg => {
+      if (!usg.usg_data) return null; // Ignora USGs sem data
+
+      const usgHeader = `- (${formatDateBR(new Date(usg.usg_data))}) USG ${usg.usg_tipo || ''}:`;
+
+      const conceptosList = usg.conceptos.map(concepto => {
+        const details = [];
+        if (concepto.feto_situacao) details.push(`situação ${concepto.feto_situacao.toLowerCase()}`);
+        if (concepto.feto_apresentacao) details.push(`apresentação ${concepto.feto_apresentacao.toLowerCase()}`);
+        if (concepto.feto_dorso) details.push(`dorso à ${concepto.feto_dorso.toLowerCase()}`);
+        if (concepto.feto_bcf) details.push(`BCF ${concepto.feto_bcf}bpm`);
+        
+        let pfeTxt = '';
+        if (concepto.feto_peso) {
+          pfeTxt = `PFE ${concepto.feto_peso}g`;
+          if (concepto.feto_percentil) pfeTxt += ` (p${concepto.feto_percentil})`;
+          details.push(pfeTxt);
+        }
+        
+        let placentaTxt = '';
+        if (concepto.placenta_localizacao) {
+          placentaTxt = `Placenta ${concepto.placenta_localizacao.toLowerCase()}`;
+          if (concepto.placenta_grau) placentaTxt += `, grau ${concepto.placenta_grau}`;
+          details.push(placentaTxt);
+        }
+
+        if (concepto.feto_ila) details.push(`ILA ${concepto.feto_ila}cm`);
+        if (concepto.feto_mbv) details.push(`MBV ${concepto.feto_mbv}cm`);
+        
+        const obs = concepto.feto_observacoes?.trim();
+        const obsTxt = obs ? `${obs}` : '';
+
+        return `${details.join(', ')} ${obsTxt}`.trim();
+
+      }).filter(Boolean); // Filtra conceitos vazios
+
+      return `${usgHeader} ${conceptosList.join('\n')}`;
+    }).filter(Boolean); // Filtra USGs sem data
+
+    usgTxt = formattedUsgs.length > 0 ? formattedUsgs.join('\n') : '—';
+  }
+  // --- Fim da lógica para formatar os dados das USGs ---
+
+    const dumInc = data.dum_incerta === 'on';
+    const igdum = data['ig-dum'];
+    const dppStr = data.dpp;
+    const dataUsgStr = data['data-usg'];
+    const igUsgStr = data['ig-usg'];
+    const igUsgCorr = data['ig-usg-atual'];
+    const toqueAvoid = data.toque_evitado === 'on';
+
+    const viciosComAfixo = [];
+    const viciosSemAfixo = [];
+    if (data.etilismo === 'on') viciosSemAfixo.push('Etilismo');
+    else viciosComAfixo.push('Etilismo');
+    if (data.tabagismo === 'on') viciosSemAfixo.push('Tabagismo');
+    else viciosComAfixo.push('Tabagismo');
+    if (data.drogas === 'on') viciosSemAfixo.push('Drogadição');
+    else viciosComAfixo.push('Drogadição');
+
+    let viciosTxt = '';
+    if (viciosComAfixo.length === 3) {
+        viciosTxt += `Nega etilismo, tabagismo e uso de drogas.`;
+    } else if (viciosComAfixo.length > 0) {
+        const negados = viciosComAfixo.join(', ').replace(/,([^,]*)$/, ' e$1');
+        viciosTxt += `Nega ${negados}.`;
+    }
+    if (viciosSemAfixo.length > 0) {
+        const afirmados = [];
+        if (data.etilismo === 'on') afirmados.push('Etilista');
+        if (data.tabagismo === 'on') afirmados.push(data.tabagismo_detalhe ? `Tabagista (${data.tabagismo_detalhe})` : `Tabagista`);
+        if (data.drogas === 'on' && data.drogas_tags.length > 0) afirmados.push(`Usuária de drogas (${data.drogas_tags.join(', ')})`);
+        if (viciosTxt.length > 0) viciosTxt += ' '
+        viciosTxt += afirmados.join(', ');
+    }
+    if (viciosTxt.length === 0) viciosTxt = 'Nega etilismo, tabagismo e uso de drogas.';
+
+    const hda = data.hda?.trim() || '';
+    const especAvoid = data.especular_evitado === 'on';
+
+    const conds = getCheckedValues('conduta');
+    const outrasConds = document.getElementById('condutas-tags').getTags();
+    const allCondutas = [...conds, ...outrasConds];
+
+    const signatures = data.signatures?.map(s => `${s.title} ${s.name}`).filter(Boolean) || [];
+
+    const header = `# SR às ${hh}:${mm} #`;
+    const ident = `${nome || 'Paciente'}, ${idade || '?'} anos, procedente de ${procedencia || '?'}`;
+
+    let obstetrico;
+    if (nuligesta) {
+        obstetrico = 'Nuligesta.';
+    } else {
+        const obsParts = [
+            `${paridade} | ${dumInc ? `DUM incerta` : `DUM ${formatDateBR(new Date(data.dum))} | IG DUM ${igdum}`}`
+        ].filter(Boolean);
+        const gestacaoParts = [
+            igUsgCorr ? `IG USG ${igUsgCorr}` : null,
+            (igUsgStr && dataUsgStr) ? ` (${igUsgStr.replace('s', 's').replace('d', 'd')} em ${formatDateBR(new Date(dataUsgStr))})` : null,
+            dppStr ? ` | DPP ${dppStr}` : null,
+        ].filter(Boolean).join('');
+        obstetrico = `${obsParts.join('\n')} \n${gestacaoParts}`;
+    }
+
+     // Nova lógica para coletar e formatar as comorbidades de toggle
+    const comorbToggles = [];
+    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
+    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
+    if (data.comorbidade_hag) comorbToggles.push('HAG');
+    if (data.comorbidade_has) comorbToggles.push('HAS');
+
+    const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
+    const comorbTxt = `# Comorbidades: ${(allComorbidades.length ? allComorbidades : ['Nega']).map(c => `${c}`).join(', ')}`;
+
+    const complementaresTxt = `TS: ${tipoSanguineo} | ${trTxt}`;
+    const alergiasTxt = `# Alergias: ${(data.alergias_tags.length ? data.alergias_tags : ['Nega']).map(a => `${a}`).join(', ')}`;
+    const viciosSectionTxt = `# Vícios\n- ${viciosTxt}`;
+    const medsTxt = `# Em uso de: ${(data.custom_meds.length ? data.custom_meds : ['Nega']).map(m => `${m}`).join(', ')}`;
+    const hdaTxt = `# HDA\n${hda || '—'}`;
+
+    const vitais = [
+        data.pa ? `PA ${data.pa} mmHg` : null,
+        data.pa_dle ? `PA pós DLE ${data.pa_dle} mmHg` : null,
+        data.fc ? `FC ${data.fc} bpm` : null,
+        data.spo2 ? `SpO2 ${data.spo2}%` : null,
+        data.tax ? `TAx ${data.tax}°C` : null,
+        getSelectValue('proteinuria') !== 'nao_realizado' ? `Proteinúria: ${getSelectValue('proteinuria')}` : null,
+    ].filter(Boolean);
+
+    const efParts = [
+        data.altura_uterina ? `AU ${data.altura_uterina} cm` : null,
+        data.bcf ? `BCF ${data.bcf} bpm` : null,
+        getBinaryToggleValue('mov_fetal') ? `MF ${getBinaryToggleValue('mov_fetal')}` : null,
+        getBinaryToggleValue('tonus_uterino') ? `TU ${getBinaryToggleValue('tonus_uterino')}` : null,
+        data.dinamica_ausente === 'on' ? `DU Ausente` : (data.dinamica_uterina ? `DU ${data.dinamica_uterina}` : null),
+    ].filter(Boolean).join(' | ');
+
+    let toqueTxt = '';
+    if (toqueAvoid) {
+        toqueTxt = 'TV: evitado';
+    } else {
+        const toqueDetails = [];
+        if (getSelectValue('espessura')) toqueDetails.push(getSelectValue('espessura'));
+        if (getSelectValue('posicao')) toqueDetails.push(getSelectValue('posicao'));
+        if (data.dilatacao) toqueDetails.push(`pérvio para ${data.dilatacao} cm`);
+        if (getBinaryToggleValue('bolsa')) {
+            if (getBinaryToggleValue('bolsa') === 'Rota') {
+                const dataRomp = data.hora_rompimento ? `às ${formateDateHoraBR(new Date(data.hora_rompimento))}` : '';
+                toqueDetails.push(`bolsa rota ${dataRomp}`);
+                if (getSelectValue('cor_liquido')) toqueDetails.push(`líquido ${getSelectValue('cor_liquido')}`);
+            } else {
+                toqueDetails.push(`bolsa ${getBinaryToggleValue('bolsa').toLowerCase()}`);
+            }
+        }
+        if (getBinaryToggleValue('sangramento')) {
+            const sangramentoText = getBinaryToggleValue('sangramento') === 'Presente' ? 'com sangramento em dedo de luva' : 'sem sangramento em dedo de luva';
+            toqueDetails.push(sangramentoText);
+        }
+        toqueTxt = `TV: ${toqueDetails.length > 0 ? toqueDetails.join(', ') : 'não realizado'}.`;
+    }
+
+    const especularTxt = data.desc_especular?.trim() ? `EE: ${data.desc_especular.trim()}` : '';
+    const efTxt = `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
+    const labsTxt = data.exames_laboratoriais?.trim() ? `# Exames Laboratoriais\n${data.exames_laboratoriais.trim()}` : '';
+    const imgTxt = (usgTxt || data.exames_imagem?.trim()) ? `# Exames de Imagem\n${usgTxt || '—'}\n${data.exames_imagem?.trim() || ''}`.trim() : '';    const hipTxt = `# Hipótese Diagnóstica\n${(data.hipotese_tags.length ? data.hipotese_tags : ['—']).map(c => `- ${c}`).join('\n')}`;
+    
+    return [obstetrico, comorbTxt, medsTxt, ' ', hdaTxt, ' ', efTxt, '', labsTxt, '', imgTxt].filter(Boolean).join('\n');
 }
 
 /**
@@ -1736,6 +1974,8 @@ async function signPDF(pdfBlob, accessToken) {
 
 const btnPrintPdf = document.getElementById('btn-print-pdf');
 const btnSignPdf = document.getElementById('btn-sign-pdf');
+const btnGerarAih = document.getElementById('btn-gerar-aih');
+
 
 // Configuração dos campos de tags
 setupTagInput('alergias-tags', 'alergias-input');
@@ -1844,12 +2084,48 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         showNotification('Prontuário gerado e copiado para a área de transferência.');
     });
 
+        btnGerarAih.addEventListener('click', (e) => {
+        e.preventDefault();
+        if (!form.elements['nome'].value.trim()) {
+            showNotification('Preencha o nome da paciente.');
+            return;
+        }
+
+        // Gera o texto do prontuário
+        outputAih.value = buildAIHOutput();
+        outputAih.scrollIntoView({
+            behavior: 'smooth',
+            block: 'start'
+        });
+
+        // Copia o texto para a área de transferência
+        outputAih.select();
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+
+        // Notifica o usuário
+        showNotification('Texto para AIH gerado e copiado para a área de transferência.');
+    });
+
+
+
     document.getElementById('btn-copy').addEventListener('click', () => {
         if (!output.value) {
             showNotification('Nada para copiar.', 'error');
             return;
         }
         output.select();
+        document.execCommand('copy');
+        window.getSelection().removeAllRanges();
+    });
+
+
+    document.getElementById('btn-copy-aih').addEventListener('click', () => {
+        if (!outputAih.value) {
+            showNotification('Nada para copiar.', 'error');
+            return;
+        }
+        outputAih.select();
         document.execCommand('copy');
         window.getSelection().removeAllRanges();
     });
