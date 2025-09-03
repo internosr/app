@@ -435,6 +435,26 @@
     border-left: 5px solid #007bff;
 }
 
+        /* Estilos para o contêiner de recorte */
+        .clipped-container {
+            /* A altura visível é a altura total do iframe (400px) menos o recorte superior (70px) e inferior (30px) */
+            height: calc(400px - 70px - 30px);
+            overflow: hidden;
+            position: relative;
+            border-radius: 0.5rem;
+        }
+
+        /* Estilos para o iframe com zoom e posição */
+        #my-iframe {
+            position: absolute;
+            top: -70px; /* Move o iframe 70px para cima, escondendo a parte superior */
+            width: 100%; 
+            height: 400px;
+            transform-origin: top left; /* Garante que o zoom seja aplicado a partir do canto superior esquerdo */
+            zoom: 0.75;
+            border: 0;
+        }
+
       @media (max-width: 768px) {
       .form-grid { grid-template-columns: 1fr 1fr; }
       .grid-col-span-full, .grid-col-span-2, .grid-col-span-3, .grid-col-span-4 { grid-column: 1 / -1; }

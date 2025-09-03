@@ -2046,8 +2046,8 @@ async function initPage() {
     startClock();
     initListeners();
     renderSavedAtendimentos();
-    refreshTriagem();
-    setInterval(refreshTriagem, 60000);
+    //refreshTriagem();
+    //setInterval(refreshTriagem, 60000);
 
     try {
         await openDB();

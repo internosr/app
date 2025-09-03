@@ -185,8 +185,7 @@ app.get('/triagem-proxy', async (req, res) => {
         res.send(htmlContent);
 
     } catch (error) {
-        console.error('Erro ao buscar dados da triagem com Puppeteer:', error);
-        res.status(500).send('Erro ao buscar dados da triagem.');
+        res.status(500).send('Erro ao buscar dados da triagem.', error);
     } finally {
         // Garante que o navegador seja fechado, mesmo se ocorrer um erro.
         if (browser) {
