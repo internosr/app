@@ -357,11 +357,8 @@ function setupTagInput(containerId, inputId) {
  * @param {string} [type='info'] O tipo da notificação ('success', 'error', 'info').
  * @param {number} [duration=3000] Duração em milissegundos antes de desaparecer.
  */
-<<<<<<< HEAD
-function showNotification(message, type = 'info', duration = 3000) {
-=======
+
 function showNotification(message, type = 'info', duration = 5000) {
->>>>>>> d2dd3ce (Commit inicial)
     const container = document.getElementById('notification-container');
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -992,10 +989,7 @@ function renderSavedAtendimentos() {
         delete savedData[key];
         localStorage.setItem(LS_KEY, JSON.stringify(savedData));
         renderSavedAtendimentos(); // Atualiza a tabela
-<<<<<<< HEAD
-=======
         showNotification('Registro apagado');
->>>>>>> d2dd3ce (Commit inicial)
       }
     });
 
