@@ -343,27 +343,30 @@
     overflow-x: auto;
 }
 
-#saved-atendimentos-table {
+#saved-atendimentos-table, .table-container table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1rem;
     font-size: 0.875rem;
 }
 
+
 #saved-atendimentos-table th,
-#saved-atendimentos-table td {
+#saved-atendimentos-table td, 
+.table-container table th,
+.table-container table td {
     padding: 0.75rem;
     border: 1px solid #e0e0e0;
     text-align: left;
     vertical-align: top;
 }
 
-#saved-atendimentos-table th {
+#saved-atendimentos-table th, .table-container table th {
     background-color: #f5f5f5;
     font-weight: bold;
 }
 
-#saved-atendimentos-table tr:nth-child(even) {
+#saved-atendimentos-table tr:nth-child(even), .table-container table tr:nth-child(even) {
     background-color: #f9f9f9;
 }
 

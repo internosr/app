@@ -13,6 +13,30 @@
         <h1>Prontuário de Atendimento - Obstetrícia</h1>
         <p id="clock"></p>
       </header>
+      <section class="card collapsible-card">
+    <h2 class="card-header collapsible-header">Triagem</h2>
+    <div class="card-content">
+        <div class="table-container">
+            <table id="triagem-table">
+                <thead>
+                    <tr>
+                        <th>Hora</th>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>Prontuário</th>
+                        <th>Classificação</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td colspan="5" style="text-align: center;">Nenhum paciente na triagem.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
       <form id="form-prontuario" autocomplete="off">
         <section class="card">
           <h2 class="card-header-with-toggle">
@@ -589,6 +613,7 @@
     <div class="form-group"><button type="submit" class="btn primary">Gerar Prontuário</button></div>
     <div class="form-group"><button class="btn primary" id="btn-print-pdf">Gerar PDF de Internação</button></div>
     <div class="form-group" style="display: none"><button class="btn disabled" id="btn-sign-pdf" disabled>Assinar PDF</button></div>
+    <div class="form-group"><button class="btn disabled" id="btn-sign-pdf" disabled>Assinar PDF</button></div>
     </div>
     </section>
     <section class="card output-card">

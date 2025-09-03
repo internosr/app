@@ -357,7 +357,11 @@ function setupTagInput(containerId, inputId) {
  * @param {string} [type='info'] O tipo da notificação ('success', 'error', 'info').
  * @param {number} [duration=3000] Duração em milissegundos antes de desaparecer.
  */
+<<<<<<< HEAD
 function showNotification(message, type = 'info', duration = 3000) {
+=======
+function showNotification(message, type = 'info', duration = 5000) {
+>>>>>>> d2dd3ce (Commit inicial)
     const container = document.getElementById('notification-container');
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
@@ -988,6 +992,10 @@ function renderSavedAtendimentos() {
         delete savedData[key];
         localStorage.setItem(LS_KEY, JSON.stringify(savedData));
         renderSavedAtendimentos(); // Atualiza a tabela
+<<<<<<< HEAD
+=======
+        showNotification('Registro apagado');
+>>>>>>> d2dd3ce (Commit inicial)
       }
     });
 
@@ -1918,6 +1926,125 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
     });
 }
 
+
+// ==================================
+// ===== Lógica de Triagem e Atualização =====
+// ==================================
+
+const triagemTableBody = document.querySelector('#triagem-table tbody');
+const triagemUrl = './triagem-proxy';
+
+const COR_MONTREAL = {
+    'Vermelho': '#E74C3C', // Um vermelho tijolo que tem presença, mas não é gritante
+    'MUITO URGENTE': '#E67E22', // Um laranja intenso, mais vivo que o pêssego
+    'URGENTE': '#F1C40F', // Um amarelo ouro, com bastante brilho
+    'POUCO URGENTE': '#27AE60', // Um verde esmeralda, que se destaca sem ser muito claro
+    'NÃO URGENTE': '#3498DB', // Um azul céu mais forte
+    'SEM CLASSIFICAÇÃO': '#BDC3C7' // Um cinza médio, que se distingue sem ser preto
+};
+
+/**
+ * Acessa a URL, extrai os dados da tabela de triagem e os retorna.
+ * @returns {Promise<Array>} Uma promessa que resolve para um array de objetos de paciente.
+ */
+async function fetchTriagemData() {
+    try {
+        const response = await fetch(triagemUrl);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const html = await response.text();
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Acessa a tabela correta. A estrutura HTML fornecida não tem ID, então procuramos por ela.
+        const triagemTable = doc.querySelector('#example2');
+        const patients = [];
+
+        if (triagemTable) {
+            const rows = triagemTable.querySelectorAll('tbody tr');
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length >= 4) { // Certifique-se de que a linha tem dados
+                    patients.push({
+                        prontuario: cells[0].textContent.trim(),
+                        nome: cells[1].textContent.trim(),
+                        idade: cells[2].textContent.trim(),
+                        classificacao: cells[3].textContent.trim(),
+                        chegada: cells[4].textContent.trim()
+                    });
+                }
+            });
+        }
+        console.log(patients);
+        return patients;
+    } catch (error) {
+        console.error('Erro ao buscar dados da triagem:', error);
+        return [];
+    }
+}
+
+/**
+ * Popula a tabela de triagem na interface com os dados dos pacientes.
+ * @param {Array} patients O array de objetos de paciente.
+ */
+function populateTriagemTable(patients) {
+    triagemTableBody.innerHTML = ''; // Limpa a tabela existente
+    
+    if (patients.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="5" style="text-align: center;">Nenhum paciente na triagem.</td>`;
+        triagemTableBody.appendChild(row);
+        return;
+    }
+
+    patients.forEach(patient => {
+        const row = document.createElement('tr');
+        const classificacao = patient.classificacao;
+        const cor = COR_MONTREAL[classificacao] || COR_MONTREAL['Branco'];
+        row.style.backgroundColor = cor;
+        row.dataset.nome = patient.nome;
+        row.dataset.prontuario = patient.prontuario;
+        row.dataset.idade = patient.idade;
+
+        row.innerHTML = `
+            <td>${patient.chegada}</td>
+            <td>${patient.nome}</td>
+            <td>${patient.idade}</td>
+            <td>${patient.prontuario}</td>
+            <td>${classificacao}</td>
+            <td><button class="btn btn-sm copy-data-btn">Copiar Dados</button></td>
+        `;
+        
+        triagemTableBody.appendChild(row);
+    });
+
+    // Adiciona listener para os botões "Copiar Dados"
+    document.querySelectorAll('.copy-data-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const row = e.target.closest('tr');
+            const nomeInput = document.getElementById('nome');
+            const prontuarioInput = document.getElementById('prontuario');
+            const idadeInput = document.getElementById('idade');
+
+            nomeInput.value = row.dataset.nome;
+            prontuarioInput.value = row.dataset.prontuario;
+            idadeInput.value = row.dataset.idade;
+
+            showNotification(`Dados de ${row.dataset.nome} copiados para o formulário.`, 'success');
+        });
+    });
+}
+
+/**
+ * Função principal para buscar e atualizar a tabela de triagem.
+ */
+async function refreshTriagem() {
+    console.log("Atualizando Triagem...");
+    const patients = await fetchTriagemData();
+    populateTriagemTable(patients);
+}
+
 /**
  * Função principal de inicialização da página.
  */
@@ -1925,6 +2052,9 @@ async function initPage() {
     startClock();
     initListeners();
     renderSavedAtendimentos();
+    refreshTriagem();
+    setInterval(refreshTriagem, 60000);
+
     try {
         await openDB();
     } catch (e) {
@@ -1946,4 +2076,4 @@ async function initPage() {
     btnSignPdf.disabled = true;
 }
 
-initPage();
+initPage()
