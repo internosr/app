@@ -1856,8 +1856,11 @@ async function generateAndDisplayPDF() {
     let formUrl = '';
     if (caraterInternacao === 'Cesárea') {
         formUrl = './ficha_cesarea.pdf';
+    } else if (caraterInternacao === 'Indução ou Normal'){
+        formUrl = './ficha_normal.pdf'; // Para "Indução ou Normal" e "Tratamento Clínico"
     } else {
-        formUrl = './ficha_digital.pdf'; // Para "Indução ou Normal" e "Tratamento Clínico"
+        formUrl = './ficha_clinico.pdf';
+
     }
     try {
         console.log("preenchendo...");
