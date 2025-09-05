@@ -13,12 +13,36 @@
  */
 
 // =====================================
-// ===== Utilidades de Data e IG =====
+// ===== Utilidades =====
 // =====================================
 
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 let autoSaveTimer;
 const AUTO_SAVE_DELAY = 2000; // Salva após 2 segundos de inatividade
+
+
+function setCookie(cname, cvalue, exminutes = 5) {
+  const d = new Date();
+  d.setTime(d.getTime() + (exminutes * 60 * 1000)); // Calcula o tempo em milissegundos
+  let expires = "expires=" + d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
 
 /**
  * Inicia um relógio na interface para exibir a hora atual.
@@ -1901,6 +1925,7 @@ async function generateAndDisplayPDF() {
     }
 }
 
+
 /**
  * Inicia o fluxo de autorização com o SerproID em um pop-up.
  */
@@ -1908,11 +1933,13 @@ async function initSerproAuth() {
     try {
         const codeVerifier = generateCodeVerifier();
         const codeChallenge = generateCodeChallenge(codeVerifier);
+        setCookie("codeVerifier", codeVerifier);
 
         const url = new URL('http://localhost:3000/auth');
         url.searchParams.append('code_challenge', codeChallenge);
         url.searchParams.append('code_challenge_method', 'S256');
-        url.searchParams.append('state', codeVerifier);
+        url.searchParams.append('code_verifier', codeVerifier);
+        url.searchParams.append('state', 'aut');
 
         // ABRINDO O POP-UP COM AS DIMENSÕES ESPECIFICADAS
         const authWindow = window.open(url.toString(), 'SerproID Auth', 'popup=true');
@@ -1975,6 +2002,7 @@ async function signPDF(pdfBlob, accessToken) {
 // ===== Event Listeners e Inicialização =====
 // ==================================
 
+const btnGerarProntuario = document.getElementById('btn-gerar-prontuario');
 const btnPrintPdf = document.getElementById('btn-print-pdf');
 const btnSignPdf = document.getElementById('btn-sign-pdf');
 const btnGerarAih = document.getElementById('btn-gerar-aih');
@@ -2064,7 +2092,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         clearAll();
     });
 
-    form.addEventListener('submit', (e) => {
+    btnGerarProntuario.addEventListener('click', (e) => {
         e.preventDefault();
         if (!form.elements['nome'].value.trim()) {
             showNotification('Preencha o nome da paciente.');
@@ -2161,6 +2189,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         try {
             const storedPdfBlob = await getFileFromDB('prontuarioPdf');
             if (storedPdfBlob) {
+                console.log("Iniciado serproauth");
                 initSerproAuth();
             } else {
                 showNotification('Por favor, gere o PDF primeiro.');
@@ -2177,6 +2206,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
             return;
         }
         const data = event.data;
+        console.log(data);
         if (data.type === 'serproid-auth-complete' && data.token) {
             console.log('Token de acesso recebido da janela pop-up. Iniciando assinatura...');
             const accessToken = data.token;

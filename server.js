@@ -33,7 +33,7 @@ const redirectUri = isProduction
  * Esta rota será chamada pelo seu frontend.
  */
 app.get('/auth', (req, res) => {
-    const { code_challenge, code_challenge_method, state } = req.query;
+    const { code_challenge, code_challenge_method, code_verifier, state } = req.query;
 
     if (!code_challenge || !code_challenge_method || !state) {
         return res.status(400).json({ error: 'Parâmetros PKCE ausentes.' });
@@ -42,13 +42,14 @@ app.get('/auth', (req, res) => {
     const authUrl = new URL(SERPRO_AUTH_URL);
     authUrl.searchParams.append('response_type', 'code');
     authUrl.searchParams.append('client_id', SERPRO_CLIENT_ID);
-    authUrl.searchParams.append('scope', SERPRO_SCOPES);
-    authUrl.searchParams.append('redirect_uri', redirectUri);
     authUrl.searchParams.append('code_challenge', code_challenge);
     authUrl.searchParams.append('code_challenge_method', code_challenge_method);
+    authUrl.searchParams.append('code_verifier', code_verifier);
+    authUrl.searchParams.append('redirect_uri', redirectUri);
+    authUrl.searchParams.append('scope', SERPRO_SCOPES);
     authUrl.searchParams.append('state', state); // O 'state' é onde o code_verifier é enviado
     authUrl.searchParams.append('response_mode', 'query');
-
+    console.log(authUrl.toString());
     res.redirect(authUrl.toString());
 });
 
@@ -57,7 +58,7 @@ app.get('/auth', (req, res) => {
  * Esta rota é responsável por trocar o código de autorização pelo token de acesso.
  */
 app.get('/callback', async (req, res) => {
-    const { code, state } = req.query; // 'state' é onde o SerproID retorna o code_verifier
+    const { code, state } = req.query;
 
     if (!code || !state) {
         return res.status(400).send('Código de autorização ou verificador não recebido.');
@@ -66,12 +67,14 @@ app.get('/callback', async (req, res) => {
     try {
         const tokenPayload = new URLSearchParams({
             grant_type: 'authorization_code',
-            code,
+            code: code,
             redirect_uri: redirectUri,
             client_id: SERPRO_CLIENT_ID,
             client_secret: SERPRO_CLIENT_SECRET,
             code_verifier: state // Usa o 'state' como o verifier
         });
+
+        console.log(tokenPayload);
 
         const tokenResponse = await axios.post(SERPRO_TOKEN_URL, tokenPayload, {
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
