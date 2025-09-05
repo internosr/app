@@ -1153,6 +1153,57 @@ function getSignatures()
     return signatures;
 }
 
+function formatarIdentificacao(nome, idade, procedencia)
+{
+    console.log(nome);
+    const nomeCompleto = nome.trim();
+
+    const idadeCompleta = idade.trim() ? `${idade} anos` : '';
+
+    const partes = [];
+    
+    if (nomeCompleto) {
+        partes.push(nomeCompleto)
+    }
+
+    if (idadeCompleta) {
+        partes.push(idadeCompleta);
+    }
+
+    if (procedencia.trim()) {
+        partes.push(`procedente de ${procedencia.trim()}.`);
+    }
+
+    return partes.join(', ');
+}
+
+function formatarParidade(g, pn, pc, ab)
+{
+    g = Number(g || '0');
+    pn = Number(pn || '0');
+    pc = Number(pc || '0');
+    ab = Number(ab || '0');
+   
+    if (g === 0) {
+        return `G0`;
+    }
+
+    let partos = '';
+    const totalPartos = pn + pc;
+
+    if (totalPartos === 0) {
+       partos = 'P0';
+      } else if (pn === 0) {
+        partos = `P${pc}c`;
+      } else if (pc === 0) {
+        partos = `P${pn}v`;
+      } else {
+        partos = `P${pn}v${pc}c`;
+      }
+
+    return `G${g}${partos}A${ab}`;
+};
+
 /**
  * Constrói o texto final do prontuário com base nos dados do formulário.
  * @returns {string} O texto formatado do prontuário.
@@ -1163,9 +1214,13 @@ function buildOutput() {
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
 
-    const nome = data.nome?.trim() || '';
-    const idade = data.idade?.trim() || '';
-    const procedencia = data.procedencia?.trim() || '';
+    const header = `# SR às ${hh}:${mm} #`;
+    const ident = formatarIdentificacao(data.nome, data.idade, data.procedencia);
+
+
+    console.log(data.g);
+    const paridade = formatarParidade(data.gestacoes, data['partos-normais'], data['partos-cesarea'], data.abortos);
+
     const tipoSanguineo = data.tipo_sanguineo || 'Não Informado';
 
     const trMap = {
@@ -1191,34 +1246,6 @@ function buildOutput() {
     if (naoRealizados.length > 0) trParts.push(`${naoRealizados.join(', ')} Não Realizados`);
     trTxt += trParts.join(', ') + '.';
     if (trParts.length === 0) trTxt = 'TR não realizados.';
-
-    const nuligesta = data.nuligesta === 'on';
-    const g = data.gestacoes || '0';
-    const pn = Number(data['partos-normais'] || '0');
-    const pc = Number(data['partos-cesarea'] || '0');
-    const ab = Number(data.abortos || '0');
-    const paridade = ((g, pn, pc, ab) => {
-  // Lógica para determinar a parte de Partos (P)
-  let partos = '';
-  const totalPartos = pn + pc;
-
-  if (totalPartos === 0) {
-    // Se não há partos normais ou cesáreas, a paridade é P0
-    partos = 'P0';
-  } else if (pn === 0) {
-    // Se há apenas cesáreas (pn = 0 e pc >= 1), exibe P<pc>c
-    partos = `P${pc}c`;
-  } else if (pc === 0) {
-    // Se há apenas partos normais (pc = 0 e pn >= 1), exibe P<pn>v
-    partos = `P${pn}v`;
-  } else {
-    // Se há ambos, exibe o formato completo
-    partos = `P${pn}v${pc}c`;
-  }
-
-  // Combina todas as partes da string de paridade
-  return `G${g}${partos}A${ab}`;
-})(g, pn, pc, ab);
 
 
  // --- Lógica para formatar os dados das USGs ---
@@ -1310,11 +1337,10 @@ function buildOutput() {
 
     const signatures = data.signatures?.map(s => `${s.title} ${s.name}`).filter(Boolean) || [];
 
-    const header = `# SR às ${hh}:${mm} #`;
-    const ident = `${nome || 'Paciente'}, ${idade || '?'} anos, procedente de ${procedencia || '?'}`;
+    
 
     let obstetrico;
-    if (nuligesta) {
+    if (false) {
         obstetrico = 'Nuligesta.';
     } else {
         const obsParts = [
@@ -1555,7 +1581,7 @@ function buildAIHOutput() {
     const signatures = data.signatures?.map(s => `${s.title} ${s.name}`).filter(Boolean) || [];
 
     const header = `# SR às ${hh}:${mm} #`;
-    const ident = `${nome || 'Paciente'}, ${idade || '?'} anos, procedente de ${procedencia || '?'}`;
+    const ident = formatarIdentificacao(nome, idade, procedencia);
 
     let obstetrico;
     if (nuligesta) {
@@ -2184,6 +2210,8 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         generateAndDisplayPDF();
     });
 
+
+    /* Desativada a função de assinar
     btnSignPdf.addEventListener('click', async (e) => {
         e.preventDefault();
         try {
@@ -2199,6 +2227,7 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
             showNotification('Ocorreu um erro ao verificar o PDF. Tente gerar novamente.', 'error');
         }
     });
+    */
 
     // Adiciona o listener para a mensagem do pop-up
     window.addEventListener('message', async (event) => {
@@ -2375,8 +2404,6 @@ async function initPage() {
     if (!signaturesContainer.children.length) {
         addSignatureField();
     }
-
-    btnSignPdf.disabled = true;
 }
 
 initPage()
