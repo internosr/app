@@ -103,8 +103,8 @@ header p {
     box-shadow: var(--shadow);
     border: 1px solid var(--border-color);
 }
-.card-header, .card-header-with-toggle {
-    font-size: 18px;
+.card-title, .card-header-with-toggle {
+    font-size: 24px;
     font-weight: 700;
     margin-bottom: 14px;
     padding-bottom: 8px;

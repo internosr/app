@@ -757,16 +757,24 @@ function getFormData() {
  */
 function saveLocal() {
     const data = getFormData();
-    // Determina o identificador do prontuário
-    const identifier = data.prontuario?.trim() || data.nome?.trim();
-    if (!identifier) {
+    
+    const prontuario = data.prontuario?.trim();
+    const nome = data.nome?.trim();
+    if (!prontuario && !nome) {
         showNotification('Por favor, preencha o número do prontuário ou o nome da paciente para salvar.', 'error');
         return;
     }
+    
     let savedData = JSON.parse(localStorage.getItem(LS_KEY)) || {};
+    let identifier = prontuario || nome;
+    let oldIdentifier = nome;
+    if (prontuario && savedData[oldIdentifier] && oldIdentifier !== prontuario) {
+        delete savedData[oldIdentifier];
+    }
     savedData[identifier] = data;
+    
     localStorage.setItem(LS_KEY, JSON.stringify(savedData));
-    renderSavedAtendimentos(); // Atualiza a lista após salvar
+    renderSavedAtendimentos();
 }
 /**
  * Carrega um prontuário específico a partir do localStorage.
@@ -805,17 +813,9 @@ function loadLocal(identifier) {
             }, usgIndex);
         });
         // Adiciona a lógica para expandir o card de USGs
-        const usgCardHeader = document.querySelector('.collapsible-card .collapsible-header');
-        const usgCardContent = usgCardHeader.nextElementSibling;
-        usgCardHeader.classList.add('active');
-        usgCardContent.style.display = 'block';
-    } else {
-        createUsgBlock({}, 0); // Cria um bloco USG vazio por padrão
-        const usgCardHeader = document.querySelector('.collapsible-card .collapsible-header');
-        const usgCardContent = usgCardHeader.nextElementSibling;
-        usgCardHeader.classList.remove('active');
-        usgCardContent.style.display = 'none';
-    }
+        const usgCardHeader = document.getElementById('headerUSG');
+        const usgCardContent = document.getElementById('contentUSG');
+    } 
     // Restaura campos principais e de toggles
     Object.keys(data).forEach((k) => {
         if (k.startsWith('_') || k.includes('_tags') || k === 'custom_meds' || k === 'signatures' || k === 'ultrassonografias') return;
@@ -862,19 +862,85 @@ function loadLocal(identifier) {
     refreshPregCalc();
     showNotification(`Atendimento de ${data.nome} (${identifier}) carregado.`);
 }
+
+// =====================================
+// ===== Controle de Paginação =====
+// =====================================
+const ITEMS_PER_PAGE = 5; // Defina quantos itens por página você quer
+let currentPage = 1;
+
 /**
- * Renderiza a lista de atendimentos salvos em uma tabela na interface.
+ * Cria os controles de paginação (botões, números, etc.) e os insere na interface.
+ * @param {number} totalPages O número total de páginas.
+ * @param {number} totalItems O número total de itens.
+ */
+function renderPaginationControls(totalPages, totalItems) {
+    let paginationContainer = document.getElementById('pagination-container');
+    if (!paginationContainer) {
+        const tableContainer = document.querySelector('#saved-atendimentos-table').closest('.table-container');
+        paginationContainer = document.createElement('div');
+        paginationContainer.id = 'pagination-container';
+        paginationContainer.className = 'd-flex justify-content-center mt-3'; // Use classes Bootstrap para alinhamento
+        tableContainer.after(paginationContainer);
+    }
+    
+    if (totalPages <= 1) {
+        paginationContainer.innerHTML = '';
+        return;
+    }
+
+    let paginationHtml = `<ul class="pagination">`;
+    
+    // Botão Anterior
+    paginationHtml += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage - 1}">Anterior</a></li>`;
+
+    // Números das páginas
+    for (let i = 1; i <= totalPages; i++) {
+        paginationHtml += `<li class="page-item ${currentPage === i ? 'active' : ''}"><a class="page-link" href="#" data-page="${i}">${i}</a></li>`;
+    }
+
+    // Botão Próximo
+    paginationHtml += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}"><a class="page-link" href="#" data-page="${currentPage + 1}">Próximo</a></li>`;
+    
+    paginationHtml += `</ul>`;
+    paginationContainer.innerHTML = paginationHtml;
+
+    // Adiciona os event listeners aos botões de paginação
+    paginationContainer.querySelectorAll('.page-link').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const page = parseInt(e.target.dataset.page);
+            if (page >= 1 && page <= totalPages) {
+                currentPage = page;
+                renderSavedAtendimentos();
+            }
+        });
+    });
+}
+
+/**
+ * Renderiza a lista de atendimentos salvos em uma tabela na interface, com paginação.
  */
 function renderSavedAtendimentos() {
     savedTableBody.innerHTML = '';
     const savedData = JSON.parse(localStorage.getItem(LS_KEY));
-    if (!savedData || Object.keys(savedData).length === 0) {
+    const keys = Object.keys(savedData || {});
+    const totalPages = Math.ceil(keys.length / ITEMS_PER_PAGE);
+
+    if (keys.length === 0) {
         const emptyRow = document.createElement('tr');
         emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">Nenhum atendimento salvo.</td>`;
         savedTableBody.appendChild(emptyRow);
+        renderPaginationControls(0, 0); // Oculta os controles
         return;
     }
-    Object.keys(savedData).forEach(key => {
+
+    // Calcula o índice de início e fim para a página atual
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const endIndex = startIndex + ITEMS_PER_PAGE;
+    const currentItems = keys.slice(startIndex, endIndex);
+
+    currentItems.forEach(key => {
         const data = savedData[key];
         const newRow = document.createElement('tr');
         newRow.dataset.key = key;
@@ -885,42 +951,40 @@ function renderSavedAtendimentos() {
         }) : 'N/A';
         const name = data.nome?.trim() || 'Sem nome';
         const igUsg = data['ig-usg-atual'] || 'N/A';
-        // Concatena as comorbidades de toggle e de tags
         const comorbToggles = [];
         if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
         if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
         if (data.comorbidade_hag) comorbToggles.push('HAG');
         if (data.comorbidade_has) comorbToggles.push('HAS');
-        const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
+        const allComorbidades = [...comorbToggles, ...(data.comorbidades_tags || [])];
         const comorbidades = allComorbidades.length > 0 ? allComorbidades.join(', ') : 'Nenhum';
         const prontuario = data.prontuario?.trim() || 'N/A';
         newRow.innerHTML = `
-      <td>${date} às ${time}</td>
-      <td>${name}</td>
-      <td>${igUsg}</td>
-      <td>${prontuario}</td>
-      <td>${comorbidades}</td>
-      <td style="line-height: 2">
-        <button class="btn btn-sm load-btn"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
-        <button class="btn btn-sm delete-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
-        <button class="btn warning btn-sm add-pendencia-btn"><i class="fa fa-plus-circle" aria-hidden="true"></i>
- Pendência</button>
-      </td>
-    `;
-        // Adiciona o evento de clique para o botão "Carregar"
+            <td>${date} às ${time}</td>
+            <td>${name}</td>
+            <td>${igUsg}</td>
+            <td>${prontuario}</td>
+            <td>${comorbidades}</td>
+            <td style="line-height: 2">
+                <button class="btn btn-sm view-btn"><i class="fa fa-eye" aria-hidden="true"></i></button>
+                <button class="btn btn-sm load-btn"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
+                <button class="btn btn-sm delete-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                <button class="btn warning btn-sm add-pendencia-btn"><i class="fa fa-plus-circle" aria-hidden="true"></i> Pendência</button>
+            </td>
+        `;
         newRow.querySelector('.load-btn').addEventListener('click', (e) => {
-            let data = { "target": { "dataset": { "prontuario": key }} }
-            console.log(data);
+            const data = { "target": { "dataset": { "prontuario": key }} };
             carregarAtendimento(data);
-            //loadLocal(key);
         });
-        // Adiciona o evento de clique para o botão "Apagar"
         newRow.querySelector('.delete-btn').addEventListener('click', () => {
             apagarAtendimento(savedData, key);
         });
         savedTableBody.appendChild(newRow);
     });
+
+    renderPaginationControls(totalPages, keys.length);
 }
+
 /**
  * Limpa todos os campos do formulário e retorna ao estado inicial.
  */
@@ -1884,11 +1948,6 @@ function initListeners() {
     addSignatureBtn.addEventListener('click', () => addSignatureField());
     addUsgBtn.addEventListener('click', () => {
         createUsgBlock({}, usgContainer.children.length);
-    });
-    // Listeners para botões de controle local
-    document.getElementById('btn-save').addEventListener('click', (e) => {
-        e.preventDefault();
-        saveLocal();
     });
     document.getElementById('btn-clear').addEventListener('click', (e) => {
         e.preventDefault();

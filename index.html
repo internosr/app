@@ -4,1120 +4,1153 @@
         <meta charset="utf-8"/>
         <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
         <title>
-            Prontuário Eletrônico - Obstetrícia (PS)
+            AGIX
         </title>
-        <head>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <link href="front.css" rel="stylesheet" type="text/css">
+                <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+                    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js">
+                    </script>
+                </link>
             </link>
-             <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-        </head>
-        <body>
-            <div class="container">
-                <header>
-                    <h1>
-                        Prontuário de Atendimento - Obstetrícia
-                    </h1>
-                    <p id="clock">
-                    </p>
-                </header>
-                <section class="card collapsible-card">
-                    <h2 class="card-header collapsible-header active">
+        </link>
+    </head>
+    <body>
+        <div class="container my-4">
+            <header>
+                <svg fill="none" height="70" viewbox="0 0 200 70" width="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <filter height="200%" id="shadowLight" width="200%" x="-50%" y="-50%">
+                            <fedropshadow dx="0.5" dy="0.5" flood-color="#000000" flood-opacity="0.2" stddeviation="0.5">
+                            </fedropshadow>
+                        </filter>
+                    </defs>
+                    <g filter="url(#shadowLight)" transform="translate(110, 0) scale(0.8)">
+                        <path d="M50 0L100 25L50 50L0 25L50 0Z" fill="#808080">
+                        </path>
+                        <path d="M0 25L50 50L50 65L0 40L0 25Z" fill="#666666">
+                        </path>
+                        <path d="M100 25L50 50L50 65L100 40L100 25Z" fill="#666666">
+                        </path>
+                        <rect fill="#E0E0E0" height="20" width="10" x="45" y="20">
+                        </rect>
+                        <rect fill="#E0E0E0" height="10" width="20" x="40" y="25">
+                        </rect>
+                    </g>
+                    <text fill="#A02020" filter="url(#shadowLight)" font-family="Arial, sans-serif" font-size="48" font-weight="bold" x="0" y="55">
+                        AGI
+                    </text>
+                    <text fill="#8AC24D" filter="url(#shadowLight)" font-family="Arial, sans-serif" font-size="48" font-weight="bold" x="105" y="55">
+                        X
+                    </text>
+                </svg>
+                <p id="clock">
+                </p>
+            </header>
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="triagem" aria-selected="true" class="nav-link active" data-bs-target="#triagem" data-bs-toggle="tab" id="triagem-tab" role="tab" type="button">
                         Triagem
-                    </h2>
-                    <div class="card-content" style="display: block;">
-                        <div class="clipped-container">
-                            <iframe frameborder="0" id="my-iframe" src="https://agmejc.mejc.br/app/urgenciasca/consultasclassificacaorisco">
-                            </iframe>
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="atendimento" aria-selected="false" class="nav-link" data-bs-target="#atendimento" data-bs-toggle="tab" id="atendimento-tab" role="tab" type="button">
+                        Atendimento
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="pendencias" aria-selected="false" class="nav-link" data-bs-target="#pendencias" data-bs-toggle="tab" id="pendencias-tab" role="tab" type="button">
+                        Pendências
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button aria-controls="finalizados" aria-selected="false" class="nav-link" data-bs-target="#finalizados" data-bs-toggle="tab" id="finalizados-tab" role="tab" type="button">
+                        Finalizados
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content" id="myTabContent">
+                <div aria-labelledby="triagem-tab" class="tab-pane fade show active" id="triagem" role="tabpanel">
+                    <section class="card">
+                        <div class="card-content" style="display: block;">
+                            <div class="clipped-container">
+                                <iframe frameborder="0" id="my-iframe" src="https://agmejc.mejc.br/app/urgenciasca/consultasclassificacaorisco">
+                                </iframe>
+                            </div>
                         </div>
-                        <!-- <div class="table-container">
-            <table id="triagem-table">
-                <thead>
-                    <tr>
-                        <th>Hora</th>
-                        <th>Nome</th>
-                        <th>Idade</th>
-                        <th>Prontuário</th>
-                        <th>Classificação</th>
-                        <th>Ação</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="5" style="text-align: center;">Nenhum paciente na triagem.</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>//-->
+                    </section>
+                </div>
+                <div aria-labelledby="atendimento-tab" class="tab-pane fade" id="atendimento" role="tabpanel">
+                    <div class="toolbar mt-3">
+                        <button class="btn warning" id="btn-clear">
+                            Limpar Tudo
+                        </button>
                     </div>
-                </section>
-                <form autocomplete="off" id="form-prontuario">
-                    <section class="card">
-                        <h2 class="card-header-with-toggle">
-                            <span>
-                                Dados do Atendimento
-                            </span>
-                            <label class="toggle">
-                                <span class="toggle-label">
-                                    Nuligesta
+                    <form autocomplete="off" id="form-prontuario">
+                        <section class="card">
+                            <h2 class="card-title">
+                                <span>
+                                    Dados do Atendimento
                                 </span>
-                                <input id="nuligesta" name="nuligesta" type="checkbox"/>
-                                <span class="toggle-slider">
-                                </span>
-                            </label>
-                        </h2>
-                        <div class="form-grid">
-                            <div class="form-group grid-col-span-2">
-                                <label for="nome">
-                                    Nome
+                                <label class="toggle">
+                                    <span class="toggle-label">
+                                        Nuligesta
+                                    </span>
+                                    <input id="nuligesta" name="nuligesta" type="checkbox"/>
+                                    <span class="toggle-slider">
+                                    </span>
                                 </label>
-                                <input id="nome" name="nome" type="text"/>
+                            </h2>
+                            <div class="form-grid">
+                                <div class="form-group grid-col-span-2">
+                                    <label for="nome">
+                                        Nome
+                                    </label>
+                                    <input id="nome" name="nome" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="idade">
+                                        Idade
+                                    </label>
+                                    <input id="idade" name="idade" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="procedencia">
+                                        Procedência
+                                    </label>
+                                    <input id="procedencia" name="procedencia" type="text"/>
+                                </div>
                             </div>
-                            <div class="form-group">
-                                <label for="idade">
-                                    Idade
-                                </label>
-                                <input id="idade" name="idade" type="number"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="procedencia">
-                                    Procedência
-                                </label>
-                                <input id="procedencia" name="procedencia" type="text"/>
-                            </div>
-                        </div>
-                        <div class="section-subheader">
-                            <h3>
-                                Sinais Vitais
-                            </h3>
-                        </div>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>
-                                    PA (mmHg)
-                                </label>
-                                <input name="pa" placeholder="Ex: 120/80" type="text"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    FC (bpm)
-                                </label>
-                                <input name="fc" type="number"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    SpO2 (%)
-                                </label>
-                                <input name="spo2" type="number"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    TAx (°C)
-                                </label>
-                                <input name="tax" placeholder="Ex: 36.5" type="text"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    PA pós DLE
-                                </label>
-                                <input name="pa_dle" placeholder="Ex: 110/70" type="text"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="proteinuria">
-                                    Proteinúria
-                                </label>
-                                <select id="proteinuria" name="proteinuria">
-                                    <option value="N.R">
-                                        Não Realizado
-                                    </option>
-                                    <option value="Ausente">
-                                        Ausente
-                                    </option>
-                                    <option value="Traços">
-                                        Traços
-                                    </option>
-                                    <option value="1+">
-                                        1+
-                                    </option>
-                                    <option value="2+">
-                                        2+
-                                    </option>
-                                    <option value="3+">
-                                        3+
-                                    </option>
-                                    <option value="4+">
-                                        4+
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div id="obstetrico-fields">
                             <div class="section-subheader">
                                 <h3>
-                                    Histórico Obstétrico
+                                    Sinais Vitais
                                 </h3>
                             </div>
                             <div class="form-grid">
                                 <div class="form-group">
-                                    <label for="gestacoes">
-                                        Gestações (G)
-                                    </label>
-                                    <input id="gestacoes" name="gestacoes" type="number" value="0"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="partos-normais">
-                                        Partos Normais (N)
-                                    </label>
-                                    <input id="partos-normais" name="partos-normais" type="number" value="0"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="partos-cesarea">
-                                        Partos Cesárea (C)
-                                    </label>
-                                    <input id="partos-cesarea" name="partos-cesarea" type="number" value="0"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="abortos">
-                                        Abortos (A)
-                                    </label>
-                                    <input id="abortos" name="abortos" type="number" value="0"/>
-                                </div>
-                            </div>
-                        </div>
-                        <div id="gestacao-atual-fields">
-                            <div class="section-subheader">
-                                <h3>
-                                    Dados da Gestação Atual
-                                </h3>
-                                <label class="toggle">
-                                    <span class="toggle-label">
-                                        DUM Incerta
-                                    </span>
-                                    <input id="dum_incerta" name="dum_incerta" type="checkbox"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="form-grid mg-bottom-10">
-                                <div class="form-group">
-                                    <label for="dum">
-                                        DUM
-                                    </label>
-                                    <input id="dum" name="dum" type="date"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ig-dum">
-                                        IG DUM
-                                    </label>
-                                    <input id="ig-dum" name="ig-dum" placeholder="Calculada..." readonly="" type="text"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="data-usg">
-                                        Data 1ª USG
-                                    </label>
-                                    <input id="data-usg" name="data-usg" type="date"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ig-usg">
-                                        IG 1ª USG
-                                    </label>
-                                    <input id="ig-usg" name="ig-usg" placeholder="Ex: 8s 1d ou 8+1" type="text"/>
-                                </div>
-                            </div>
-                            <div class="form-grid">
-                                <div class="form-group">
-                                    <label for="ig-usg-atual">
-                                        IG USG Corrigida
-                                    </label>
-                                    <input id="ig-usg-atual" name="ig-usg-atual" placeholder="Calculada..." readonly="" type="text"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="ig-usg-atual">
-                                        IG Considerada
-                                    </label>
-                                    <input id="ig-considerada" name="ig-considerada" placeholder="Calculada..." readonly="" type="text"/>
-                                </div>
-                                <div class="form-group">
-                                    <label for="dpp">
-                                        DPP (Data Provável do Parto)
-                                    </label>
-                                    <input id="dpp" name="dpp" placeholder="Calculada..." readonly="" type="text"/>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section class="card collapsible-card">
-                        <h2 class="card-header collapsible-header">
-                            Ultrassonografias
-                        </h2>
-                        <div class="card-content">
-                            <div class="section-subheader">
-                                <button class="btn" id="add-usg-btn" type="button">
-                                    Adicionar Ultrassonografia
-                                </button>
-                            </div>
-                            <div id="usg-container">
-                            </div>
-                        </div>
-                    </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            Dados Complementares
-                        </h2>
-                        <div class="form-group grid-col-span-full">
-                            <label>
-                                Tipo Sanguíneo
-                            </label>
-                            <div class="toggle-group">
-                                <input id="ts_desc" name="tipo_sanguineo" type="radio" value="?"/>
-                                <label class="btn-toggle" for="ts_desc">
-                                    ?
-                                </label>
-                                <input id="ts_o_pos" name="tipo_sanguineo" type="radio" value="O+"/>
-                                <label class="btn-toggle" for="ts_o_pos">
-                                    O+
-                                </label>
-                                <input id="ts_o_neg" name="tipo_sanguineo" type="radio" value="O-"/>
-                                <label class="btn-toggle" for="ts_o_neg">
-                                    O-
-                                </label>
-                                <input id="ts_a_pos" name="tipo_sanguineo" type="radio" value="A+"/>
-                                <label class="btn-toggle" for="ts_a_pos">
-                                    A+
-                                </label>
-                                <input id="ts_a_neg" name="tipo_sanguineo" type="radio" value="A-"/>
-                                <label class="btn-toggle" for="ts_a_neg">
-                                    A-
-                                </label>
-                                <input id="ts_b_pos" name="tipo_sanguineo" type="radio" value="B+"/>
-                                <label class="btn-toggle" for="ts_b_pos">
-                                    B+
-                                </label>
-                                <input id="ts_b_neg" name="tipo_sanguineo" type="radio" value="B-"/>
-                                <label class="btn-toggle" for="ts_b_neg">
-                                    B-
-                                </label>
-                                <input id="ts_ab_pos" name="tipo_sanguineo" type="radio" value="AB+"/>
-                                <label class="btn-toggle" for="ts_ab_pos">
-                                    AB+
-                                </label>
-                                <input id="ts_ab_neg" name="tipo_sanguineo" type="radio" value="AB-"/>
-                                <label class="btn-toggle" for="ts_ab_neg">
-                                    AB-
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group grid-col-span-full">
-                            <label class="separator-label">
-                                Testes Rápidos (TR)
-                            </label>
-                            <div class="toggle-group testes-rapidos">
-                                <input class="state-toggle-input" name="tr_sifilis" type="hidden" value="nao_realizado"/>
-                                <label class="btn-toggle state-toggle-label nao_realizado" for="tr_sifilis">
-                                    Sífilis Não Realizado
-                                </label>
-                                <input class="state-toggle-input" name="tr_hiv" type="hidden" value="nao_realizado"/>
-                                <label class="btn-toggle state-toggle-label nao_realizado" for="tr_hiv">
-                                    Anti-HIV Não Realizado
-                                </label>
-                                <input class="state-toggle-input" name="tr_hepb" type="hidden" value="nao_realizado"/>
-                                <label class="btn-toggle state-toggle-label nao_realizado" for="tr_hepb">
-                                    HepB Não Realizado
-                                </label>
-                                <input class="state-toggle-input" name="tr_hepc" type="hidden" value="nao_realizado"/>
-                                <label class="btn-toggle state-toggle-label nao_realizado" for="tr_hepc">
-                                    HepC Não Realizado
-                                </label>
-                            </div>
-                        </div>
-                        <div class="form-group grid-col-span-full">
-                            <label class="separator-label">
-                                Alergias
-                            </label>
-                            <div class="tag-input-container" id="alergias-tags">
-                                <input class="tag-input" id="alergias-input" placeholder="Alergia a... (use vírgula para registrar)" type="text"/>
-                            </div>
-                        </div>
-                        <div class="form-group grid-col-span-full">
-                            <label class="separator-label">
-                                Vícios
-                            </label>
-                            <div class="toggle-group">
-                                <input id="etilismo" name="etilismo" type="checkbox"/>
-                                <label class="btn-toggle toggle-alert" for="etilismo">
-                                    Etilismo
-                                </label>
-                                <input id="tabagismo" name="tabagismo" type="checkbox"/>
-                                <label class="btn-toggle toggle-alert" for="tabagismo">
-                                    Tabagismo
-                                </label>
-                                <input id="drogas" name="drogas" type="checkbox"/>
-                                <label class="btn-toggle toggle-alert" for="drogas">
-                                    Drogadição
-                                </label>
-                            </div>
-                            <div class="form-group hidden-field" id="tabagismo-input" style="margin-top: 10px;">
-                                <label for="tabagismo_detalhe">
-                                    Detalhes do Tabagismo
-                                </label>
-                                <input id="tabagismo_detalhe" name="tabagismo_detalhe" placeholder="Ex: 20 maços/ano" type="text"/>
-                            </div>
-                            <div class="form-group hidden-field" id="drogas-input" style="margin-top: 10px;">
-                                <label for="drogas_detalhe">
-                                    Detalhes da Drogadição
-                                </label>
-                                <div class="tag-input-container" id="drogas-tags">
-                                    <input class="tag-input" id="drogas-input-field" placeholder="Maconha, Cocaína, etc. (use vírgula para registrar)" type="text"/>
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            Comorbidades e Medicações
-                        </h2>
-                        <div class="form-group grid-col-span-full">
-                            <label for="comorbidades-input">
-                                Comorbidades
-                            </label>
-                            <div class="toggle-group" style="margin-bottom: 20px">
-                                <label class="toggle">
-                                    <input id="dmg-dieta" name="comorbidade_dmg_dieta" type="checkbox"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        DMG (Dieta)
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input id="dmg-insulina" name="comorbidade_dmg_insulina" type="checkbox"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        DMG (Insulina)
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input id="hag" name="comorbidade_hag" type="checkbox"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        HAG
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input id="has" name="comorbidade_has" type="checkbox"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        HAS
-                                    </span>
-                                </label>
-                            </div>
-                            <div class="tag-input-container" id="comorbidades-tags">
-                                <input class="tag-input" id="comorbidades-input" placeholder="DM2, HAC, etc. (use vírgula para registrar)" type="text"/>
-                            </div>
-                        </div>
-                        <div class="form-group grid-col-span-full">
-                            <label class="separator-label">
-                                Medicações em Uso
-                            </label>
-                            <div id="medication-list">
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_folico" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            Ácido Fólico
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_folico" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_ferroso" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            Sulfato Ferroso
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_ferroso" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_calcio" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            Carbonato de Cálcio
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_calcio" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_metildopa" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            Metildopa
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_metildopa" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_aas" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            AAS
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_aas" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_nph" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            Insulina NPH
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_nph" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                                <div class="medication-item">
-                                    <label class="toggle">
-                                        <input name="med_regular" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                        <span class="toggle-label">
-                                            Insulina Regular
-                                        </span>
-                                    </label>
-                                    <input class="dose-input" name="dose_regular" placeholder="Dose" type="text"/>
-                                    <button class="btn remove-btn" style="visibility: hidden;" type="button">
-                                        X
-                                    </button>
-                                </div>
-                            </div>
-                            <button class="btn" id="add-medication-btn" style="margin-top: 10px;" type="button">
-                                Adicionar outra medicação
-                            </button>
-                        </div>
-                    </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            HDA (História da Doença Atual)
-                        </h2>
-                        <div class="form-group">
-                            <textarea id="hda" name="hda" placeholder="Resumo claro e objetivo do motivo da procura, início, evolução, fatores associados, sinais de alarme...">
-                            </textarea>
-                        </div>
-                    </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            Exame Físico
-                            <label class="toggle">
-                                <span class="toggle-label">
-                                    Gestação inicial ou não gestante
-                                </span>
-                                <input id="gestacao_inicial" name="gestacao_inicial" type="checkbox"/>
-                                <span class="toggle-slider">
-                                </span>
-                            </label>
-                        </h2>
-                        <div class="form-grid mg-bottom-10">
-                            <div class="form-group">
-                                <label for="nome">
-                                    Ectoscopia
-                                </label>
-                                <input id="ectoscopia" name="ectoscopia" type="text"/>
-                            </div>
-                        </div>
-                        <div class="form-grid gestacao-inicial-fields">
-                            <div class="form-group">
-                                <label>
-                                    Altura Uterina (cm)
-                                </label>
-                                <input name="altura_uterina" type="number"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    BCF (bpm)
-                                </label>
-                                <input name="bcf" type="number"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Mov. Fetal
-                                </label>
-                                <div class="toggle-group">
-                                    <input id="mov_fetal" name="mov_fetal" type="checkbox"/>
-                                    <label class="btn-toggle style-green-orange" data-checked="Ausente" data-default="Presente" for="mov_fetal">
-                                        Presente
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Tônus Uterino
-                                </label>
-                                <div class="toggle-group">
-                                    <input id="tonus_uterino" name="tonus_uterino" type="checkbox"/>
-                                    <label class="btn-toggle style-green-orange" data-checked="Aumentado" data-default="Normal" for="tonus_uterino">
-                                        Normal
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Dorso
-                                </label>
-                                <div class="toggle-group">
-                                    <input id="dorso" name="dorso" type="checkbox"/>
-                                    <label class="btn-toggle style-green-orange" data-checked="Direita" data-default="Esquerda" for="dorso">
-                                        Esquerda
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group grid-col-span-4">
-                                <div class="label-with-option">
-                                    <label for="dinamica_uterina">
-                                        Dinâmica Uterina
-                                    </label>
-                                    <label class="toggle">
-                                        <span class="toggle-label">
-                                            Ausente
-                                        </span>
-                                        <input checked="" id="dinamica_ausente" name="dinamica_ausente" type="checkbox"/>
-                                        <span class="toggle-slider">
-                                        </span>
-                                    </label>
-                                </div>
-                                <input disabled="" id="dinamica_uterina" name="dinamica_uterina" placeholder="Ex: 3 contrações / 10 min" type="text"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Abdômen
-                                </label>
-                                <div class="toggle-group">
-                                    <input id="abd" name="abd" type="checkbox"/>
-                                    <label class="btn-toggle style-green-orange" data-checked="Plano" data-default="Globoso" for="abd">
-                                        Globoso
-                                    </label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Apresentação Fetal
-                                </label>
-                                <div class="toggle-group">
-                                    <input checked="" id="apresentacao_cefalica" name="apresentacao" type="radio" value="Cefálica"/>
-                                    <label class="btn-toggle" for="apresentacao_cefalica">
-                                        Cefálica
-                                    </label>
-                                    <input id="apresentacao_pelvica" name="apresentacao" type="radio" value="Pélvica"/>
-                                    <label class="btn-toggle" for="apresentacao_pelvica">
-                                        Pélvica
-                                    </label>
-                                    <input id="apresentacao_outra" name="apresentacao" type="radio" value="Outra"/>
-                                    <label class="btn-toggle" for="apresentacao_outra">
-                                        Outra (Transversa/Obliqua)
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="section-subheader">
-                            <h3>
-                                Toque Vaginal
-                            </h3>
-                            <label class="toggle">
-                                <span class="toggle-label">
-                                    Evitado
-                                </span>
-                                <input checked="" id="toque_evitado" name="toque_evitado" type="checkbox"/>
-                                <span class="toggle-slider">
-                                </span>
-                            </label>
-                        </div>
-                        <div class="form-grid" id="toque_fields" style="display: none">
-                            <div class="form-group">
-                                <label>
-                                    Dilatação (cm)
-                                </label>
-                                <input name="dilatacao" type="number"/>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Posição
-                                </label>
-                                <select name="posicao">
-                                    <option value="">
-                                        Selecione...
-                                    </option>
-                                    <option value="Posterior">
-                                        Posterior
-                                    </option>
-                                    <option value="Médio">
-                                        Médio
-                                    </option>
-                                    <option value="Anterior">
-                                        Anterior
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Espessura
-                                </label>
-                                <select name="espessura">
-                                    <option value="">
-                                        Selecione...
-                                    </option>
-                                    <option value="Grosso">
-                                        Grosso
-                                    </option>
-                                    <option value="Médio">
-                                        Médio
-                                    </option>
-                                    <option value="Fino">
-                                        Fino
-                                    </option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>
-                                    Sangramento
-                                </label>
-                                <div class="toggle-group">
-                                    <input id="sangramento" name="sangramento" type="checkbox"/>
-                                    <label class="btn-toggle style-green-orange" data-checked="Presente" data-default="Ausente" for="sangramento">
-                                        Ausente
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="section-subheader gestacao-inicial-fields" id="bolsa_fields">
-                            <h3>
-                                Bolsa
-                            </h3>
-                            <label class="toggle">
-                                <label class="toggle-label" data-checked="Rota" data-default="integra" for="bolsa">
-                                    Rota
-                                </label>
-                                <input id="bolsa" name="bolsa" type="checkbox"/>
-                                <span class="toggle-slider">
-                                </span>
-                            </label>
-                        </div>
-                        <div class="form-grid hidden-field" id="bolsa_rota_fields">
-                            <div class="form-group">
-                                <label for="hora_rompimento">
-                                    Data e Hora do Rompimento
-                                </label>
-                                <input id="hora_rompimento" name="hora_rompimento" type="datetime-local"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="cor_liquido">
-                                    Cor do Líquido
-                                </label>
-                                <select id="cor_liquido" name="cor_liquido">
-                                    <option value="">
-                                        Selecione...
-                                    </option>
-                                    <option value="Claro">
-                                        Claro
-                                    </option>
-                                    <option value="Esverdeado">
-                                        Esverdeado
-                                    </option>
-                                    <option value="Meconial">
-                                        Meconial
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="section-subheader">
-                            <h3>
-                                Exame Especular
-                            </h3>
-                            <label class="toggle">
-                                <span class="toggle-label">
-                                    Evitado
-                                </span>
-                                <input checked="" id="especular_evitado" name="especular_evitado" type="checkbox"/>
-                                <span class="toggle-slider">
-                                </span>
-                            </label>
-                        </div>
-                        <div class="form-group hidden-field" id="especular_fields">
-                            <label>
-                                Descrição Especular
-                            </label>
-                            <textarea id="desc_especular" name="desc_especular">
-                            </textarea>
-                        </div>
-                    </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            Hipótese Diagnóstica e Conduta
-                        </h2>
-                        <div class="form-group">
-                            <label for="exames_laboratoriais">
-                                Exames Laboratoriais
-                            </label>
-                            <textarea id="exames_laboratoriais" name="exames_laboratoriais">
-                            </textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="exames_imagem">
-                                Exames de Imagem
-                            </label>
-                            <textarea id="exames_imagem" name="exames_imagem">
-                            </textarea>
-                        </div>
-                        <div class="form-group">
-                            <label for="hipotese-input">
-                                Hipótese Diagnóstica
-                            </label>
-                            <div class="tag-input-container" id="hipotese-tags">
-                                <input class="tag-input" id="hipotese-input" placeholder="Hipóteses... (use vírgula para registrar)" type="text"/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label>
-                                Conduta
-                            </label>
-                            <div class="conduta-grid options-container">
-                                <label class="toggle">
-                                    <input checked="" name="conduta" type="checkbox" value="Orientações Gerais"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        Orientações Gerais
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="Rotina de PE"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        Rotina de PE
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="Rotina Infecciosa"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        Rotina Infecciosa
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="Internação para resolução de gestação"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        Internação (resolução)
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="Internação para tratamento clínico"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        Internação (tratamento clínico)
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="CTG"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        CTG
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="USG Obstétrica"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        USG Obstétrica
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="USG Transvaginal"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        USG Transvaginal
-                                    </span>
-                                </label>
-                                <label class="toggle">
-                                    <input name="conduta" type="checkbox" value="Analgesia"/>
-                                    <span class="toggle-slider">
-                                    </span>
-                                    <span class="toggle-label">
-                                        Analgesia
-                                    </span>
-                                </label>
-                            </div>
-                            <label class="separator-label" for="condutas-input">
-                                Outras Condutas
-                            </label>
-                            <div class="tag-input-container" id="condutas-tags">
-                                <input class="tag-input" id="condutas-input" placeholder="Condutas extras... (use vírgula para registrar)" type="text"/>
-                            </div>
-                        </div>
-                    </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            Assinaturas
-                        </h2>
-                        <div id="signatures-container">
-                            <div class="signature-item">
-                                <div class="form-group" style="flex-grow: 1;">
                                     <label>
-                                        Título
+                                        PA (mmHg)
                                     </label>
-                                    <select name="signature_title">
-                                        <option value="Ddo.">
-                                            Ddo.
+                                    <input name="pa" placeholder="Ex: 120/80" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        FC (bpm)
+                                    </label>
+                                    <input name="fc" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        SpO2 (%)
+                                    </label>
+                                    <input name="spo2" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        TAx (°C)
+                                    </label>
+                                    <input name="tax" placeholder="Ex: 36.5" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        PA pós DLE
+                                    </label>
+                                    <input name="pa_dle" placeholder="Ex: 110/70" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="proteinuria">
+                                        Proteinúria
+                                    </label>
+                                    <select id="proteinuria" name="proteinuria">
+                                        <option value="N.R">
+                                            Não Realizado
                                         </option>
-                                        <option value="Dda.">
-                                            Dda.
+                                        <option value="Ausente">
+                                            Ausente
                                         </option>
-                                        <option value="MR.">
-                                            MR.
+                                        <option value="Traços">
+                                            Traços
                                         </option>
-                                        <option value="Dr.">
-                                            Dr.
+                                        <option value="1+">
+                                            1+
                                         </option>
-                                        <option value="Dra.">
-                                            Dra.
+                                        <option value="2+">
+                                            2+
+                                        </option>
+                                        <option value="3+">
+                                            3+
+                                        </option>
+                                        <option value="4+">
+                                            4+
                                         </option>
                                     </select>
                                 </div>
-                                <div class="form-group" style="flex-grow: 2;">
-                                    <label>
-                                        Nome Completo
+                                <div class="form-group">
+                                    <label for="hgt">
+                                        HGT
                                     </label>
-                                    <input name="signature_name" placeholder="Nome Completo" type="text"/>
+                                    <input name="hgt" type="text"/>
                                 </div>
-                                <button class="btn remove-signature-btn" style="align-self: flex-end; margin-bottom: 6px;" type="button">
-                                    X
+                            </div>
+                            <div id="obstetrico-fields">
+                                <div class="section-subheader">
+                                    <h3>
+                                        Histórico Obstétrico
+                                    </h3>
+                                </div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="gestacoes">
+                                            Gestações (G)
+                                        </label>
+                                        <input id="gestacoes" name="gestacoes" type="number" value="0"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="partos-normais">
+                                            Partos Normais (N)
+                                        </label>
+                                        <input id="partos-normais" name="partos-normais" type="number" value="0"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="partos-cesarea">
+                                            Partos Cesárea (C)
+                                        </label>
+                                        <input id="partos-cesarea" name="partos-cesarea" type="number" value="0"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="abortos">
+                                            Abortos (A)
+                                        </label>
+                                        <input id="abortos" name="abortos" type="number" value="0"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="gestacao-atual-fields">
+                                <div class="section-subheader">
+                                    <h3>
+                                        Dados da Gestação Atual
+                                    </h3>
+                                    <label class="toggle">
+                                        <span class="toggle-label">
+                                            DUM Incerta
+                                        </span>
+                                        <input id="dum_incerta" name="dum_incerta" type="checkbox"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="form-grid mg-bottom-10">
+                                    <div class="form-group">
+                                        <label for="dum">
+                                            DUM
+                                        </label>
+                                        <input id="dum" name="dum" type="date"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ig-dum">
+                                            IG DUM
+                                        </label>
+                                        <input id="ig-dum" name="ig-dum" placeholder="Calculada..." readonly="" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="data-usg">
+                                            Data 1ª USG
+                                        </label>
+                                        <input id="data-usg" name="data-usg" type="date"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ig-usg">
+                                            IG 1ª USG
+                                        </label>
+                                        <input id="ig-usg" name="ig-usg" placeholder="Ex: 8s 1d ou 8+1" type="text"/>
+                                    </div>
+                                </div>
+                                <div class="form-grid">
+                                    <div class="form-group">
+                                        <label for="ig-usg-atual">
+                                            IG USG Corrigida
+                                        </label>
+                                        <input id="ig-usg-atual" name="ig-usg-atual" placeholder="Calculada..." readonly="" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="ig-usg-atual">
+                                            IG Considerada
+                                        </label>
+                                        <input id="ig-considerada" name="ig-considerada" placeholder="Calculada..." readonly="" type="text"/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="dpp">
+                                            DPP (Data Provável do Parto)
+                                        </label>
+                                        <input id="dpp" name="dpp" placeholder="Calculada..." readonly="" type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title" id="headerUSG">
+                                Ultrassonografias
+                            </h2>
+                            <div class="card-content" id="contentUSG">
+                                <div class="section-subheader">
+                                    <button class="btn" id="add-usg-btn" type="button">
+                                        Adicionar Ultrassonografia
+                                    </button>
+                                </div>
+                                <div id="usg-container">
+                                </div>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                Dados Complementares
+                            </h2>
+                            <div class="form-group grid-col-span-full">
+                                <label>
+                                    Tipo Sanguíneo
+                                </label>
+                                <div class="toggle-group">
+                                    <input id="ts_desc" name="tipo_sanguineo" type="radio" value="?"/>
+                                    <label class="btn-toggle" for="ts_desc">
+                                        ?
+                                    </label>
+                                    <input id="ts_o_pos" name="tipo_sanguineo" type="radio" value="O+"/>
+                                    <label class="btn-toggle" for="ts_o_pos">
+                                        O+
+                                    </label>
+                                    <input id="ts_o_neg" name="tipo_sanguineo" type="radio" value="O-"/>
+                                    <label class="btn-toggle" for="ts_o_neg">
+                                        O-
+                                    </label>
+                                    <input id="ts_a_pos" name="tipo_sanguineo" type="radio" value="A+"/>
+                                    <label class="btn-toggle" for="ts_a_pos">
+                                        A+
+                                    </label>
+                                    <input id="ts_a_neg" name="tipo_sanguineo" type="radio" value="A-"/>
+                                    <label class="btn-toggle" for="ts_a_neg">
+                                        A-
+                                    </label>
+                                    <input id="ts_b_pos" name="tipo_sanguineo" type="radio" value="B+"/>
+                                    <label class="btn-toggle" for="ts_b_pos">
+                                        B+
+                                    </label>
+                                    <input id="ts_b_neg" name="tipo_sanguineo" type="radio" value="B-"/>
+                                    <label class="btn-toggle" for="ts_b_neg">
+                                        B-
+                                    </label>
+                                    <input id="ts_ab_pos" name="tipo_sanguineo" type="radio" value="AB+"/>
+                                    <label class="btn-toggle" for="ts_ab_pos">
+                                        AB+
+                                    </label>
+                                    <input id="ts_ab_neg" name="tipo_sanguineo" type="radio" value="AB-"/>
+                                    <label class="btn-toggle" for="ts_ab_neg">
+                                        AB-
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group grid-col-span-full">
+                                <label class="separator-label">
+                                    Testes Rápidos (TR)
+                                </label>
+                                <div class="toggle-group testes-rapidos">
+                                    <input class="state-toggle-input" name="tr_sifilis" type="hidden" value="nao_realizado"/>
+                                    <label class="btn-toggle state-toggle-label nao_realizado" for="tr_sifilis">
+                                        Sífilis Não Realizado
+                                    </label>
+                                    <input class="state-toggle-input" name="tr_hiv" type="hidden" value="nao_realizado"/>
+                                    <label class="btn-toggle state-toggle-label nao_realizado" for="tr_hiv">
+                                        Anti-HIV Não Realizado
+                                    </label>
+                                    <input class="state-toggle-input" name="tr_hepb" type="hidden" value="nao_realizado"/>
+                                    <label class="btn-toggle state-toggle-label nao_realizado" for="tr_hepb">
+                                        HepB Não Realizado
+                                    </label>
+                                    <input class="state-toggle-input" name="tr_hepc" type="hidden" value="nao_realizado"/>
+                                    <label class="btn-toggle state-toggle-label nao_realizado" for="tr_hepc">
+                                        HepC Não Realizado
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-group grid-col-span-full">
+                                <label class="separator-label">
+                                    Alergias
+                                </label>
+                                <div class="tag-input-container" id="alergias-tags">
+                                    <input class="tag-input" id="alergias-input" placeholder="Alergia a... (use vírgula para registrar)" type="text"/>
+                                </div>
+                            </div>
+                            <div class="form-group grid-col-span-full">
+                                <label class="separator-label">
+                                    Vícios
+                                </label>
+                                <div class="toggle-group">
+                                    <input id="etilismo" name="etilismo" type="checkbox"/>
+                                    <label class="btn-toggle toggle-alert" for="etilismo">
+                                        Etilismo
+                                    </label>
+                                    <input id="tabagismo" name="tabagismo" type="checkbox"/>
+                                    <label class="btn-toggle toggle-alert" for="tabagismo">
+                                        Tabagismo
+                                    </label>
+                                    <input id="drogas" name="drogas" type="checkbox"/>
+                                    <label class="btn-toggle toggle-alert" for="drogas">
+                                        Drogadição
+                                    </label>
+                                </div>
+                                <div class="form-group hidden-field" id="tabagismo-input" style="margin-top: 10px;">
+                                    <label for="tabagismo_detalhe">
+                                        Detalhes do Tabagismo
+                                    </label>
+                                    <input id="tabagismo_detalhe" name="tabagismo_detalhe" placeholder="Ex: 20 maços/ano" type="text"/>
+                                </div>
+                                <div class="form-group hidden-field" id="drogas-input" style="margin-top: 10px;">
+                                    <label for="drogas_detalhe">
+                                        Detalhes da Drogadição
+                                    </label>
+                                    <div class="tag-input-container" id="drogas-tags">
+                                        <input class="tag-input" id="drogas-input-field" placeholder="Maconha, Cocaína, etc. (use vírgula para registrar)" type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                Comorbidades e Medicações
+                            </h2>
+                            <div class="form-group grid-col-span-full">
+                                <label for="comorbidades-input">
+                                    Comorbidades
+                                </label>
+                                <div class="toggle-group" style="margin-bottom: 20px">
+                                    <label class="toggle">
+                                        <input id="dmg-dieta" name="comorbidade_dmg_dieta" type="checkbox"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            DMG (Dieta)
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input id="dmg-insulina" name="comorbidade_dmg_insulina" type="checkbox"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            DMG (Insulina)
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input id="hag" name="comorbidade_hag" type="checkbox"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            HAG
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input id="has" name="comorbidade_has" type="checkbox"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            HAS
+                                        </span>
+                                    </label>
+                                </div>
+                                <div class="tag-input-container" id="comorbidades-tags">
+                                    <input class="tag-input" id="comorbidades-input" placeholder="DM2, HAC, etc. (use vírgula para registrar)" type="text"/>
+                                </div>
+                            </div>
+                            <div class="form-group grid-col-span-full">
+                                <label class="separator-label">
+                                    Medicações em Uso
+                                </label>
+                                <div id="medication-list">
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_folico" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                Ácido Fólico
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_folico" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_ferroso" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                Sulfato Ferroso
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_ferroso" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_calcio" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                Carbonato de Cálcio
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_calcio" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_metildopa" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                Metildopa
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_metildopa" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_aas" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                AAS
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_aas" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_nph" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                Insulina NPH
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_nph" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                    <div class="medication-item">
+                                        <label class="toggle">
+                                            <input name="med_regular" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                            <span class="toggle-label">
+                                                Insulina Regular
+                                            </span>
+                                        </label>
+                                        <input class="dose-input" name="dose_regular" placeholder="Dose" type="text"/>
+                                        <button class="btn remove-btn" style="visibility: hidden;" type="button">
+                                            X
+                                        </button>
+                                    </div>
+                                </div>
+                                <button class="btn" id="add-medication-btn" style="margin-top: 10px;" type="button">
+                                    Adicionar outra medicação
+                                </button>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                HDA (História da Doença Atual)
+                            </h2>
+                            <div class="form-group">
+                                <textarea id="hda" name="hda" placeholder="Resumo claro e objetivo do motivo da procura, início, evolução, fatores associados, sinais de alarme...">
+                                </textarea>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                Exame Físico
+                                <label class="toggle">
+                                    <span class="toggle-label">
+                                        Gestação inicial ou não gestante
+                                    </span>
+                                    <input id="gestacao_inicial" name="gestacao_inicial" type="checkbox"/>
+                                    <span class="toggle-slider">
+                                    </span>
+                                </label>
+                            </h2>
+                            <div class="form-grid mg-bottom-10">
+                                <div class="form-group">
+                                    <label for="nome">
+                                        Ectoscopia
+                                    </label>
+                                    <input id="ectoscopia" name="ectoscopia" type="text"/>
+                                </div>
+                            </div>
+                            <div class="form-grid gestacao-inicial-fields">
+                                <div class="form-group">
+                                    <label>
+                                        Altura Uterina (cm)
+                                    </label>
+                                    <input name="altura_uterina" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        BCF (bpm)
+                                    </label>
+                                    <input name="bcf" type="number"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Mov. Fetal
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input id="mov_fetal" name="mov_fetal" type="checkbox"/>
+                                        <label class="btn-toggle style-green-orange" data-checked="Ausente" data-default="Presente" for="mov_fetal">
+                                            Presente
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Tônus Uterino
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input id="tonus_uterino" name="tonus_uterino" type="checkbox"/>
+                                        <label class="btn-toggle style-green-orange" data-checked="Aumentado" data-default="Normal" for="tonus_uterino">
+                                            Normal
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Dorso
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input id="dorso" name="dorso" type="checkbox"/>
+                                        <label class="btn-toggle style-green-orange" data-checked="Direita" data-default="Esquerda" for="dorso">
+                                            Esquerda
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group grid-col-span-4">
+                                    <div class="label-with-option">
+                                        <label for="dinamica_uterina">
+                                            Dinâmica Uterina
+                                        </label>
+                                        <label class="toggle">
+                                            <span class="toggle-label">
+                                                Ausente
+                                            </span>
+                                            <input checked="" id="dinamica_ausente" name="dinamica_ausente" type="checkbox"/>
+                                            <span class="toggle-slider">
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <input disabled="" id="dinamica_uterina" name="dinamica_uterina" placeholder="Ex: 3 contrações / 10 min" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Abdômen
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input id="abd" name="abd" type="checkbox"/>
+                                        <label class="btn-toggle style-green-orange" data-checked="Plano" data-default="Globoso" for="abd">
+                                            Globoso
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group grid-col-span-3">
+                                    <label>
+                                        Apresentação Fetal
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input checked="" id="apresentacao_cefalica" name="apresentacao" type="radio" value="Cefálica"/>
+                                        <label class="btn-toggle" for="apresentacao_cefalica">
+                                            Cefálica
+                                        </label>
+                                        <input id="apresentacao_pelvica" name="apresentacao" type="radio" value="Pélvica"/>
+                                        <label class="btn-toggle" for="apresentacao_pelvica">
+                                            Pélvica
+                                        </label>
+                                        <input id="apresentacao_outra" name="apresentacao" type="radio" value="Outra"/>
+                                        <label class="btn-toggle" for="apresentacao_outra">
+                                            Outra (Transversa/Obliqua)
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="section-subheader">
+                                <h3>
+                                    Toque Vaginal
+                                </h3>
+                                <label class="toggle">
+                                    <span class="toggle-label">
+                                        Evitado
+                                    </span>
+                                    <input checked="" id="toque_evitado" name="toque_evitado" type="checkbox"/>
+                                    <span class="toggle-slider">
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="form-grid" id="toque_fields" style="display: none">
+                                <div class="form-group">
+                                    <label>
+                                        Dilatação (cm)
+                                    </label>
+                                    <input name="dilatacao" placeholder="ex.: 1cm" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Posição
+                                    </label>
+                                    <select name="posicao">
+                                        <option value="">
+                                            Selecione...
+                                        </option>
+                                        <option value="Posterior">
+                                            Posterior
+                                        </option>
+                                        <option value="Médio">
+                                            Médio
+                                        </option>
+                                        <option value="Anterior">
+                                            Anterior
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Espessura
+                                    </label>
+                                    <select name="espessura">
+                                        <option value="">
+                                            Selecione...
+                                        </option>
+                                        <option value="Grosso">
+                                            Grosso
+                                        </option>
+                                        <option value="Médio">
+                                            Médio
+                                        </option>
+                                        <option value="Fino">
+                                            Fino
+                                        </option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>
+                                        Sangramento
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input id="sangramento" name="sangramento" type="checkbox"/>
+                                        <label class="btn-toggle style-green-orange" data-checked="Presente" data-default="Ausente" for="sangramento">
+                                            Ausente
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="section-subheader gestacao-inicial-fields" id="bolsa_fields">
+                                <h3>
+                                    Bolsa
+                                </h3>
+                                <label class="toggle">
+                                    <label class="toggle-label" data-checked="Rota" data-default="integra" for="bolsa">
+                                        Rota
+                                    </label>
+                                    <input id="bolsa" name="bolsa" type="checkbox"/>
+                                    <span class="toggle-slider">
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="form-grid hidden-field" id="bolsa_rota_fields">
+                                <div class="form-group">
+                                    <label for="hora_rompimento">
+                                        Data e Hora do Rompimento
+                                    </label>
+                                    <input id="hora_rompimento" name="hora_rompimento" type="datetime-local"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="cor_liquido">
+                                        Cor do Líquido
+                                    </label>
+                                    <select id="cor_liquido" name="cor_liquido">
+                                        <option value="">
+                                            Selecione...
+                                        </option>
+                                        <option value="Claro">
+                                            Claro
+                                        </option>
+                                        <option value="Esverdeado">
+                                            Esverdeado
+                                        </option>
+                                        <option value="Meconial">
+                                            Meconial
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="section-subheader">
+                                <h3>
+                                    Exame Especular
+                                </h3>
+                                <label class="toggle">
+                                    <span class="toggle-label">
+                                        Evitado
+                                    </span>
+                                    <input checked="" id="especular_evitado" name="especular_evitado" type="checkbox"/>
+                                    <span class="toggle-slider">
+                                    </span>
+                                </label>
+                            </div>
+                            <div class="form-group hidden-field" id="especular_fields">
+                                <label>
+                                    Descrição Especular
+                                </label>
+                                <textarea id="desc_especular" name="desc_especular">
+                                </textarea>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                Hipótese Diagnóstica e Conduta
+                            </h2>
+                            <div class="form-group">
+                                <label for="exames_laboratoriais">
+                                    Exames Laboratoriais
+                                </label>
+                                <textarea id="exames_laboratoriais" name="exames_laboratoriais">
+                                </textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="exames_imagem">
+                                    Exames de Imagem
+                                </label>
+                                <textarea id="exames_imagem" name="exames_imagem">
+                                </textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="hipotese-input">
+                                    Hipótese Diagnóstica
+                                </label>
+                                <div class="tag-input-container" id="hipotese-tags">
+                                    <input class="tag-input" id="hipotese-input" placeholder="Hipóteses... (use vírgula para registrar)" type="text"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label>
+                                    Conduta
+                                </label>
+                                <div class="conduta-grid options-container">
+                                    <label class="toggle">
+                                        <input checked="" name="conduta" type="checkbox" value="Orientações Gerais"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            Orientações Gerais
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="Rotina de PE"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            Rotina de PE
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="Rotina Infecciosa"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            Rotina Infecciosa
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="Internação para resolução de gestação"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            Internação (resolução)
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="Internação para tratamento clínico"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            Internação (tratamento clínico)
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="CTG"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            CTG
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="USG Obstétrica"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            USG Obstétrica
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="USG Transvaginal"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            USG Transvaginal
+                                        </span>
+                                    </label>
+                                    <label class="toggle">
+                                        <input name="conduta" type="checkbox" value="Analgesia"/>
+                                        <span class="toggle-slider">
+                                        </span>
+                                        <span class="toggle-label">
+                                            Analgesia
+                                        </span>
+                                    </label>
+                                </div>
+                                <label class="separator-label" for="condutas-input">
+                                    Outras Condutas
+                                </label>
+                                <div class="tag-input-container" id="condutas-tags">
+                                    <input class="tag-input" id="condutas-input" placeholder="Condutas extras... (use vírgula para registrar)" type="text"/>
+                                </div>
+                            </div>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                Assinaturas
+                            </h2>
+                            <div id="signatures-container">
+                                <div class="signature-item">
+                                    <div class="form-group" style="flex-grow: 1;">
+                                        <label>
+                                            Título
+                                        </label>
+                                        <select name="signature_title">
+                                            <option value="Ddo.">
+                                                Ddo.
+                                            </option>
+                                            <option value="Dda.">
+                                                Dda.
+                                            </option>
+                                            <option value="MR.">
+                                                MR.
+                                            </option>
+                                            <option value="Dr.">
+                                                Dr.
+                                            </option>
+                                            <option value="Dra.">
+                                                Dra.
+                                            </option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group" style="flex-grow: 2;">
+                                        <label>
+                                            Nome Completo
+                                        </label>
+                                        <input name="signature_name" placeholder="Nome Completo" type="text"/>
+                                    </div>
+                                    <button class="btn remove-signature-btn" style="align-self: flex-end; margin-bottom: 6px;" type="button">
+                                        X
+                                    </button>
+                                </div>
+                            </div>
+                            <button class="btn" id="add-signature-btn" style="width: 100%; margin-top: 10px;" type="button">
+                                Adicionar Assinatura
+                            </button>
+                        </section>
+                        <section class="card">
+                            <h2 class="card-title">
+                                Campos de Internação
+                            </h2>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="procedencia">
+                                        Prontuário
+                                    </label>
+                                    <input id="prontuario" name="prontuario" type="text"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="dup">
+                                        Data do Último Parto
+                                    </label>
+                                    <input id="dup" name="dup" type="date"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="consultas">
+                                        Consultas de Pré-Natal
+                                    </label>
+                                    <input id="consultas" name="consultas" type="number"/>
+                                </div>
+                                <div class="form-group grid-col-span-2">
+                                    <label>
+                                        Caráter da Internação
+                                    </label>
+                                    <div class="toggle-group">
+                                        <input checked="" id="carater_cesarea" name="carater_internacao" type="radio" value="Cesárea"/>
+                                        <label class="btn-toggle" for="carater_cesarea">
+                                            Cesárea
+                                        </label>
+                                        <input id="carater_inducao_normal" name="carater_internacao" type="radio" value="Indução ou Normal"/>
+                                        <label class="btn-toggle" for="carater_inducao_normal">
+                                            Vaginal
+                                        </label>
+                                        <input id="carater_tratamento_clinico" name="carater_internacao" type="radio" value="Tratamento Clínico"/>
+                                        <label class="btn-toggle" for="carater_tratamento_clinico">
+                                            Tto. Clínico
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+                    </form>
+                    <section class="card">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <button class="btn primary" id="btn-gerar-prontuario">
+                                    Gerar Prontuário
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn primary" id="btn-gerar-aih">
+                                    Gerar texto AIH
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn primary" id="btn-print-pdf">
+                                    PDF Internação
+                                </button>
+                            </div>
+                            <div class="form-group">
+                                <button class="btn warning" id="btn-add-pendencia-form">
+                                    Adicionar Pendência
                                 </button>
                             </div>
                         </div>
-                        <button class="btn" id="add-signature-btn" style="width: 100%; margin-top: 10px;" type="button">
-                            Adicionar Assinatura
-                        </button>
                     </section>
-                    <section class="card">
-                        <h2 class="card-header">
-                            Campos de Internação
+                    <section class="card output-card">
+                        <h2 class="card-title">
+                            Prontuário Gerado (texto)
                         </h2>
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label for="procedencia">
-                                    Prontuário
-                                </label>
-                                <input id="prontuario" name="prontuario" type="text"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="dup">
-                                    Data do Último Parto
-                                </label>
-                                <input id="dup" name="dup" type="date"/>
-                            </div>
-                            <div class="form-group">
-                                <label for="consultas">
-                                    Consultas de Pré-Natal
-                                </label>
-                                <input id="consultas" name="consultas" type="number"/>
-                            </div>
-                            <div class="form-group grid-col-span-2">
-                                <label>
-                                    Caráter da Internação
-                                </label>
-                                <div class="toggle-group">
-                                    <input checked="" id="carater_cesarea" name="carater_internacao" type="radio" value="Cesárea"/>
-                                    <label class="btn-toggle" for="carater_cesarea">
-                                        Cesárea
-                                    </label>
-                                    <input id="carater_inducao_normal" name="carater_internacao" type="radio" value="Indução ou Normal"/>
-                                    <label class="btn-toggle" for="carater_inducao_normal">
-                                        Indução ou Normal
-                                    </label>
-                                    <input id="carater_tratamento_clinico" name="carater_internacao" type="radio" value="Tratamento Clínico"/>
-                                    <label class="btn-toggle" for="carater_tratamento_clinico">
-                                        Tratamento Clínico
-                                    </label>
-                                </div>
-                            </div>
+                        <div class="form-group">
+                            <textarea id="output" placeholder="O texto gerado aparecerá aqui..." readonly="">
+                            </textarea>
+                        </div>
+                        <div class="toolbar" style="justify-content: flex-end;">
+                            <button class="btn" id="btn-copy">
+                                Copiar
+                            </button>
+                            <button class="btn" id="btn-download">
+                                Baixar .txt
+                            </button>
                         </div>
                     </section>
-                </form>
-                <section class="card">
-                    <div class="form-grid">
+                    <section class="card output-card">
+                        <h2 class="card-title">
+                            Texto AIH Gerado (texto)
+                        </h2>
                         <div class="form-group">
-                            <button class="btn primary" id="btn-gerar-prontuario">
-                                Gerar Prontuário
+                            <textarea id="output-aih" placeholder="O texto gerado aparecerá aqui..." readonly="">
+                            </textarea>
+                        </div>
+                        <div class="toolbar" style="justify-content: flex-end;">
+                            <button class="btn" id="btn-copy-aih">
+                                Copiar
+                            </button>
+                            <button class="btn" id="btn-download-aih">
+                                Baixar .txt
                             </button>
                         </div>
-                        <div class="form-group">
-                            <button class="btn primary" id="btn-gerar-aih">
-                                Gerar texto AIH
-                            </button>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn primary" id="btn-print-pdf">
-                                Gerar PDF de Internação
-                            </button>
-                        </div>
-                        <div class="form-group">
-                            <button class="btn warning" id="btn-add-pendencia-form">
-                                Adicionar Pendência
-                            </button>
-                        </div>
-                    </div>
-                </section>
-                <section class="card output-card">
-                    <h2 class="card-header">
-                        Prontuário Gerado (texto)
-                    </h2>
-                    <div class="form-group">
-                        <textarea id="output" placeholder="O texto gerado aparecerá aqui..." readonly="">
-                        </textarea>
-                    </div>
-                    <div class="toolbar" style="justify-content: flex-end;">
-                        <button class="btn" id="btn-copy">
-                            Copiar
-                        </button>
-                        <button class="btn" id="btn-download">
-                            Baixar .txt
-                        </button>
-                    </div>
-                </section>
-                <section class="card output-card">
-                    <h2 class="card-header">
-                        Texto AIH Gerado (texto)
-                    </h2>
-                    <div class="form-group">
-                        <textarea id="output-aih" placeholder="O texto gerado aparecerá aqui..." readonly="">
-                        </textarea>
-                    </div>
-                    <div class="toolbar" style="justify-content: flex-end;">
-                        <button class="btn" id="btn-copy-aih">
-                            Copiar
-                        </button>
-                        <button class="btn" id="btn-download">
-                            Baixar .txt
-                        </button>
-                    </div>
-                </section>
-                <div class="toolbar">
-                    <button class="btn" id="btn-clear">
-                        Limpar Tudo
-                    </button>
-                    <button class="btn" id="btn-save">
-                        Salvar Atendimento
-                    </button>
+                    </section>
                 </div>
-                <section class="card collapsible-card">
-                    <h2 class="card-header collapsible-header">
-                        Atendimentos Salvos
-                    </h2>
-                    <div class="table-container" style="display: none;">
-                        <table id="saved-atendimentos-table">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Data/Hora
-                                    </th>
-                                    <th>
-                                        Nome
-                                    </th>
-                                    <th>
-                                        IG USG
-                                    </th>
-                                    <th>
-                                        Prontuário
-                                    </th>
-                                    <th>
-                                        Comorbidades
-                                    </th>
-                                    <th>
-                                        Ações
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="6" style="text-align: center;">
-                                        Nenhum atendimento salvo.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
-                <section class="card collapsible-card">
-                    <h2 class="card-header collapsible-header">
-                        Pendências e Reavaliações
-                    </h2>
-                    <div class="table-container" style="display: none">
-                        <table id="pendencias-table">
-                            <thead>
-                                <tr>
-                                    <th>
-                                        Tempo Restante
-                                    </th>
-                                    <th>
-                                        Nome
-                                    </th>
-                                    <th>
-                                        Prontuário
-                                    </th>
-                                    <th>
-                                        Descrição
-                                    </th>
-                                    <th>
-                                        Ações
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td colspan="5" style="text-align: center;">
-                                        Nenhuma pendência.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </section>
+                <div aria-labelledby="pendencias-tab" class="tab-pane fade" id="pendencias" role="tabpanel">
+                    <section class="card">
+                        <div class="table-container" style="display: block;">
+                            <table id="pendencias-table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Tempo Restante
+                                        </th>
+                                        <th>
+                                            Nome
+                                        </th>
+                                        <th>
+                                            Prontuário
+                                        </th>
+                                        <th>
+                                            Descrição
+                                        </th>
+                                        <th>
+                                            Ações
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5" style="text-align: center;">
+                                            Nenhuma pendência.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+                <div aria-labelledby="finalizados-tab" class="tab-pane fade" id="finalizados" role="tabpanel">
+                    <section class="card">
+                        <div class="table-container">
+                            <table id="saved-atendimentos-table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Data/Hora
+                                        </th>
+                                        <th>
+                                            Nome
+                                        </th>
+                                        <th>
+                                            IG
+                                        </th>
+                                        <th>
+                                            Prontuário
+                                        </th>
+                                        <th>
+                                            Comorbidades
+                                        </th>
+                                        <th>
+                                            Ações
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6" style="text-align: center;">
+                                            Nenhum atendimento salvo.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
             </div>
             <div class="modal-overlay hidden-field" id="pendencia-modal">
                 <div class="modal-content">
@@ -1188,16 +1221,31 @@
                     </div>
                 </div>
             </div>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js">
-            </script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
-            </script>
-            <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
-            <script src="front.js">
-            </script>
-            
-        </body>
-        <div id="notification-container">
+            <div aria-hidden="true" aria-labelledby="modalViewTitle" class="modal fade" id="view-atendimento-modal" tabindex="-1">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modalViewTitle">
+                                Visualizar Atendimento
+                            </h5>
+                            <button aria-label="Close" class="btn-close" data-bs-dismiss="modal" type="button">
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </head>
+    </body>
 </html>
+<div id="notification-container">
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js">
+</script>
+<script src="front.js">
+</script>
