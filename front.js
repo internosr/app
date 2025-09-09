@@ -11,39 +11,44 @@
  *
  * As funções são organizadas por seções lógicas para maior clareza.
  */
-
 // =====================================
 // ===== Utilidades =====
 // =====================================
-
 const MS_PER_DAY = 24 * 60 * 60 * 1000;
 let autoSaveTimer;
 const AUTO_SAVE_DELAY = 2000; // Salva após 2 segundos de inatividade
-
+// Referências para Pendências
+const PENDENCIA_LS_KEY = 'pendencias_salvas';
+const pendenciasTableBody = document.querySelector('#pendencias-table tbody');
+const pendenciaModal = document.getElementById('pendencia-modal');
+const btnSalvarPendencia = document.getElementById('btn-salvar-pendencia');
+const pendenciaDescricaoInput = document.getElementById('pendencia-descricao');
+const pendenciaTempoInput = document.getElementById('pendencia-tempo');
+const modalNome = document.getElementById('modal-paciente-nome');
+const modalProntuario = document.getElementById('modal-prontuario');
 
 function setCookie(cname, cvalue, exminutes = 5) {
-  const d = new Date();
-  d.setTime(d.getTime() + (exminutes * 60 * 1000)); // Calcula o tempo em milissegundos
-  let expires = "expires=" + d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    const d = new Date();
+    d.setTime(d.getTime() + (exminutes * 60 * 1000)); // Calcula o tempo em milissegundos
+    let expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
 
 function getCookie(cname) {
-  let name = cname + "=";
-  let decodedCookie = decodeURIComponent(document.cookie);
-  let ca = decodedCookie.split(';');
-  for(let i = 0; i <ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for (let i = 0; i < ca.length; i++) {
+        let c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
     }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
+    return "";
 }
-
 /**
  * Inicia um relógio na interface para exibir a hora atual.
  */
@@ -57,7 +62,6 @@ function startClock() {
     tick();
     setInterval(tick, 30_000);
 }
-
 /**
  * Cria um novo objeto Date com apenas a data (sem a parte de tempo),
  * usando o fuso horário UTC para garantir consistência.
@@ -68,7 +72,6 @@ function toDateOnly(d) {
     const dt = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()));
     return dt;
 }
-
 /**
  * Calcula a diferença em dias entre duas datas.
  * @param {Date} dateA A data final.
@@ -80,7 +83,6 @@ function diffDays(dateA, dateB) {
     const b = toDateOnly(dateB);
     return (Math.floor((a - b) / MS_PER_DAY) - 1);
 }
-
 /**
  * Adiciona um número de dias a uma data.
  * @param {Date} date A data inicial.
@@ -93,7 +95,6 @@ function addDays(date, days) {
     r.setDate(r.getDate() + days);
     return r;
 }
-
 /**
  * Formata um objeto Date para o formato de data brasileiro (DD/MM/YYYY).
  * @param {Date} date O objeto Date a ser formatado.
@@ -106,7 +107,6 @@ function formatDateBR(date) {
     const yyyy = d.getFullYear();
     return `${dd}/${mm}/${yyyy}`;
 }
-
 /**
  * Formata um total de dias em semanas e dias (ex: 280 -> 40s0d).
  * @param {number} totalDays O total de dias.
@@ -118,7 +118,6 @@ function formatWeeksDays(totalDays) {
     const days = totalDays % 7;
     return `${weeks}s${days}d`;
 }
-
 /**
  * Formata um objeto Date para o formato de hora e data brasileiro (HH:mm de DD/MM).
  * @param {Date} date O objeto Date a ser formatado.
@@ -130,10 +129,8 @@ function formateDateHoraBR(date) {
     const minute = String(d.getMinutes()).padStart(2, '0');
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0');
-
     return `${hour}:${minute} de ${day}/${month}`;
 }
-
 /**
  * Analisa uma string de idade gestacional e a converte para o total de dias.
  * Suporta formatos como "40+2", "40s2d", "40 2".
@@ -165,7 +162,6 @@ function parseIgString(str) {
     }
     return null;
 }
-
 /**
  * Calcula a idade gestacional (IG) atual com base na Data da Última Menstruação (DUM).
  * @param {string} dumStr A DUM em formato de string.
@@ -180,7 +176,6 @@ function calcIgByDUM(dumStr) {
     if (days < 0) return '';
     return formatWeeksDays(days);
 }
-
 /**
  * Calcula a Data Provável do Parto (DPP) com base na DUM.
  * @param {string} dumStr A DUM em formato de string.
@@ -193,7 +188,6 @@ function calcDPP(dumStr) {
     const dpp = addDays(dum, 280);
     return formatDateBR(dpp);
 }
-
 /**
  * Calcula a DPP com base na data e IG de uma ultrassonografia (USG).
  * @param {string} usgDateStr A data da USG.
@@ -209,7 +203,6 @@ function calcDPPFromUsg(usgDateStr, usgIgStr) {
     const dpp = addDays(usgDate, dppDays);
     return formatDateBR(dpp);
 }
-
 /**
  * Calcula a IG corrigida com base na data e IG de uma USG, ajustando para a data atual.
  * @param {string} dataUsgStr A data da USG.
@@ -227,7 +220,29 @@ function calcIgUsgCorrigida(dataUsgStr, igUsgStr) {
     const total = baseDays + Math.max(0, delta);
     return formatWeeksDays(total);
 }
-
+/**
+ * Calcula a idade gestacional considerada (IG) com base na regra de 7 dias.
+ * @param {string} igDumStr A IG pela DUM.
+ * @param {string} igUsgStr A IG corrigida pela USG.
+ * @param {boolean} dumIncerta Se a DUM é incerta.
+ * @returns {string} A IG considerada, formatada em semanas e dias, ou uma string vazia.
+ */
+function calcIgConsiderada(igDumStr, igUsgStr, dumIncerta) {
+    if (dumIncerta) {
+        return igUsgStr;
+    }
+    const igDumDays = parseIgString(igDumStr);
+    const igUsgDays = parseIgString(igUsgStr);
+    if (igDumDays === null || igUsgDays === null) {
+        return '';
+    }
+    const diffDaysAbs = Math.abs(igDumDays - igUsgDays);
+    if (diffDaysAbs <= 7) {
+        return igDumStr;
+    } else {
+        return igUsgStr;
+    }
+}
 /**
  * Classifica a paciente em um dos 10 grupos de Robson com base nos dados do formulário.
  * @param {object} data Os dados coletados do formulário.
@@ -249,24 +264,19 @@ function classifyRobson(data) {
     const isCesareaPreLabor = data.carater_internacao === 'Cesárea';
     const apresentacaoFetal = data.apresentacao;
     const isUnica = data.gemelaridade !== 'on'; // Assumindo que você terá um campo de gemelaridade
-
     // A nova lógica de prioridade
-    
     // Grupo 8: Gestação Múltipla
     if (!isUnica) {
         return 8;
     }
-
     // Grupo 10: Feto Pré-termo
     if (isIgPreTermo) {
         return 10;
     }
-    
     // Grupo 9: Feto Transverso ou Oblíquo
     if (apresentacaoFetal === 'Outra') {
         return 9;
     }
-
     // Grupos 6 e 7: Apresentação Pélvica
     if (apresentacaoFetal === 'Pélvica') {
         if (isMultipara) {
@@ -275,43 +285,34 @@ function classifyRobson(data) {
             return 6;
         }
     }
-    
     // Grupos 1 a 5 (apenas para apresentação Cefálica e a termo)
     if (apresentacaoFetal === 'Cefálica' && isIgTermo) {
-        
         // Grupo 1: Nulípara, espontâneo
         if (isNuligesta && isSpontaneous) {
             return 1;
         }
-
         // Grupo 2: Nulípara, indução ou cesárea antes do TP
         if (isNuligesta && (isInduced || isCesareaPreLabor)) {
             return 2;
         }
-        
         // Grupo 3: Multípara sem cesárea anterior, espontâneo
         if (isMultipara && !temCesareaAnterior && isSpontaneous) {
             return 3;
         }
-
         // Grupo 4: Multípara sem cesárea anterior, indução ou cesárea antes do TP
         if (isMultipara && !temCesareaAnterior && (isInduced || isCesareaPreLabor)) {
             return 4;
         }
-        
         // Grupo 5: Multípara com cesárea anterior
         if (isMultipara && temCesareaAnterior) {
             return 5;
         }
     }
-
     return null; // Caso nenhum critério seja atendido
 }
-
 // ===========================================
 // ===== Lógica de Tags (Comorbidades e Condutas) =====
 // ===========================================
-
 /**
  * Configura um campo de entrada para funcionar como um sistema de tags.
  * Permite adicionar tags digitando, usando vírgula ou colando.
@@ -332,7 +333,6 @@ function setupTagInput(containerId, inputId) {
             container.removeChild(tag);
         });
     }
-
     input.addEventListener('keydown', (e) => {
         if (e.key === 'Enter' || e.key === ',') {
             e.preventDefault();
@@ -348,7 +348,6 @@ function setupTagInput(containerId, inputId) {
         tags.forEach(addTag);
         input.value = '';
     });
-
     /**
      * Obtém todas as tags do container.
      * @returns {string[]} Um array com o texto de cada tag.
@@ -356,7 +355,6 @@ function setupTagInput(containerId, inputId) {
     container.getTags = () => {
         return Array.from(container.querySelectorAll('.tag')).map((el) => el.textContent.replace(/\s*×$/, ''));
     };
-
     /**
      * Define as tags do container, substituindo as existentes.
      * @param {string[]} tags Um array de strings para serem adicionadas como tags.
@@ -366,49 +364,39 @@ function setupTagInput(containerId, inputId) {
         tags.forEach(addTag);
     };
 }
-
 // ==============================================
 // ===== Manipulação de Formulário e UI =====
 // ==============================================
-
 // ===================================
 // ===== Sistema de Notificação =====
 // ===================================
-
 /**
  * Exibe uma notificação moderna no canto superior direito.
  * @param {string} message A mensagem a ser exibida.
  * @param {string} [type='info'] O tipo da notificação ('success', 'error', 'info').
  * @param {number} [duration=3000] Duração em milissegundos antes de desaparecer.
  */
-
 function showNotification(message, type = 'info', duration = 5000) {
     const container = document.getElementById('notification-container');
     const notification = document.createElement('div');
     notification.className = `notification ${type}`;
     notification.textContent = message;
-
     container.appendChild(notification);
-
     // Exibe a notificação com um pequeno atraso para a animação
     setTimeout(() => {
         notification.classList.add('show');
     }, 10);
-
     // Remove a notificação após a duração
     setTimeout(() => {
         notification.classList.remove('show');
         notification.classList.add('hide');
-        
         // Remove o elemento do DOM após a animação de saída
         notification.addEventListener('transitionend', () => {
             notification.remove();
         });
     }, duration);
-
     console.log(type);
 }
-
 // Referências a elementos do DOM
 const form = document.getElementById('form-prontuario');
 const dumInput = document.getElementById('dum');
@@ -418,6 +406,7 @@ const dpp = document.getElementById('dpp');
 const dataUsg = document.getElementById('data-usg');
 const igUsg = document.getElementById('ig-usg');
 const igUsgAtual = document.getElementById('ig-usg-atual');
+const igConsiderada = document.getElementById('ig-considerada');
 const bolsaToggle = document.getElementById('bolsa');
 const bolsaRotaFields = document.getElementById('bolsa_rota_fields');
 const toqueEvitado = document.getElementById('toque_evitado');
@@ -432,22 +421,19 @@ const signaturesContainer = document.getElementById('signatures-container');
 const addSignatureBtn = document.getElementById('add-signature-btn');
 const usgContainer = document.getElementById('usg-container');
 const addUsgBtn = document.getElementById('add-usg-btn');
-
 const nuligestaToggle = document.getElementById('nuligesta');
 const gestacaoInicalToggle = document.getElementById('gestacao_inicial');
 const obstetricoFields = document.getElementById('obstetrico-fields');
 const gestacaoAtualFields = document.getElementById('gestacao-atual-fields');
 const gestacaoInicialFields = document.getElementsByClassName('gestacao-inicial-fields');
-
 const dinamicaAusenteToggle = document.getElementById('dinamica_ausente');
 const dinamicaInput = document.getElementById('dinamica_uterina');
-
 const etilismoCheckbox = document.getElementById('etilismo');
 const tabagismoCheckbox = document.getElementById('tabagismo');
 const drogasCheckbox = document.getElementById('drogas');
 const tabagismoInputDiv = document.getElementById('tabagismo-input');
 const drogasInputDiv = document.getElementById('drogas-input');
-
+const btnAddPendenciaForm = document.getElementById('btn-add-pendencia-form');
 // Lógica de estado para Testes Rápidos
 const trLabels = document.querySelectorAll('.testes-rapidos .state-toggle-label');
 const trStates = ['nao_realizado', 'nao_reagente', 'reagente'];
@@ -473,7 +459,6 @@ const trLabelsMap = {
         reagente: 'Anti-HCV Reagente',
     },
 };
-
 /**
  * Atualiza os campos de cálculo de gravidez (IG e DPP) com base na DUM ou USG.
  */
@@ -489,8 +474,11 @@ function refreshPregCalc() {
         dpp.value = calcDPPFromUsg(dataUsg.value, igUsg.value);
     }
     igUsgAtual.value = calcIgUsgCorrigida(dataUsg.value, igUsg.value);
+    // Nova lógica para a IG considerada
+    if (igConsiderada) {
+        igConsiderada.value = calcIgConsiderada(igDum.value, igUsgAtual.value, dumIncerta.checked);
+    }
 }
-
 /**
  * Habilita ou desabilita os campos relacionados à obstetrícia.
  * @param {boolean} disabled Se os campos devem ser desabilitados.
@@ -514,7 +502,6 @@ function setObstetricFieldsDisabled(disabled) {
         gestacaoAtualFields.style.opacity = '1';
     }
 }
-
 /**
  * Atualiza o texto do label de um botão de alternância com base no estado do checkbox.
  * @param {HTMLInputElement} input O checkbox.
@@ -525,7 +512,6 @@ function updateToggleLabel(input) {
         label.textContent = input.checked ? label.dataset.checked : label.dataset.default;
     }
 }
-
 /**
  * Adiciona um campo de medicação dinâmico ao formulário.
  */
@@ -546,7 +532,6 @@ function addMedicationField() {
     });
     medicationList.appendChild(newItem);
 }
-
 /**
  * Adiciona um campo de assinatura dinâmico ao formulário.
  * @param {string} [title='Ddo.'] O título da assinatura (ex: "Dr.", "Acd.").
@@ -578,17 +563,16 @@ function addSignatureField(title = 'Ddo.', name = '') {
         signaturesContainer.removeChild(newItem);
     });
 }
-
 /**
  * Cria um novo bloco de USG, incluindo a data, tipo e um concepto inicial.
  * @param {object} [data] Dados para pré-preenchimento.
  * @param {number} index O índice do USG.
  */
 function createUsgBlock(data = {}, index = 0) {
-  const usgItem = document.createElement('div');
-  usgItem.className = 'usg-item';
-  usgItem.dataset.usgIndex = index;
-  usgItem.innerHTML = `
+    const usgItem = document.createElement('div');
+    usgItem.className = 'usg-item';
+    usgItem.dataset.usgIndex = index;
+    usgItem.innerHTML = `
     <div class="form-grid">
     
       <button type="button" class="remove-usg-btn">X</button>
@@ -611,26 +595,21 @@ function createUsgBlock(data = {}, index = 0) {
       <button type="button" class="btn add-concepto-btn" data-usg-index="${index}">Adicionar Concepto</button>
     </div>
   `;
-
-  const conceptoContainer = usgItem.querySelector(`#concepto-container-${index}`);
-  const conceptosData = data.conceptos && data.conceptos.length > 0 ? data.conceptos : [{}];
-  conceptosData.forEach((conceptoData, cIndex) => {
-    createConceptoBlock(conceptoContainer, conceptoData, cIndex);
-  });
-
-  usgItem.querySelector('.remove-usg-btn').addEventListener('click', () => {
-    usgItem.remove();
-  });
-
-  usgItem.querySelector('.add-concepto-btn').addEventListener('click', (e) => {
-    const parentUsgIndex = e.target.dataset.usgIndex;
-    const newConceptoIndex = conceptoContainer.children.length;
-    createConceptoBlock(conceptoContainer, {}, newConceptoIndex);
-  });
-
-  usgContainer.appendChild(usgItem);
+    const conceptoContainer = usgItem.querySelector(`#concepto-container-${index}`);
+    const conceptosData = data.conceptos && data.conceptos.length > 0 ? data.conceptos : [{}];
+    conceptosData.forEach((conceptoData, cIndex) => {
+        createConceptoBlock(conceptoContainer, conceptoData, cIndex);
+    });
+    usgItem.querySelector('.remove-usg-btn').addEventListener('click', () => {
+        usgItem.remove();
+    });
+    usgItem.querySelector('.add-concepto-btn').addEventListener('click', (e) => {
+        const parentUsgIndex = e.target.dataset.usgIndex;
+        const newConceptoIndex = conceptoContainer.children.length;
+        createConceptoBlock(conceptoContainer, {}, newConceptoIndex);
+    });
+    usgContainer.appendChild(usgItem);
 }
-
 /**
  * Cria um novo bloco de concepto (feto e placenta).
  * @param {HTMLElement} container O container pai (concepto-container).
@@ -638,11 +617,11 @@ function createUsgBlock(data = {}, index = 0) {
  * @param {number} index O índice do concepto.
  */
 function createConceptoBlock(container, data = {}, index = 0) {
-  const parentUsgIndex = container.closest('.usg-item').dataset.usgIndex;
-  const conceptoItem = document.createElement('div');
-  conceptoItem.className = 'concepto-item';
-  conceptoItem.dataset.conceptoIndex = index;
-  conceptoItem.innerHTML = `
+    const parentUsgIndex = container.closest('.usg-item').dataset.usgIndex;
+    const conceptoItem = document.createElement('div');
+    conceptoItem.className = 'concepto-item';
+    conceptoItem.dataset.conceptoIndex = index;
+    conceptoItem.innerHTML = `
     <div class="concepto-header">
       <h4>Placenta #${index + 1}</h4>
       <button type="button" class="btn remove-concepto-btn" ${index === 0 ? 'style="display:none;"' : ''}>X</button>
@@ -722,22 +701,17 @@ function createConceptoBlock(container, data = {}, index = 0) {
       <textarea id="feto_observacoes_${parentUsgIndex}_${index}" name="feto_observacoes_${parentUsgIndex}_${index}">${data.feto_observacoes || ''}</textarea>
     </div>
   `;
-
-  conceptoItem.querySelector('.remove-concepto-btn').addEventListener('click', () => {
-    conceptoItem.remove();
-  });
-
-  container.appendChild(conceptoItem);
+    conceptoItem.querySelector('.remove-concepto-btn').addEventListener('click', () => {
+        conceptoItem.remove();
+    });
+    container.appendChild(conceptoItem);
 }
-
 // ======================================
 // ===== Salvar, Carregar e Limpar Localmente =====
 // ======================================
-
 const LS_KEY = 'prontuarios_salvos';
 const savedList = document.getElementById('saved-atendimentos-list');
 const savedTableBody = document.getElementById('saved-atendimentos-table').querySelector('tbody');
-
 /**
  * Coleta todos os dados do formulário em um único objeto.
  * Essa função é a fonte única de dados para salvar, gerar texto e PDF.
@@ -765,7 +739,6 @@ function getFormData() {
             }
         }
     }
-
     data.alergias_tags = document.getElementById('alergias-tags').getTags();
     data.comorbidades_tags = document.getElementById('comorbidades-tags').getTags();
     data.custom_meds = getMedList();
@@ -776,30 +749,25 @@ function getFormData() {
     data.signatures = getSignatures();
     data.tabagismo_detalhe = tabagismoCheckbox.checked ? form.elements['tabagismo_detalhe'].value : '';
     data._timestamp = new Date().toISOString();
-
-  return data;
+    return data;
 }
-
 /**
  * Salva o prontuário atual em uma lista no localStorage.
  * O identificador é o número do prontuário ou o nome da paciente.
  */
 function saveLocal() {
     const data = getFormData();
-
     // Determina o identificador do prontuário
     const identifier = data.prontuario?.trim() || data.nome?.trim();
     if (!identifier) {
         showNotification('Por favor, preencha o número do prontuário ou o nome da paciente para salvar.', 'error');
         return;
     }
-
     let savedData = JSON.parse(localStorage.getItem(LS_KEY)) || {};
     savedData[identifier] = data;
     localStorage.setItem(LS_KEY, JSON.stringify(savedData));
     renderSavedAtendimentos(); // Atualiza a lista após salvar
 }
-
 /**
  * Carrega um prontuário específico a partir do localStorage.
  * @param {string} identifier O identificador (prontuário ou nome) do atendimento a ser carregado.
@@ -812,25 +780,21 @@ function loadLocal(identifier) {
     }
     const data = savedData[identifier];
     form.reset();
-
     // Restaura campos dinâmicos existentes
     document.querySelectorAll('.signature-item').forEach((el) => el.remove());
     document.querySelectorAll('#medication-list .medication-item input[name="dose_outra"]').forEach((el) => el.closest('.medication-item').remove());
     document.querySelectorAll('.usg-item').forEach(el => el.remove());
-
     // Restaura assinaturas
     data.signatures?.forEach((sig) => addSignatureField(sig.title, sig.name));
     if (!signaturesContainer.children.length) {
         addSignatureField();
     }
-
     // Restaura medicamentos
     data.custom_meds?.forEach((med) => {
         addMedicationField();
         const lastMedication = medicationList.lastElementChild;
         lastMedication.querySelector('[name="dose_outra"]').value = med;
     });
-
     // Restaura ultrassonografias
     if (data.ultrassonografias && data.ultrassonografias.length > 0) {
         data.ultrassonografias.forEach((usg, usgIndex) => {
@@ -840,29 +804,23 @@ function loadLocal(identifier) {
                 conceptos: usg.conceptos
             }, usgIndex);
         });
-        
         // Adiciona a lógica para expandir o card de USGs
         const usgCardHeader = document.querySelector('.collapsible-card .collapsible-header');
         const usgCardContent = usgCardHeader.nextElementSibling;
-        
         usgCardHeader.classList.add('active');
         usgCardContent.style.display = 'block';
-        
     } else {
         createUsgBlock({}, 0); // Cria um bloco USG vazio por padrão
         const usgCardHeader = document.querySelector('.collapsible-card .collapsible-header');
         const usgCardContent = usgCardHeader.nextElementSibling;
-        
         usgCardHeader.classList.remove('active');
         usgCardContent.style.display = 'none';
     }
-
     // Restaura campos principais e de toggles
     Object.keys(data).forEach((k) => {
         if (k.startsWith('_') || k.includes('_tags') || k === 'custom_meds' || k === 'signatures' || k === 'ultrassonografias') return;
         const el = form.elements[k];
         if (!el) return;
-
         if (el.type === 'checkbox') {
             el.checked = data[k];
         } else if (el.type === 'radio') {
@@ -883,99 +841,86 @@ function loadLocal(identifier) {
             el.value = data[k];
         }
     });
-
     // Restaura as tags
     document.getElementById('alergias-tags').setTags(data.alergias_tags || []);
     document.getElementById('comorbidades-tags').setTags(data.comorbidades_tags || []);
     document.getElementById('condutas-tags').setTags(data.condutas_tags || []);
     document.getElementById('hipotese-tags').setTags(data.hipotese_tags || []);
     document.getElementById('drogas-tags').setTags(data.drogas_tags || []);
-
     // Restaura a visibilidade de campos condicionais
     tabagismoCheckbox.checked = !!data.tabagismo_detalhe;
     if (tabagismoCheckbox.checked) form.elements['tabagismo_detalhe'].value = data.tabagismo_detalhe;
     drogasCheckbox.checked = (data.drogas_tags || []).length > 0;
     tabagismoCheckbox.dispatchEvent(new Event('change'));
     drogasCheckbox.dispatchEvent(new Event('change'));
-
     // Atualiza a UI para o estado carregado
     document.querySelectorAll('.btn-toggle, .toggle-group input[type="checkbox"]').forEach((el) => {
         const input = el.tagName === 'INPUT' ? el : document.getElementById(el.getAttribute('for'));
         if (input) updateToggleLabel(input);
     });
-
     setObstetricFieldsDisabled(document.getElementById('nuligesta').checked);
     refreshPregCalc();
-    showNotification(`Atendimento de "${identifier}" carregado.`);
+    showNotification(`Atendimento de ${data.nome} (${identifier}) carregado.`);
 }
-
 /**
  * Renderiza a lista de atendimentos salvos em uma tabela na interface.
  */
 function renderSavedAtendimentos() {
-  savedTableBody.innerHTML = '';
-  const savedData = JSON.parse(localStorage.getItem(LS_KEY));
-
-  if (!savedData || Object.keys(savedData).length === 0) {
-    const emptyRow = document.createElement('tr');
-    emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">Nenhum atendimento salvo.</td>`;
-    savedTableBody.appendChild(emptyRow);
-    return;
-  }
-
-  Object.keys(savedData).forEach(key => {
-    const data = savedData[key];
-    const newRow = document.createElement('tr');
-    newRow.dataset.key = key;
-
-    const date = data._timestamp ? new Date(data._timestamp).toLocaleDateString('pt-BR') : 'N/A';
-    const time = data._timestamp ? new Date(data._timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : 'N/A';
-    const name = data.nome?.trim() || 'Sem nome';
-    const igUsg = data['ig-usg-atual'] || 'N/A';
-    
-    // Concatena as comorbidades de toggle e de tags
-    const comorbToggles = [];
-    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
-    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
-    if (data.comorbidade_hag) comorbToggles.push('HAG');
-    if (data.comorbidade_has) comorbToggles.push('HAS');
-    const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
-    const comorbidades = allComorbidades.length > 0 ? allComorbidades.join(', ') : 'Nenhum';
-    const prontuario = data.prontuario?.trim() || 'N/A';
-
-    newRow.innerHTML = `
+    savedTableBody.innerHTML = '';
+    const savedData = JSON.parse(localStorage.getItem(LS_KEY));
+    if (!savedData || Object.keys(savedData).length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">Nenhum atendimento salvo.</td>`;
+        savedTableBody.appendChild(emptyRow);
+        return;
+    }
+    Object.keys(savedData).forEach(key => {
+        const data = savedData[key];
+        const newRow = document.createElement('tr');
+        newRow.dataset.key = key;
+        const date = data._timestamp ? new Date(data._timestamp).toLocaleDateString('pt-BR') : 'N/A';
+        const time = data._timestamp ? new Date(data._timestamp).toLocaleTimeString('pt-BR', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : 'N/A';
+        const name = data.nome?.trim() || 'Sem nome';
+        const igUsg = data['ig-usg-atual'] || 'N/A';
+        // Concatena as comorbidades de toggle e de tags
+        const comorbToggles = [];
+        if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
+        if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
+        if (data.comorbidade_hag) comorbToggles.push('HAG');
+        if (data.comorbidade_has) comorbToggles.push('HAS');
+        const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
+        const comorbidades = allComorbidades.length > 0 ? allComorbidades.join(', ') : 'Nenhum';
+        const prontuario = data.prontuario?.trim() || 'N/A';
+        newRow.innerHTML = `
       <td>${date} às ${time}</td>
       <td>${name}</td>
       <td>${igUsg}</td>
       <td>${prontuario}</td>
       <td>${comorbidades}</td>
-      <td>
-        <button class="btn btn-sm load-btn">Carregar</button>
-        <button class="btn btn-sm delete-btn">Apagar</button>
+      <td style="line-height: 2">
+        <button class="btn btn-sm load-btn"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
+        <button class="btn btn-sm delete-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+        <button class="btn warning btn-sm add-pendencia-btn"><i class="fa fa-plus-circle" aria-hidden="true"></i>
+ Pendência</button>
       </td>
     `;
-
-    // Adiciona o evento de clique para o botão "Carregar"
-    newRow.querySelector('.load-btn').addEventListener('click', () => {
-      loadLocal(key);
+        // Adiciona o evento de clique para o botão "Carregar"
+        newRow.querySelector('.load-btn').addEventListener('click', (e) => {
+            let data = { "target": { "dataset": { "prontuario": key }} }
+            console.log(data);
+            carregarAtendimento(data);
+            //loadLocal(key);
+        });
+        // Adiciona o evento de clique para o botão "Apagar"
+        newRow.querySelector('.delete-btn').addEventListener('click', () => {
+            apagarAtendimento(savedData, key);
+        });
+        savedTableBody.appendChild(newRow);
     });
-
-    // Adiciona o evento de clique para o botão "Apagar"
-    newRow.querySelector('.delete-btn').addEventListener('click', () => {
-      if (confirm(`Tem certeza que deseja apagar o prontuário de "${key}"?`)) {
-        delete savedData[key];
-        localStorage.setItem(LS_KEY, JSON.stringify(savedData));
-        renderSavedAtendimentos(); // Atualiza a tabela
-        showNotification('Registro apagado');
-      }
-    });
-
-    savedTableBody.appendChild(newRow);
-  });
 }
-
-
-
 /**
  * Limpa todos os campos do formulário e retorna ao estado inicial.
  */
@@ -992,7 +937,6 @@ function clearAll() {
     document.getElementById('condutas-tags').setTags([]);
     document.getElementById('hipotese-tags').setTags([]);
     document.getElementById('drogas-tags').setTags([]);
-
     document.querySelectorAll('.testes-rapidos .state-toggle-input').forEach((input) => {
         input.value = 'nao_realizado';
     });
@@ -1001,7 +945,6 @@ function clearAll() {
         label.classList.remove(...trStates);
         label.classList.add('nao_realizado');
     });
-
     // Dispara eventos de mudança para atualizar a UI
     document.getElementById('nuligesta').checked = false;
     document.getElementById('dinamica_ausente').checked = true;
@@ -1009,22 +952,18 @@ function clearAll() {
     document.getElementById('especular_evitado').checked = true;
     document.getElementById('tabagismo').checked = false;
     document.getElementById('drogas').checked = false;
-
     nuligestaToggle.dispatchEvent(new Event('change'));
     dinamicaAusenteToggle.dispatchEvent(new Event('change'));
     toqueEvitado.dispatchEvent(new Event('change'));
     especularEvitado.dispatchEvent(new Event('change'));
     tabagismoCheckbox.dispatchEvent(new Event('change'));
     drogasCheckbox.dispatchEvent(new Event('change'));
-
     refreshPregCalc();
     output.value = '';
 }
-
 // ==================================
 // ===== Gerador de Conteúdo (Texto e PDF) =====
 // ==================================
-
 /**
  * Obtém os valores de checkboxes marcados com um nome específico.
  * @param {string} name O atributo `name` dos checkboxes.
@@ -1033,7 +972,6 @@ function clearAll() {
 function getCheckedValues(name) {
     return Array.from(form.querySelectorAll(`input[name="${name}"]:checked`)).map((i) => i.value);
 }
-
 /**
  * Obtém os valores dos campos de tags e os formata como uma string separada por vírgulas.
  * @param {string} containerId O ID do elemento container das tags.
@@ -1051,18 +989,16 @@ function getTagValues(containerId) {
     });
     return tags.join(', ');
 }
-
 /**
  * Obtém os valores de condutas e os formata como uma string separada por vírgulas.
  * @returns {string} Uma string formatada com as condutas selecionadas.
  */
 function getCondutaValues() {
-  const conds = getCheckedValues('conduta');
-  const outrasConds = document.getElementById('condutas-tags').getTags();
-  const allCondutas = [...conds, ...outrasConds];
-  return allCondutas.join(', ');
+    const conds = getCheckedValues('conduta');
+    const outrasConds = document.getElementById('condutas-tags').getTags();
+    const allCondutas = [...conds, ...outrasConds];
+    return allCondutas.join(', ');
 }
-
 /**
  * Obtém o valor de um campo de alternância (toggle) com base no estado `checked`.
  * @param {string} id O ID do campo de entrada.
@@ -1075,7 +1011,6 @@ function getBinaryToggleValue(id) {
     if (!label) return '';
     return input.checked ? label.dataset.checked : label.dataset.default;
 }
-
 /**
  * Obtém o valor de um campo de seleção (`<select>`).
  * @param {string} name O atributo `name` do select.
@@ -1085,7 +1020,6 @@ function getSelectValue(name) {
     const select = form.elements[name];
     return select ? select.value : '';
 }
-
 /**
  * Obtém a lista de medicamentos preenchidos.
  * @returns {string[]} Um array com os nomes e doses dos medicamentos.
@@ -1110,35 +1044,33 @@ function getMedList() {
 
 function getUsg() {
     const usgData = [];
-       document.querySelectorAll('.usg-item').forEach((usgItem) => {
-    const usgBlock = {
-      usg_data: usgItem.querySelector('input[name^="usg_data_"]').value,
-      usg_tipo: usgItem.querySelector('select[name^="usg_tipo_"]').value,
-      conceptos: []
-    };
-
-    usgItem.querySelectorAll('.concepto-item').forEach((conceptoItem) => {
-      usgBlock.conceptos.push({
-        placenta_localizacao: conceptoItem.querySelector('select[name^="placenta_localizacao_"]').value,
-        placenta_grau: conceptoItem.querySelector('select[name^="placenta_grau_"]').value,
-        feto_situacao: conceptoItem.querySelector('select[name^="feto_situacao_"]').value,
-        feto_apresentacao: conceptoItem.querySelector('select[name^="feto_apresentacao_"]').value,
-        feto_dorso: conceptoItem.querySelector('select[name^="feto_dorso_"]').value,
-        feto_peso: conceptoItem.querySelector('input[name^="feto_peso_"]').value,
-        feto_percentil: conceptoItem.querySelector('input[name^="feto_percentil_"]').value,
-        feto_bcf: conceptoItem.querySelector('input[name^="feto_bcf_"]').value,
-        feto_ila: conceptoItem.querySelector('input[name^="feto_ila_"]').value, // Novo campo ILA
-        feto_mbv: conceptoItem.querySelector('input[name^="feto_mbv_"]').value, // Novo campo MBV
-        feto_observacoes: conceptoItem.querySelector('textarea[name^="feto_observacoes_"]').value
-      });
+    document.querySelectorAll('.usg-item').forEach((usgItem) => {
+        const usgBlock = {
+            usg_data: usgItem.querySelector('input[name^="usg_data_"]').value,
+            usg_tipo: usgItem.querySelector('select[name^="usg_tipo_"]').value,
+            conceptos: []
+        };
+        usgItem.querySelectorAll('.concepto-item').forEach((conceptoItem) => {
+            usgBlock.conceptos.push({
+                placenta_localizacao: conceptoItem.querySelector('select[name^="placenta_localizacao_"]').value,
+                placenta_grau: conceptoItem.querySelector('select[name^="placenta_grau_"]').value,
+                feto_situacao: conceptoItem.querySelector('select[name^="feto_situacao_"]').value,
+                feto_apresentacao: conceptoItem.querySelector('select[name^="feto_apresentacao_"]').value,
+                feto_dorso: conceptoItem.querySelector('select[name^="feto_dorso_"]').value,
+                feto_peso: conceptoItem.querySelector('input[name^="feto_peso_"]').value,
+                feto_percentil: conceptoItem.querySelector('input[name^="feto_percentil_"]').value,
+                feto_bcf: conceptoItem.querySelector('input[name^="feto_bcf_"]').value,
+                feto_ila: conceptoItem.querySelector('input[name^="feto_ila_"]').value, // Novo campo ILA
+                feto_mbv: conceptoItem.querySelector('input[name^="feto_mbv_"]').value, // Novo campo MBV
+                feto_observacoes: conceptoItem.querySelector('textarea[name^="feto_observacoes_"]').value
+            });
+        });
+        usgData.push(usgBlock);
     });
-    usgData.push(usgBlock);
-  });
     return usgData;
 }
 
-function getSignatures() 
-{
+function getSignatures() {
     const signatures = [];
     document.querySelectorAll('.signature-item').forEach((item) => {
         const title = item.querySelector('[name="signature_title"]').value;
@@ -1153,516 +1085,393 @@ function getSignatures()
     return signatures;
 }
 
-function formatarIdentificacao(nome, idade, procedencia)
-{
+function formatarIdentificacao(nome, idade, procedencia) {
     console.log(nome);
     const nomeCompleto = nome.trim();
-
     const idadeCompleta = idade.trim() ? `${idade} anos` : '';
-
     const partes = [];
-    
     if (nomeCompleto) {
         partes.push(nomeCompleto)
     }
-
     if (idadeCompleta) {
         partes.push(idadeCompleta);
     }
-
     if (procedencia.trim()) {
         partes.push(`procedente de ${procedencia.trim()}.`);
     }
-
     return partes.join(', ');
 }
 
-function formatarParidade(g, pn, pc, ab)
-{
+function formatarParidade(g, pn, pc, ab) {
     g = Number(g || '0');
     pn = Number(pn || '0');
     pc = Number(pc || '0');
     ab = Number(ab || '0');
-   
     if (g === 0) {
         return `G0`;
     }
-
     let partos = '';
     const totalPartos = pn + pc;
-
     if (totalPartos === 0) {
-       partos = 'P0';
-      } else if (pn === 0) {
+        partos = 'P0';
+    } else if (pn === 0) {
         partos = `P${pc}c`;
-      } else if (pc === 0) {
+    } else if (pc === 0) {
         partos = `P${pn}v`;
-      } else {
+    } else {
         partos = `P${pn}v${pc}c`;
-      }
-
+    }
     return `G${g}${partos}A${ab}`;
 };
-
 /**
- * Constrói o texto final do prontuário com base nos dados do formulário.
- * @returns {string} O texto formatado do prontuário.
+ * Constrói o texto do cabeçalho do prontuário.
+ * @returns {string} O cabeçalho formatado.
  */
+function buildHeader() {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    return `# SR às ${hh}:${mm} #`;
+}
+/**
+ * Constrói a seção de histórico obstétrico.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado.
+ */
+function buildHistoricoObstetrico(data) {
+    const nuligesta = document.getElementById('nuligesta').checked;
+    if (nuligesta) {
+        return 'Nuligesta.';
+    }
+    const paridade = formatarParidade(data.gestacoes, data['partos-normais'], data['partos-cesarea'], data.abortos);
+    const dumInc = data.dum_incerta === 'on';
+    const dumText = dumInc ? 'DUM incerta' : `DUM ${formatDateBR(new Date(data.dum))} | IG DUM ${data['ig-dum']}`;
+    const usgIgStr = data['ig-usg'];
+    const dataUsgStr = data['data-usg'];
+    const igUsgCorr = data['ig-usg-atual'];
+    const dppStr = data.dpp;
+    const gestacaoParts = [
+        igUsgCorr ? `IG USG ${igUsgCorr}` : null, (usgIgStr && dataUsgStr) ? ` (${usgIgStr.replace('s', 's').replace('d', 'd')} em ${formatDateBR(new Date(dataUsgStr))})` : null,
+        dppStr ? ` | DPP ${dppStr}` : null,
+    ].filter(Boolean).join('');
+    const obstetrico = `${paridade} | ${dumText}\n${gestacaoParts}`;
+    return obstetrico.trim();
+}
+/**
+ * Constrói a seção de dados complementares (TS e TR).
+ * Retorna uma string vazia se não houver informações de tipo sanguíneo ou testes rápidos.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia.
+ */
+function buildComplementares(data) {
+    const tipoSanguineo = data.tipo_sanguineo;
+    const trMap = {
+        tr_sifilis: 'Sífilis',
+        tr_hiv: 'Anti-HIV',
+        tr_hepb: 'HepB',
+        tr_hepc: 'HepC'
+    };
+    const trResults = {
+        tr_sifilis: data.tr_sifilis,
+        tr_hiv: data.tr_hiv,
+        tr_hepb: data.tr_hepb,
+        tr_hepc: data.tr_hepc
+    };
+    const reagentes = Object.keys(trResults).filter(k => trResults[k] === 'reagente').map(k => trMap[k]);
+    const naoReagentes = Object.keys(trResults).filter(k => trResults[k] === 'nao_reagente').map(k => trMap[k]);
+    const partesTexto = [];
+    // Adiciona o tipo sanguíneo se houver um selecionado
+    if (tipoSanguineo && tipoSanguineo !== '?' && tipoSanguineo !== 'N.R') {
+        partesTexto.push(`TS: ${tipoSanguineo}`);
+    }
+    // Formata e adiciona os resultados reagentes
+    if (reagentes.length > 0) {
+        const reagentesTxt = reagentes.join(', ');
+        partesTexto.push(`TR ${reagentesTxt} Reagente${reagentes.length > 1 ? 's' : ''}`);
+    }
+    // Formata e adiciona os resultados não reagentes
+    if (naoReagentes.length > 0) {
+        const naoReagentesTxt = naoReagentes.join(', ');
+        partesTexto.push(`TR ${naoReagentesTxt} Não Reagente${naoReagentes.length > 1 ? 's' : ''}`);
+    }
+    // Se não houver partes de texto, retorna uma string vazia
+    if (partesTexto.length === 0) {
+        return '';
+    }
+    // Junta as partes com ' | ' para formar a linha final
+    return partesTexto.join(' | ');
+}
+/**
+ * Constrói a seção de comorbidades.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildComorbidades(data) {
+    const comorbToggles = [];
+    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
+    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
+    if (data.comorbidade_hag) comorbToggles.push('HAG');
+    if (data.comorbidade_has) comorbToggles.push('HAS');
+    const allComorbidades = [...comorbToggles, ...(data.comorbidades_tags || [])];
+    if (allComorbidades.length > 0) {
+        return `# Comorbidades\n${allComorbidades.map(c => `- ${c}`).join('\n')}`;
+    }
+    return '';
+}
+/**
+ * Constrói a seção de alergias.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildAlergias(data) {
+    const alergias = data.alergias_tags;
+    if (alergias && alergias.length > 0) {
+        return `# Alergias\n${alergias.map(a => `- ${a}`).join('\n')}`;
+    }
+    return '';
+}
+/**
+ * Constrói a seção de vícios.
+ * Retorna uma string vazia se nenhum vício estiver selecionado.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildVicios(data) {
+    const viciosAfirmados = [];
+    const viciosNegados = [];
+    // Lógica para determinar quais vícios estão presentes ou negados
+    if (data.etilismo === 'on') {
+        viciosAfirmados.push('Etilista');
+    } else {
+        viciosNegados.push('Etilismo');
+    }
+    if (data.tabagismo === 'on') {
+        viciosAfirmados.push(data.tabagismo_detalhe ? `Tabagista (${data.tabagismo_detalhe})` : `Tabagista`);
+    } else {
+        viciosNegados.push('Tabagismo');
+    }
+    if (data.drogas === 'on') {
+        viciosAfirmados.push(`Usuária de drogas (${getTagValues('drogas-tags') || 'não especificado'})`);
+    } else {
+        viciosNegados.push('Drogadição');
+    }
+    // Retorna string vazia se não houver vícios afirmados ou negados
+    if (viciosAfirmados.length === 0 && viciosNegados.length === 0) {
+        return '';
+    }
+    // Constrói a frase de negação, se houver
+    let negacoesTxt = '';
+    if (viciosNegados.length > 0) {
+        const negadosFormatado = viciosNegados.join(', ').replace(/,([^,]*)$/, ' e$1');
+        negacoesTxt = `Nega ${negadosFormatado}.`;
+    }
+    // Constrói a frase de afirmação, se houver
+    let afirmacoesTxt = '';
+    if (viciosAfirmados.length > 0) {
+        afirmacoesTxt = viciosAfirmados.join(', ');
+    }
+    // Combina as frases de negação e afirmação
+    let viciosTxt = '';
+    if (negacoesTxt && afirmacoesTxt) {
+        viciosTxt = `${negacoesTxt} ${afirmacoesTxt}`;
+    } else if (negacoesTxt) {
+        viciosTxt = negacoesTxt;
+    } else if (afirmacoesTxt) {
+        viciosTxt = afirmacoesTxt;
+    }
+    return `# Vícios\n- ${viciosTxt}`;
+}
+/**
+ * Constrói a seção de medicações em uso.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildMedicacoes(data) {
+    const medicacoes = data.custom_meds;
+    if (medicacoes && medicacoes.length > 0) {
+        return `# Em uso de\n${medicacoes.map(m => `- ${m}`).join('\n')}`;
+    }
+    return '';
+}
+/**
+ * Constrói a seção de exame físico.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado.
+ */
+function buildExameFisico(data) {
+    const vitais = [
+        data.pa ? `PA ${data.pa} mmHg` : null,
+        data.pa_dle ? `PA pós DLE ${data.pa_dle} mmHg` : null,
+        data.fc ? `FC ${data.fc} bpm` : null,
+        data.spo2 ? `SpO2 ${data.spo2}%` : null,
+        data.tax ? `TAx ${data.tax}°C` : null,
+        getSelectValue('proteinuria') !== 'N.R' ? `Proteinúria: ${getSelectValue('proteinuria')}` : null,
+    ].filter(Boolean);
+    const efParts = [
+        data.altura_uterina ? `AU ${data.altura_uterina} cm` : null,
+        data.bcf ? `BCF ${data.bcf} bpm` : null,
+        getBinaryToggleValue('mov_fetal') ? `MF ${getBinaryToggleValue('mov_fetal')}` : null,
+        getBinaryToggleValue('tonus_uterino') ? `TU ${getBinaryToggleValue('tonus_uterino')}` : null,
+        data.dinamica_ausente === 'on' ? `DU Ausente` : (data.dinamica_uterina ? `DU ${data.dinamica_uterina}` : null),
+    ].filter(Boolean).join(' | ');
+    let toqueTxt = '';
+    const toqueAvoid = data.toque_evitado === 'on';
+    if (toqueAvoid) {
+        toqueTxt = 'TV: evitado.';
+    } else {
+        const toqueDetails = [];
+        if (getSelectValue('espessura')) toqueDetails.push(`espessura ${getSelectValue('espessura').toLowerCase()}`);
+        if (getSelectValue('posicao')) toqueDetails.push(`posição ${getSelectValue('posicao').toLowerCase()}`);
+        if (data.dilatacao) toqueDetails.push(`pérvio para ${data.dilatacao} cm`);
+        if (getBinaryToggleValue('bolsa') === 'Rota') {
+            const dataRomp = data.hora_rompimento ? `às ${formateDateHoraBR(new Date(data.hora_rompimento))}` : '';
+            toqueDetails.push(`bolsa rota ${dataRomp}`);
+            if (getSelectValue('cor_liquido')) toqueDetails.push(`líquido ${getSelectValue('cor_liquido').toLowerCase()}`);
+        } else if (getBinaryToggleValue('bolsa')) {
+            toqueDetails.push(`bolsa ${getBinaryToggleValue('bolsa').toLowerCase()}`);
+        }
+        if (getBinaryToggleValue('sangramento')) {
+            const sangramentoText = getBinaryToggleValue('sangramento') === 'Presente' ? 'com sangramento em dedo de luva' : 'sem sangramento em dedo de luva';
+            toqueDetails.push(sangramentoText);
+        }
+        toqueTxt = `TV: ${toqueDetails.length > 0 ? toqueDetails.join(', ') : 'não realizado'}.`;
+    }
+    const especAvoid = data.especular_evitado === 'on';
+    const especularTxt = especAvoid ? 'EE: evitado.' : `EE: ${data.desc_especular?.trim() || 'não descrito'}.`;
+    return `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
+}
+/**
+ * Constrói a seção de exames laboratoriais.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildExamesLaboratoriais(data) {
+    const labsTxt = data.exames_laboratoriais?.trim();
+    if (labsTxt) {
+        return `# Exames Laboratoriais\n${labsTxt}`;
+    }
+    return '';
+}
+/**
+ * Constrói a seção de exames de imagem e USGs.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildExamesImagem(data) {
+    const usgData = data.ultrassonografias;
+    const imagemTxt = data.exames_imagem?.trim();
+    let usgTxt = '';
+    if (usgData && usgData.length > 0) {
+        const formattedUsgs = usgData.map(usg => {
+            if (!usg.usg_data) return null;
+            const usgHeader = `- (${formatDateBR(new Date(usg.usg_data))}) USG ${usg.usg_tipo || ''}:`;
+            const conceptosList = usg.conceptos.map(concepto => {
+                const details = [];
+                if (concepto.feto_situacao) details.push(`situação ${concepto.feto_situacao.toLowerCase()}`);
+                if (concepto.feto_apresentacao) details.push(`apresentação ${concepto.feto_apresentacao.toLowerCase()}`);
+                if (concepto.feto_dorso) details.push(`dorso à ${concepto.feto_dorso.toLowerCase()}`);
+                if (concepto.feto_bcf) details.push(`BCF ${concepto.feto_bcf}bpm`);
+                let pfeTxt = '';
+                if (concepto.feto_peso) {
+                    pfeTxt = `PFE ${concepto.feto_peso}g`;
+                    if (concepto.feto_percentil) pfeTxt += ` (p${concepto.feto_percentil})`;
+                    details.push(pfeTxt);
+                }
+                let placentaTxt = '';
+                if (concepto.placenta_localizacao) {
+                    placentaTxt = `Placenta ${concepto.placenta_localizacao.toLowerCase()}`;
+                    if (concepto.placenta_grau) placentaTxt += `, grau ${concepto.placenta_grau}`;
+                    details.push(placentaTxt);
+                }
+                if (concepto.feto_ila) details.push(`ILA ${concepto.feto_ila}cm`);
+                if (concepto.feto_mbv) details.push(`MBV ${concepto.feto_mbv}cm`);
+                const obs = concepto.feto_observacoes?.trim();
+                const obsTxt = obs ? `(${obs})` : '';
+                return `${details.join(', ')} ${obsTxt}`.trim();
+            }).filter(Boolean);
+            return `${usgHeader} ${conceptosList.join('\n')}`;
+        }).filter(Boolean);
+        usgTxt = formattedUsgs.length > 0 ? formattedUsgs.join('\n') : '';
+    }
+    if (usgTxt || imagemTxt) {
+        let content = '';
+        if (usgTxt) {
+            content += usgTxt;
+        }
+        if (imagemTxt) {
+            if (content) content += '\n';
+            content += imagemTxt;
+        }
+        return `# Exames de Imagem\n${content}`;
+    }
+    return '';
+}
+/**
+ * Constrói a seção de hipótese diagnóstica.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado ou uma string vazia se não houver dados.
+ */
+function buildHipoteseDiagnostica(data) {
+    const hipotese = data.hipotese_tags;
+    if (hipotese && hipotese.length > 0) {
+        return `# Hipótese Diagnóstica\n${hipotese.map(c => `- ${c}`).join('\n')}`;
+    }
+    return '';
+}
+/**
+ * Constrói a seção de condutas.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado.
+ */
+function buildCondutas(data) {
+    const conds = getCheckedValues('conduta');
+    const outrasConds = document.getElementById('condutas-tags').getTags();
+    const allCondutas = [...conds, ...outrasConds];
+    return `# Conduta\n${(allCondutas.length ? allCondutas : ['—']).map(c => `- ${c}`).join('\n')}`;
+}
+/**
+ * Constrói a seção de assinaturas.
+ * @param {object} data Dados do formulário.
+ * @returns {string} O texto formatado.
+ */
+function buildAssinaturas(data) {
+    const signatures = data.signatures?.map(s => `${s.title} ${s.name}`).filter(Boolean) || [];
+    return signatures.length ? signatures.join(' + ') : '';
+}
+// 3. A Nova Função Principal `buildOutput`
+// Agora, esta função apenas orquestra as chamadas para as outras funções.
+// A nova função principal buildOutput
 function buildOutput() {
     const data = getFormData();
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mm = String(now.getMinutes()).padStart(2, '0');
-
-    const header = `# SR às ${hh}:${mm} #`;
-    const ident = formatarIdentificacao(data.nome, data.idade, data.procedencia);
-
-
-    console.log(data.g);
-    const paridade = formatarParidade(data.gestacoes, data['partos-normais'], data['partos-cesarea'], data.abortos);
-
-    const tipoSanguineo = data.tipo_sanguineo || 'Não Informado';
-
-    const trMap = {
-        tr_sifilis: 'Sífilis',
-        tr_hiv: 'Anti-HIV',
-        tr_hepb: 'HepB',
-        tr_hepc: 'HepC'
-    };
-    const trResults = {
-        tr_sifilis: data.tr_sifilis,
-        tr_hiv: data.tr_hiv,
-        tr_hepb: data.tr_hepb,
-        tr_hepc: data.tr_hepc
-    };
-    const reagentes = Object.keys(trResults).filter(k => trResults[k] === 'reagente').map(k => trMap[k]);
-    const naoReagentes = Object.keys(trResults).filter(k => trResults[k] === 'nao_reagente').map(k => trMap[k]);
-    const naoRealizados = Object.keys(trResults).filter(k => trResults[k] === 'nao_realizado').map(k => trMap[k]);
-
-    let trTxt = 'TR ';
-    const trParts = [];
-    if (reagentes.length > 0) trParts.push(`${reagentes.join(', ')} Reagente`);
-    if (naoReagentes.length > 0) trParts.push(`${naoReagentes.join(', ')} Não Reagentes`);
-    if (naoRealizados.length > 0) trParts.push(`${naoRealizados.join(', ')} Não Realizados`);
-    trTxt += trParts.join(', ') + '.';
-    if (trParts.length === 0) trTxt = 'TR não realizados.';
-
-
- // --- Lógica para formatar os dados das USGs ---
-  let usgTxt = data.ultrassonografias && data.ultrassonografias.length > 0 ? '' : '—';
-  if (data.ultrassonografias && data.ultrassonografias.length > 0) {
-    const formattedUsgs = data.ultrassonografias.map(usg => {
-      if (!usg.usg_data) return null; // Ignora USGs sem data
-
-      const usgHeader = `- (${formatDateBR(new Date(usg.usg_data))}) USG ${usg.usg_tipo || ''}:`;
-
-      const conceptosList = usg.conceptos.map(concepto => {
-        const details = [];
-        if (concepto.feto_situacao) details.push(`situação ${concepto.feto_situacao.toLowerCase()}`);
-        if (concepto.feto_apresentacao) details.push(`apresentação ${concepto.feto_apresentacao.toLowerCase()}`);
-        if (concepto.feto_dorso) details.push(`dorso à ${concepto.feto_dorso.toLowerCase()}`);
-        if (concepto.feto_bcf) details.push(`BCF ${concepto.feto_bcf}bpm`);
-        
-        let pfeTxt = '';
-        if (concepto.feto_peso) {
-          pfeTxt = `PFE ${concepto.feto_peso}g`;
-          if (concepto.feto_percentil) pfeTxt += ` (p${concepto.feto_percentil})`;
-          details.push(pfeTxt);
-        }
-        
-        let placentaTxt = '';
-        if (concepto.placenta_localizacao) {
-          placentaTxt = `Placenta ${concepto.placenta_localizacao.toLowerCase()}`;
-          if (concepto.placenta_grau) placentaTxt += `, grau ${concepto.placenta_grau}`;
-          details.push(placentaTxt);
-        }
-
-        if (concepto.feto_ila) details.push(`ILA ${concepto.feto_ila}cm`);
-        if (concepto.feto_mbv) details.push(`MBV ${concepto.feto_mbv}cm`);
-        
-        const obs = concepto.feto_observacoes?.trim();
-        const obsTxt = obs ? `${obs}` : '';
-
-        return `${details.join(', ')} ${obsTxt}`.trim();
-
-      }).filter(Boolean); // Filtra conceitos vazios
-
-      return `${usgHeader} ${conceptosList.join('\n')}`;
-    }).filter(Boolean); // Filtra USGs sem data
-
-    usgTxt = formattedUsgs.length > 0 ? formattedUsgs.join('\n') : '—';
-  }
-  // --- Fim da lógica para formatar os dados das USGs ---
-
-    const dumInc = data.dum_incerta === 'on';
-    const igdum = data['ig-dum'];
-    const dppStr = data.dpp;
-    const dataUsgStr = data['data-usg'];
-    const igUsgStr = data['ig-usg'];
-    const igUsgCorr = data['ig-usg-atual'];
-    const toqueAvoid = data.toque_evitado === 'on';
-
-    const viciosComAfixo = [];
-    const viciosSemAfixo = [];
-    if (data.etilismo === 'on') viciosSemAfixo.push('Etilismo');
-    else viciosComAfixo.push('Etilismo');
-    if (data.tabagismo === 'on') viciosSemAfixo.push('Tabagismo');
-    else viciosComAfixo.push('Tabagismo');
-    if (data.drogas === 'on') viciosSemAfixo.push('Drogadição');
-    else viciosComAfixo.push('Drogadição');
-
-    let viciosTxt = '';
-    if (viciosComAfixo.length === 3) {
-        viciosTxt += `Nega etilismo, tabagismo e uso de drogas.`;
-    } else if (viciosComAfixo.length > 0) {
-        const negados = viciosComAfixo.join(', ').replace(/,([^,]*)$/, ' e$1');
-        viciosTxt += `Nega ${negados}.`;
-    }
-    if (viciosSemAfixo.length > 0) {
-        const afirmados = [];
-        if (data.etilismo === 'on') afirmados.push('Etilista');
-        if (data.tabagismo === 'on') afirmados.push(data.tabagismo_detalhe ? `Tabagista (${data.tabagismo_detalhe})` : `Tabagista`);
-        if (data.drogas === 'on' && data.drogas_tags.length > 0) afirmados.push(`Usuária de drogas (${data.drogas_tags.join(', ')})`);
-        if (viciosTxt.length > 0) viciosTxt += ' '
-        viciosTxt += afirmados.join(', ');
-    }
-    if (viciosTxt.length === 0) viciosTxt = 'Nega etilismo, tabagismo e uso de drogas.';
-
-    const hda = data.hda?.trim() || '';
-    const especAvoid = data.especular_evitado === 'on';
-
-    const conds = getCheckedValues('conduta');
-    const outrasConds = document.getElementById('condutas-tags').getTags();
-    const allCondutas = [...conds, ...outrasConds];
-
-    const signatures = data.signatures?.map(s => `${s.title} ${s.name}`).filter(Boolean) || [];
-
-    
-
-    let obstetrico;
-    if (false) {
-        obstetrico = 'Nuligesta.';
-    } else {
-        const obsParts = [
-            `${paridade} | ${dumInc ? `DUM incerta` : `DUM ${formatDateBR(new Date(data.dum))} | IG DUM ${igdum}`}`
-        ].filter(Boolean);
-        const gestacaoParts = [
-            igUsgCorr ? `IG USG ${igUsgCorr}` : null,
-            (igUsgStr && dataUsgStr) ? ` (${igUsgStr.replace('s', 's').replace('d', 'd')} em ${formatDateBR(new Date(dataUsgStr))})` : null,
-            dppStr ? ` | DPP ${dppStr}` : null,
-        ].filter(Boolean).join('');
-        obstetrico = `${obsParts.join('\n')} \n${gestacaoParts}`;
-    }
-
-     // Nova lógica para coletar e formatar as comorbidades de toggle
-    const comorbToggles = [];
-    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
-    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
-    if (data.comorbidade_hag) comorbToggles.push('HAG');
-    if (data.comorbidade_has) comorbToggles.push('HAS');
-
-    const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
-    const comorbTxt = `# Comorbidades\n${(allComorbidades.length ? allComorbidades : ['Nega']).map(c => `- ${c}`).join('\n')}`;
-
-    const complementaresTxt = `TS: ${tipoSanguineo} | ${trTxt}`;
-    const alergiasTxt = `# Alergias\n${(data.alergias_tags.length ? data.alergias_tags : ['Nega']).map(a => `- ${a}`).join('\n')}`;
-    const viciosSectionTxt = `# Vícios\n- ${viciosTxt}`;
-    const medsTxt = `# Em uso de\n${(data.custom_meds.length ? data.custom_meds : ['Nega']).map(m => `- ${m}`).join('\n')}`;
-    const hdaTxt = `# HDA\n${hda || '—'}`;
-
-    const vitais = [
-        data.pa ? `PA ${data.pa} mmHg` : null,
-        data.pa_dle ? `PA pós DLE ${data.pa_dle} mmHg` : null,
-        data.fc ? `FC ${data.fc} bpm` : null,
-        data.spo2 ? `SpO2 ${data.spo2}%` : null,
-        data.tax ? `TAx ${data.tax}°C` : null,
-        getSelectValue('proteinuria') !== 'nao_realizado' ? `Proteinúria: ${getSelectValue('proteinuria')}` : null,
-    ].filter(Boolean);
-
-    const efParts = [
-        data.altura_uterina ? `AU ${data.altura_uterina} cm` : null,
-        data.bcf ? `BCF ${data.bcf} bpm` : null,
-        getBinaryToggleValue('mov_fetal') ? `MF ${getBinaryToggleValue('mov_fetal')}` : null,
-        getBinaryToggleValue('tonus_uterino') ? `TU ${getBinaryToggleValue('tonus_uterino')}` : null,
-        data.dinamica_ausente === 'on' ? `DU Ausente` : (data.dinamica_uterina ? `DU ${data.dinamica_uterina}` : null),
-    ].filter(Boolean).join(' | ');
-
-    let toqueTxt = '';
-    if (toqueAvoid) {
-        toqueTxt = 'TV: evitado';
-    } else {
-        const toqueDetails = [];
-        if (getSelectValue('espessura')) toqueDetails.push(getSelectValue('espessura'));
-        if (getSelectValue('posicao')) toqueDetails.push(getSelectValue('posicao'));
-        if (data.dilatacao) toqueDetails.push(`pérvio para ${data.dilatacao} cm`);
-        if (getBinaryToggleValue('bolsa')) {
-            if (getBinaryToggleValue('bolsa') === 'Rota') {
-                const dataRomp = data.hora_rompimento ? `às ${formateDateHoraBR(new Date(data.hora_rompimento))}` : '';
-                toqueDetails.push(`bolsa rota ${dataRomp}`);
-                if (getSelectValue('cor_liquido')) toqueDetails.push(`líquido ${getSelectValue('cor_liquido')}`);
-            } else {
-                toqueDetails.push(`bolsa ${getBinaryToggleValue('bolsa').toLowerCase()}`);
-            }
-        }
-        if (getBinaryToggleValue('sangramento')) {
-            const sangramentoText = getBinaryToggleValue('sangramento') === 'Presente' ? 'com sangramento em dedo de luva' : 'sem sangramento em dedo de luva';
-            toqueDetails.push(sangramentoText);
-        }
-        toqueTxt = `TV: ${toqueDetails.length > 0 ? toqueDetails.join(', ') : 'não realizado'}.`;
-    }
-
-    const especularTxt = especAvoid ? 'EE: evitado' : `EE: ${data.desc_especular?.trim() || 'não descrito'}`;
-
-    const efTxt = `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
-    const labsTxt = `# Exames Laboratoriais\n${data.exames_laboratoriais?.trim() || '—'}`;
-    const imgTxt = `# Exames de Imagem\n${usgTxt || '—'}\n${data.exames_imagem?.trim() || ''}`.trim();
-    const hipTxt = `# Hipótese Diagnóstica\n${(data.hipotese_tags.length ? data.hipotese_tags : ['—']).map(c => `- ${c}`).join('\n')}`;
-    const condTxt = `# Conduta\n${(allCondutas.length ? allCondutas : ['—']).map(c => `- ${c}`).join('\n')}`;
-    const assTxt = signatures.length ? signatures.join(' + ') : '';
-
-    return [header, '', ident, obstetrico, complementaresTxt, '', alergiasTxt, '', viciosSectionTxt, '', comorbTxt, '', medsTxt, '', hdaTxt, '', efTxt, '', labsTxt, '', imgTxt, '', hipTxt, '', condTxt, '', assTxt].filter(Boolean).join('\n\n');
+    // Suas outras chamadas de função (mantidas)
+    const header = buildHeader();
+    const identificacao = formatarIdentificacao(data.nome, data.idade, data.procedencia);
+    const historicoObstetrico = buildHistoricoObstetrico(data);
+    const complementares = buildComplementares(data);
+    const vicios = buildVicios(data);
+    const hda = `# HDA\n${data.hda?.trim() || '—'}`;
+    const exameFisico = buildExameFisico(data);
+    const examesLaboratoriais = buildExamesLaboratoriais(data);
+    const examesImagem = buildExamesImagem(data);
+    const conduta = buildCondutas(data);
+    const assinaturas = buildAssinaturas(data);
+    // Chamadas para as novas funções
+    const alergias = buildAlergias(data);
+    const comorbidades = buildComorbidades(data);
+    const medicacoes = buildMedicacoes(data);
+    const hipotese = buildHipoteseDiagnostica(data);
+    const sections = [
+        header, identificacao, historicoObstetrico, complementares, alergias,
+        vicios, comorbidades, medicacoes, hda, exameFisico,
+        examesLaboratoriais, examesImagem, hipotese, conduta, assinaturas
+    ];
+    return sections.filter(Boolean).join('\n\n');
 }
-
 /**
  * Constrói o texto final do prontuário com base nos dados do formulário.
  * @returns {string} O texto formatado do prontuário.
  */
-function buildAIHOutput() {
-    const data = getFormData();
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2, '0');
-    const mm = String(now.getMinutes()).padStart(2, '0');
-
-    const nome = data.nome?.trim() || '';
-    const idade = data.idade?.trim() || '';
-    const procedencia = data.procedencia?.trim() || '';
-    const tipoSanguineo = data.tipo_sanguineo || 'Não Informado';
-
-    const trMap = {
-        tr_sifilis: 'Sífilis',
-        tr_hiv: 'Anti-HIV',
-        tr_hepb: 'HepB',
-        tr_hepc: 'HepC'
-    };
-    const trResults = {
-        tr_sifilis: data.tr_sifilis,
-        tr_hiv: data.tr_hiv,
-        tr_hepb: data.tr_hepb,
-        tr_hepc: data.tr_hepc
-    };
-    const reagentes = Object.keys(trResults).filter(k => trResults[k] === 'reagente').map(k => trMap[k]);
-    const naoReagentes = Object.keys(trResults).filter(k => trResults[k] === 'nao_reagente').map(k => trMap[k]);
-    const naoRealizados = Object.keys(trResults).filter(k => trResults[k] === 'nao_realizado').map(k => trMap[k]);
-
-    let trTxt = 'TR ';
-    const trParts = [];
-    if (reagentes.length > 0) trParts.push(`${reagentes.join(', ')} Reagente`);
-    if (naoReagentes.length > 0) trParts.push(`${naoReagentes.join(', ')} Não Reagentes`);
-    if (naoRealizados.length > 0) trParts.push(`${naoRealizados.join(', ')} Não Realizados`);
-    trTxt += trParts.join(', ') + '.';
-    if (trParts.length === 0) trTxt = 'TR não realizados.';
-
-    const nuligesta = data.nuligesta === 'on';
-    const g = data.gestacoes || '0';
-    const pn = Number(data['partos-normais'] || '0');
-    const pc = Number(data['partos-cesarea'] || '0');
-    const ab = Number(data.abortos || '0');
-    const paridade = ((g, pn, pc, ab) => {
-  // Lógica para determinar a parte de Partos (P)
-  let partos = '';
-  const totalPartos = pn + pc;
-
-  if (totalPartos === 0) {
-    // Se não há partos normais ou cesáreas, a paridade é P0
-    partos = 'P0';
-  } else if (pn === 0) {
-    // Se há apenas cesáreas (pn = 0 e pc >= 1), exibe P<pc>c
-    partos = `P${pc}c`;
-  } else if (pc === 0) {
-    // Se há apenas partos normais (pc = 0 e pn >= 1), exibe P<pn>v
-    partos = `P${pn}v`;
-  } else {
-    // Se há ambos, exibe o formato completo
-    partos = `P${pn}v${pc}c`;
-  }
-
-  // Combina todas as partes da string de paridade
-  return `G${g}${partos}A${ab}`;
-})(g, pn, pc, ab);
-
-
- // --- Lógica para formatar os dados das USGs ---
-  let usgTxt = data.ultrassonografias && data.ultrassonografias.length > 0 ? '' : '—';
-  if (data.ultrassonografias && data.ultrassonografias.length > 0) {
-    const formattedUsgs = data.ultrassonografias.map(usg => {
-      if (!usg.usg_data) return null; // Ignora USGs sem data
-
-      const usgHeader = `- (${formatDateBR(new Date(usg.usg_data))}) USG ${usg.usg_tipo || ''}:`;
-
-      const conceptosList = usg.conceptos.map(concepto => {
-        const details = [];
-        if (concepto.feto_situacao) details.push(`situação ${concepto.feto_situacao.toLowerCase()}`);
-        if (concepto.feto_apresentacao) details.push(`apresentação ${concepto.feto_apresentacao.toLowerCase()}`);
-        if (concepto.feto_dorso) details.push(`dorso à ${concepto.feto_dorso.toLowerCase()}`);
-        if (concepto.feto_bcf) details.push(`BCF ${concepto.feto_bcf}bpm`);
-        
-        let pfeTxt = '';
-        if (concepto.feto_peso) {
-          pfeTxt = `PFE ${concepto.feto_peso}g`;
-          if (concepto.feto_percentil) pfeTxt += ` (p${concepto.feto_percentil})`;
-          details.push(pfeTxt);
-        }
-        
-        let placentaTxt = '';
-        if (concepto.placenta_localizacao) {
-          placentaTxt = `Placenta ${concepto.placenta_localizacao.toLowerCase()}`;
-          if (concepto.placenta_grau) placentaTxt += `, grau ${concepto.placenta_grau}`;
-          details.push(placentaTxt);
-        }
-
-        if (concepto.feto_ila) details.push(`ILA ${concepto.feto_ila}cm`);
-        if (concepto.feto_mbv) details.push(`MBV ${concepto.feto_mbv}cm`);
-        
-        const obs = concepto.feto_observacoes?.trim();
-        const obsTxt = obs ? `${obs}` : '';
-
-        return `${details.join(', ')} ${obsTxt}`.trim();
-
-      }).filter(Boolean); // Filtra conceitos vazios
-
-      return `${usgHeader} ${conceptosList.join('\n')}`;
-    }).filter(Boolean); // Filtra USGs sem data
-
-    usgTxt = formattedUsgs.length > 0 ? formattedUsgs.join('\n') : '—';
-  }
-  // --- Fim da lógica para formatar os dados das USGs ---
-
-    const dumInc = data.dum_incerta === 'on';
-    const igdum = data['ig-dum'];
-    const dppStr = data.dpp;
-    const dataUsgStr = data['data-usg'];
-    const igUsgStr = data['ig-usg'];
-    const igUsgCorr = data['ig-usg-atual'];
-    const toqueAvoid = data.toque_evitado === 'on';
-
-    const viciosComAfixo = [];
-    const viciosSemAfixo = [];
-    if (data.etilismo === 'on') viciosSemAfixo.push('Etilismo');
-    else viciosComAfixo.push('Etilismo');
-    if (data.tabagismo === 'on') viciosSemAfixo.push('Tabagismo');
-    else viciosComAfixo.push('Tabagismo');
-    if (data.drogas === 'on') viciosSemAfixo.push('Drogadição');
-    else viciosComAfixo.push('Drogadição');
-
-    let viciosTxt = '';
-    if (viciosComAfixo.length === 3) {
-        viciosTxt += `Nega etilismo, tabagismo e uso de drogas.`;
-    } else if (viciosComAfixo.length > 0) {
-        const negados = viciosComAfixo.join(', ').replace(/,([^,]*)$/, ' e$1');
-        viciosTxt += `Nega ${negados}.`;
-    }
-    if (viciosSemAfixo.length > 0) {
-        const afirmados = [];
-        if (data.etilismo === 'on') afirmados.push('Etilista');
-        if (data.tabagismo === 'on') afirmados.push(data.tabagismo_detalhe ? `Tabagista (${data.tabagismo_detalhe})` : `Tabagista`);
-        if (data.drogas === 'on' && data.drogas_tags.length > 0) afirmados.push(`Usuária de drogas (${data.drogas_tags.join(', ')})`);
-        if (viciosTxt.length > 0) viciosTxt += ' '
-        viciosTxt += afirmados.join(', ');
-    }
-    if (viciosTxt.length === 0) viciosTxt = 'Nega etilismo, tabagismo e uso de drogas.';
-
-    const hda = data.hda?.trim() || '';
-    const especAvoid = data.especular_evitado === 'on';
-
-    const conds = getCheckedValues('conduta');
-    const outrasConds = document.getElementById('condutas-tags').getTags();
-    const allCondutas = [...conds, ...outrasConds];
-
-    const signatures = data.signatures?.map(s => `${s.title} ${s.name}`).filter(Boolean) || [];
-
-    const header = `# SR às ${hh}:${mm} #`;
-    const ident = formatarIdentificacao(nome, idade, procedencia);
-
-    let obstetrico;
-    if (nuligesta) {
-        obstetrico = 'Nuligesta.';
-    } else {
-        const obsParts = [
-            `${paridade} | ${dumInc ? `DUM incerta` : `DUM ${formatDateBR(new Date(data.dum))} | IG DUM ${igdum}`}`
-        ].filter(Boolean);
-        const gestacaoParts = [
-            igUsgCorr ? `IG USG ${igUsgCorr}` : null,
-            (igUsgStr && dataUsgStr) ? ` (${igUsgStr.replace('s', 's').replace('d', 'd')} em ${formatDateBR(new Date(dataUsgStr))})` : null,
-            dppStr ? ` | DPP ${dppStr}` : null,
-        ].filter(Boolean).join('');
-        obstetrico = `${obsParts.join('\n')} \n${gestacaoParts}`;
-    }
-
-     // Nova lógica para coletar e formatar as comorbidades de toggle
-    const comorbToggles = [];
-    if (data.comorbidade_dmg_dieta) comorbToggles.push('DMG (Dieta)');
-    if (data.comorbidade_dmg_insulina) comorbToggles.push('DMG (Insulina)');
-    if (data.comorbidade_hag) comorbToggles.push('HAG');
-    if (data.comorbidade_has) comorbToggles.push('HAS');
-
-    const allComorbidades = [...comorbToggles, ...data.comorbidades_tags];
-    const comorbTxt = `# Comorbidades: ${(allComorbidades.length ? allComorbidades : ['Nega']).map(c => `${c}`).join(', ')}`;
-
-    const complementaresTxt = `TS: ${tipoSanguineo} | ${trTxt}`;
-    const alergiasTxt = `# Alergias: ${(data.alergias_tags.length ? data.alergias_tags : ['Nega']).map(a => `${a}`).join(', ')}`;
-    const viciosSectionTxt = `# Vícios\n- ${viciosTxt}`;
-    const medsTxt = `# Em uso de: ${(data.custom_meds.length ? data.custom_meds : ['Nega']).map(m => `${m}`).join(', ')}`;
-    const hdaTxt = `# HDA\n${hda || '—'}`;
-
-    const vitais = [
-        data.pa ? `PA ${data.pa} mmHg` : null,
-        data.pa_dle ? `PA pós DLE ${data.pa_dle} mmHg` : null,
-        data.fc ? `FC ${data.fc} bpm` : null,
-        data.spo2 ? `SpO2 ${data.spo2}%` : null,
-        data.tax ? `TAx ${data.tax}°C` : null,
-        getSelectValue('proteinuria') !== 'nao_realizado' ? `Proteinúria: ${getSelectValue('proteinuria')}` : null,
-    ].filter(Boolean);
-
-    const efParts = [
-        data.altura_uterina ? `AU ${data.altura_uterina} cm` : null,
-        data.bcf ? `BCF ${data.bcf} bpm` : null,
-        getBinaryToggleValue('mov_fetal') ? `MF ${getBinaryToggleValue('mov_fetal')}` : null,
-        getBinaryToggleValue('tonus_uterino') ? `TU ${getBinaryToggleValue('tonus_uterino')}` : null,
-        data.dinamica_ausente === 'on' ? `DU Ausente` : (data.dinamica_uterina ? `DU ${data.dinamica_uterina}` : null),
-    ].filter(Boolean).join(' | ');
-
-    let toqueTxt = '';
-    if (toqueAvoid) {
-        toqueTxt = 'TV: evitado';
-    } else {
-        const toqueDetails = [];
-        if (getSelectValue('espessura')) toqueDetails.push(getSelectValue('espessura'));
-        if (getSelectValue('posicao')) toqueDetails.push(getSelectValue('posicao'));
-        if (data.dilatacao) toqueDetails.push(`pérvio para ${data.dilatacao} cm`);
-        if (getBinaryToggleValue('bolsa')) {
-            if (getBinaryToggleValue('bolsa') === 'Rota') {
-                const dataRomp = data.hora_rompimento ? `às ${formateDateHoraBR(new Date(data.hora_rompimento))}` : '';
-                toqueDetails.push(`bolsa rota ${dataRomp}`);
-                if (getSelectValue('cor_liquido')) toqueDetails.push(`líquido ${getSelectValue('cor_liquido')}`);
-            } else {
-                toqueDetails.push(`bolsa ${getBinaryToggleValue('bolsa').toLowerCase()}`);
-            }
-        }
-        if (getBinaryToggleValue('sangramento')) {
-            const sangramentoText = getBinaryToggleValue('sangramento') === 'Presente' ? 'com sangramento em dedo de luva' : 'sem sangramento em dedo de luva';
-            toqueDetails.push(sangramentoText);
-        }
-        toqueTxt = `TV: ${toqueDetails.length > 0 ? toqueDetails.join(', ') : 'não realizado'}.`;
-    }
-
-    const especularTxt = data.desc_especular?.trim() ? `EE: ${data.desc_especular.trim()}` : '';
-    const efTxt = `# Exame Físico\n- ${vitais.join(' | ')}\n- ${efParts}\n- ${toqueTxt}\n- ${especularTxt}`;
-    const labsTxt = data.exames_laboratoriais?.trim() ? `# Exames Laboratoriais\n${data.exames_laboratoriais.trim()}` : '';
-    const imgTxt = (usgTxt || data.exames_imagem?.trim()) ? `# Exames de Imagem\n${usgTxt || '—'}\n${data.exames_imagem?.trim() || ''}`.trim() : '';    const hipTxt = `# Hipótese Diagnóstica\n${(data.hipotese_tags.length ? data.hipotese_tags : ['—']).map(c => `- ${c}`).join('\n')}`;
-    
-    return [obstetrico, comorbTxt, medsTxt, ' ', hdaTxt, ' ', efTxt, '', labsTxt, '', imgTxt].filter(Boolean).join('\n');
-}
-
+function buildAIHOutput() {}
 /**
  * Coleta os dados do formulário e cria um objeto de mapeamento para os campos do PDF.
  * @returns {object} Um objeto com os dados formatados e mapeados.
@@ -1680,10 +1489,12 @@ function collectFormDataAndMapping() {
     const dinamAusente = form.elements['dinamica_ausente'].checked;
     const dinam = form.elements['dinamica_uterina'].value;
     const caraterInternacao = form.elements['carater_internacao']?.value;
-
-
     const fieldMapping = {
-        Data: today.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: '2-digit' }),
+        Data: today.toLocaleDateString('pt-BR', {
+            day: '2-digit',
+            month: '2-digit',
+            year: '2-digit'
+        }),
         Prontuario: data.prontuario || '',
         Consultas: data.consultas || '',
         Nome: data.nome || '',
@@ -1731,9 +1542,7 @@ function collectFormDataAndMapping() {
         trHepB: trLabelsMap.tr_hepb[data.tr_hepb],
         trHepC: trLabelsMap.tr_hepc[data.tr_hepc],
         Robson: String(classifyRobson(data))
-
     };
-
     const signatureItems = document.querySelectorAll('.signature-item');
     signatureItems.forEach((item) => {
         const titleElement = item.querySelector('[name="signature_title"]');
@@ -1754,10 +1563,11 @@ function collectFormDataAndMapping() {
             }
         }
     });
-
-    return { fieldMapping, toqueAvoid: form.elements['toque_evitado'].checked };
+    return {
+        fieldMapping,
+        toqueAvoid: form.elements['toque_evitado'].checked
+    };
 }
-
 /**
  * Preenche os campos do PDF com base no mapeamento fornecido e lista todos os campos encontrados.
  * @param {PDFLib.PDFForm} formFields O objeto de formulário do PDF.
@@ -1770,23 +1580,21 @@ function fillPDFFields(formFields, fieldMapping) {
     console.log(pdfFieldsList);
     console.log('---------------------------------');
     // --- FIM DO CÓDIGO DE DEPURAÇÃO ---
-
     for (const fieldName in fieldMapping) {
         try {
             // Tenta obter o campo como um tipo genérico primeiro
             const field = formFields.getField(fieldName);
-            
             if (field) {
                 // Checa se o campo é um campo de texto pelo método `setText`
                 if (typeof field.setText === 'function') {
                     field.setText(String(fieldMapping[fieldName]));
                     console.log(`Campo de texto "${fieldName}" preenchido com o valor: ${fieldMapping[fieldName]}`);
-                } 
+                }
                 // Checa se o campo é um grupo de rádio pelo método `select`
                 else if (typeof field.select === 'function') {
                     field.select(String(fieldMapping[fieldName]));
                     console.log(`Campo de rádio "${fieldName}" preenchido com o valor: ${fieldMapping[fieldName]}`);
-                } 
+                }
                 // Checa se o campo é um checkbox pelo método `check`
                 else if (typeof field.check === 'function') {
                     if (fieldMapping[fieldName] === true || fieldMapping[fieldName] === 'true' || fieldMapping[fieldName] === 'on') {
@@ -1807,17 +1615,13 @@ function fillPDFFields(formFields, fieldMapping) {
         }
     }
 }
-
-
 // ==================================
 // ===== Lógica de Assinatura (IndexedDB e PKCE) =====
 // ==================================
-
 // Variáveis para IndexedDB
 let db;
 const DB_NAME = 'prontuarioDB';
 const STORE_NAME = 'prontuarios';
-
 /**
  * Funções de utilidade para o PKCE
  */
@@ -1835,7 +1639,6 @@ function generateCodeChallenge(codeVerifier) {
     const digest = CryptoJS.SHA256(codeVerifier).toString(CryptoJS.enc.Base64);
     return digest.replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
-
 /**
  * Abre a conexão com o banco de dados IndexedDB.
  */
@@ -1857,7 +1660,6 @@ function openDB() {
         };
     });
 }
-
 /**
  * Salva um arquivo no IndexedDB.
  * @param {string} key A chave para o item.
@@ -1875,7 +1677,6 @@ function saveFileInDB(key, data) {
         request.onerror = (event) => reject('Erro ao salvar no IndexedDB: ' + event.target.errorCode);
     });
 }
-
 /**
  * Recupera um arquivo do IndexedDB.
  * @param {string} key A chave do item.
@@ -1890,7 +1691,6 @@ function getFileFromDB(key) {
         request.onerror = (event) => reject('Erro ao buscar no IndexedDB: ' + event.target.errorCode);
     });
 }
-
 /**
  * Gera o PDF, exibe para o usuário e armazena no IndexedDB.
  */
@@ -1899,18 +1699,16 @@ async function generateAndDisplayPDF() {
         showNotification('Por favor, preencha o nome da paciente antes de gerar o PDF.', 'error');
         return;
     }
-// Coleta o caráter da internação
+    // Coleta o caráter da internação
     const caraterInternacao = form.elements['carater_internacao']?.value;
-    
     // Escolhe o nome do arquivo PDF com base no caráter da internação
     let formUrl = '';
     if (caraterInternacao === 'Cesárea') {
         formUrl = './ficha_cesarea.pdf';
-    } else if (caraterInternacao === 'Indução ou Normal'){
+    } else if (caraterInternacao === 'Indução ou Normal') {
         formUrl = './ficha_normal.pdf'; // Para "Indução ou Normal" e "Tratamento Clínico"
     } else {
         formUrl = './ficha_clinico.pdf';
-
     }
     try {
         console.log("preenchendo...");
@@ -1923,7 +1721,6 @@ async function generateAndDisplayPDF() {
         } = collectFormDataAndMapping();
         console.log(fieldMapping);
         fillPDFFields(formFields, fieldMapping);
-
         if (!toqueAvoid) {
             try {
                 formFields.getRadioGroup('Angulo_0WXA').select('>90');
@@ -1933,25 +1730,20 @@ async function generateAndDisplayPDF() {
                 console.error(`Erro ao preencher campos de rádio de toque.`, e);
             }
         }
-
         const pdfBytes = await pdfDoc.save();
         const pdfBlob = new Blob([pdfBytes], {
             type: 'application/pdf'
         });
         const pdfUrl = URL.createObjectURL(pdfBlob);
-
         window.open(pdfUrl, '_blank');
         await saveFileInDB('prontuarioPdf', pdfBlob);
         btnSignPdf.disabled = false;
-
         showNotification('PDF gerado com sucesso! Você pode visualizá-lo e, se estiver correto, prosseguir com a assinatura.', 'success');
     } catch (error) {
         console.error('Erro ao gerar o PDF:');
         showNotification('Erro ao gerar o PDF.', error);
     }
 }
-
-
 /**
  * Inicia o fluxo de autorização com o SerproID em um pop-up.
  */
@@ -1960,16 +1752,13 @@ async function initSerproAuth() {
         const codeVerifier = generateCodeVerifier();
         const codeChallenge = generateCodeChallenge(codeVerifier);
         setCookie("codeVerifier", codeVerifier);
-
         const url = new URL('http://localhost:3000/auth');
         url.searchParams.append('code_challenge', codeChallenge);
         url.searchParams.append('code_challenge_method', 'S256');
         url.searchParams.append('code_verifier', codeVerifier);
         url.searchParams.append('state', 'aut');
-
         // ABRINDO O POP-UP COM AS DIMENSÕES ESPECIFICADAS
         const authWindow = window.open(url.toString(), 'SerproID Auth', 'popup=true');
-
         const checkWindow = setInterval(() => {
             if (!authWindow || authWindow.closed) {
                 clearInterval(checkWindow);
@@ -1992,7 +1781,6 @@ async function signPDF(pdfBlob, accessToken) {
             reader.onloadend = () => resolve(reader.result.split(',')[1]);
             reader.readAsDataURL(pdfBlob);
         });
-
         const response = await fetch('http://localhost:3000/assinar', {
             method: 'POST',
             headers: {
@@ -2003,9 +1791,7 @@ async function signPDF(pdfBlob, accessToken) {
                 accessToken: accessToken
             }),
         });
-
         const result = await response.json();
-
         if (response.ok) {
             console.log('PDF assinado com sucesso!');
             const signedPdfBytes = Uint8Array.from(atob(result.pdfAssinado), c => c.charCodeAt(0));
@@ -2023,17 +1809,13 @@ async function signPDF(pdfBlob, accessToken) {
         showNotification('Erro na comunicação com o backend.', error);
     }
 }
-
-// ==================================
-// ===== Event Listeners e Inicialização =====
-// ==================================
-
+// =====================================
+// == Event Listeners e Inicialização ==
+// =====================================
 const btnGerarProntuario = document.getElementById('btn-gerar-prontuario');
 const btnPrintPdf = document.getElementById('btn-print-pdf');
 const btnSignPdf = document.getElementById('btn-sign-pdf');
 const btnGerarAih = document.getElementById('btn-gerar-aih');
-
-
 // Configuração dos campos de tags
 setupTagInput('alergias-tags', 'alergias-input');
 setupTagInput('comorbidades-tags', 'comorbidades-input');
@@ -2042,12 +1824,12 @@ setupTagInput('hipotese-tags', 'hipotese-input');
 setupTagInput('drogas-tags', 'drogas-input-field');
 
 function initListeners() {
+    listenerPendencias();
     // Eventos de cálculo de IG
     dumInput.addEventListener('change', refreshPregCalc);
     dumIncerta.addEventListener('change', refreshPregCalc);
     dataUsg.addEventListener('change', refreshPregCalc);
     igUsg.addEventListener('input', refreshPregCalc);
-
     // Eventos de alternância de campos de vício
     tabagismoCheckbox.addEventListener('change', () => {
         tabagismoInputDiv.style.display = tabagismoCheckbox.checked ? 'flex' : 'none';
@@ -2057,7 +1839,6 @@ function initListeners() {
         drogasInputDiv.style.display = drogasCheckbox.checked ? 'flex' : 'none';
         if (!drogasCheckbox.checked) document.getElementById('drogas-tags').setTags([]);
     });
-
     // Eventos de estado para Testes Rápidos
     trLabels.forEach((label) => {
         const input = document.querySelector(`input[name="${label.htmlFor}"]`);
@@ -2071,7 +1852,6 @@ function initListeners() {
             label.classList.add(nextState);
         });
     });
-
     // Outros listeners de alternância de campos e labels
     document.querySelectorAll('.toggle-group input[type="checkbox"]').forEach((input) => {
         input.addEventListener('change', () => updateToggleLabel(input));
@@ -2087,27 +1867,24 @@ function initListeners() {
         dinamicaInput.disabled = e.target.checked;
         dinamicaInput.value = '';
     });
-
     // Listener para o card colapsável
-document.querySelectorAll('.collapsible-card .collapsible-header').forEach(header => {
-    header.addEventListener('click', () => {
-        const cardContent = header.nextElementSibling;
-        header.classList.toggle('active');
-        if (header.classList.contains('active')) {
-            cardContent.style.display = 'block';
-        } else {
-            cardContent.style.display = 'none';
-        }
+    document.querySelectorAll('.collapsible-card .collapsible-header').forEach(header => {
+        header.addEventListener('click', () => {
+            const cardContent = header.nextElementSibling;
+            header.classList.toggle('active');
+            if (header.classList.contains('active')) {
+                cardContent.style.display = 'block';
+            } else {
+                cardContent.style.display = 'none';
+            }
+        });
     });
-});
-
     // Listeners para botões dinâmicos
     addMedicationBtn.addEventListener('click', addMedicationField);
     addSignatureBtn.addEventListener('click', () => addSignatureField());
     addUsgBtn.addEventListener('click', () => {
-  createUsgBlock({}, usgContainer.children.length);
-});
-
+        createUsgBlock({}, usgContainer.children.length);
+    });
     // Listeners para botões de controle local
     document.getElementById('btn-save').addEventListener('click', (e) => {
         e.preventDefault();
@@ -2117,55 +1894,44 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         e.preventDefault();
         clearAll();
     });
-
     btnGerarProntuario.addEventListener('click', (e) => {
         e.preventDefault();
         if (!form.elements['nome'].value.trim()) {
             showNotification('Preencha o nome da paciente.');
             return;
         }
-
         // Gera o texto do prontuário
         output.value = buildOutput();
         output.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
         });
-
         // Copia o texto para a área de transferência
         output.select();
         document.execCommand('copy');
         window.getSelection().removeAllRanges();
-
         // Notifica o usuário
         showNotification('Prontuário gerado e copiado para a área de transferência.');
     });
-
-        btnGerarAih.addEventListener('click', (e) => {
+    btnGerarAih.addEventListener('click', (e) => {
         e.preventDefault();
         if (!form.elements['nome'].value.trim()) {
             showNotification('Preencha o nome da paciente.');
             return;
         }
-
         // Gera o texto do prontuário
         outputAih.value = buildAIHOutput();
         outputAih.scrollIntoView({
             behavior: 'smooth',
             block: 'start'
         });
-
         // Copia o texto para a área de transferência
         outputAih.select();
         document.execCommand('copy');
         window.getSelection().removeAllRanges();
-
         // Notifica o usuário
         showNotification('Texto para AIH gerado e copiado para a área de transferência.');
     });
-
-
-
     document.getElementById('btn-copy').addEventListener('click', () => {
         if (!output.value) {
             showNotification('Nada para copiar.', 'error');
@@ -2175,8 +1941,6 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         document.execCommand('copy');
         window.getSelection().removeAllRanges();
     });
-
-
     document.getElementById('btn-copy-aih').addEventListener('click', () => {
         if (!outputAih.value) {
             showNotification('Nada para copiar.', 'error');
@@ -2186,10 +1950,9 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         document.execCommand('copy');
         window.getSelection().removeAllRanges();
     });
-
     document.getElementById('btn-download').addEventListener('click', () => {
         if (!output.value) {
-            showNotification('Nada para baixar.',  'error');
+            showNotification('Nada para baixar.', 'error');
             return;
         }
         const blob = new Blob([output.value], {
@@ -2204,13 +1967,10 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
     });
-
     btnPrintPdf.addEventListener('click', (e) => {
         e.preventDefault();
         generateAndDisplayPDF();
     });
-
-
     /* Desativada a função de assinar
     btnSignPdf.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -2228,7 +1988,6 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
         }
     });
     */
-
     // Adiciona o listener para a mensagem do pop-up
     window.addEventListener('message', async (event) => {
         if (event.origin !== window.location.origin) {
@@ -2240,7 +1999,6 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
             console.log('Token de acesso recebido da janela pop-up. Iniciando assinatura...');
             const accessToken = data.token;
             const storedPdfBlob = await getFileFromDB('prontuarioPdf');
-
             if (storedPdfBlob) {
                 await signPDF(storedPdfBlob, accessToken);
             } else {
@@ -2258,14 +2016,65 @@ document.querySelectorAll('.collapsible-card .collapsible-header').forEach(heade
     });
 }
 
-
+function listenerPendencias() {
+    // Listener para o botão de adicionar pendência na tabela de atendimentos salvos
+    savedTableBody.addEventListener('click', (e) => {
+        if (e.target.classList.contains('add-pendencia-btn')) {
+            const row = e.target.closest('tr');
+            const nome = row.querySelector('td:nth-child(2)').textContent;
+            const prontuario = row.querySelector('td:nth-child(4)').textContent;
+            modalNome.textContent = nome;
+            modalProntuario.textContent = prontuario;
+            pendenciaModal.classList.remove('hidden-field');
+        }
+    });
+    btnAddPendenciaForm.addEventListener('click', (e) => {
+        e.preventDefault();
+        const nome = document.getElementById('nome').value.trim();
+        const prontuario = document.getElementById('prontuario').value.trim();
+        if (!nome && !prontuario) {
+            showNotification('Preencha o nome da paciente ou o prontuário para adicionar uma pendência.', 'error');
+            return;
+        }
+        // Preenche o modal de pendência com os dados do formulário
+        modalNome.textContent = nome;
+        modalProntuario.textContent = prontuario;
+        // Mostra o modal
+        pendenciaModal.classList.remove('hidden-field');
+    });
+    // Listener para fechar o modal
+    document.querySelector('#pendencia-modal .close-btn').addEventListener('click', () => {
+        pendenciaModal.classList.add('hidden-field');
+    });
+    // Listener para salvar a pendência
+    btnSalvarPendencia.addEventListener('click', () => {
+        const nome = modalNome.textContent;
+        const prontuario = modalProntuario.textContent;
+        const descricao = pendenciaDescricaoInput.value.trim();
+        const tempoMinutos = parseInt(pendenciaTempoInput.value);
+        if (!descricao) {
+            showNotification('Por favor, adicione uma descrição para a pendência.', 'error');
+            return;
+        }
+        const novaPendencia = {
+            nome: nome,
+            prontuario: prontuario,
+            descricao: descricao,
+            timestamp: new Date().getTime(),
+            tempoAlarmeMs: tempoMinutos * 60 * 1000,
+            notified: false
+        };
+        savePendencia(novaPendencia);
+        showNotification('Pendência adicionada com sucesso!', 'success');
+        pendenciaModal.classList.add('hidden-field');
+        pendenciaDescricaoInput.value = '';
+    });
+}
 // ==================================
-// ===== Lógica de Triagem e Atualização =====
+// ===== Triagem e Atualização ======
 // ==================================
-
 const triagemTableBody = document.querySelector('#triagem-table tbody');
 const triagemUrl = './triagem-proxy';
-
 const COR_MONTREAL = {
     'Vermelho': '#E74C3C', // Um vermelho tijolo que tem presença, mas não é gritante
     'MUITO URGENTE': '#E67E22', // Um laranja intenso, mais vivo que o pêssego
@@ -2274,7 +2083,6 @@ const COR_MONTREAL = {
     'NÃO URGENTE': '#3498DB', // Um azul céu mais forte
     'SEM CLASSIFICAÇÃO': '#BDC3C7' // Um cinza médio, que se distingue sem ser preto
 };
-
 /**
  * Acessa a URL, extrai os dados da tabela de triagem e os retorna.
  * @returns {Promise<Array>} Uma promessa que resolve para um array de objetos de paciente.
@@ -2288,11 +2096,9 @@ async function fetchTriagemData() {
         const html = await response.text();
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, 'text/html');
-        
         // Acessa a tabela correta. A estrutura HTML fornecida não tem ID, então procuramos por ela.
         const triagemTable = doc.querySelector('#example2');
         const patients = [];
-
         if (triagemTable) {
             const rows = triagemTable.querySelectorAll('tbody tr');
             rows.forEach(row => {
@@ -2315,21 +2121,18 @@ async function fetchTriagemData() {
         return [];
     }
 }
-
 /**
  * Popula a tabela de triagem na interface com os dados dos pacientes.
  * @param {Array} patients O array de objetos de paciente.
  */
 function populateTriagemTable(patients) {
     triagemTableBody.innerHTML = ''; // Limpa a tabela existente
-    
     if (patients.length === 0) {
         const row = document.createElement('tr');
         row.innerHTML = `<td colspan="5" style="text-align: center;">Nenhum paciente na triagem.</td>`;
         triagemTableBody.appendChild(row);
         return;
     }
-
     patients.forEach(patient => {
         const row = document.createElement('tr');
         const classificacao = patient.classificacao;
@@ -2338,7 +2141,6 @@ function populateTriagemTable(patients) {
         row.dataset.nome = patient.nome;
         row.dataset.prontuario = patient.prontuario;
         row.dataset.idade = patient.idade;
-
         row.innerHTML = `
             <td>${patient.chegada}</td>
             <td>${patient.nome}</td>
@@ -2347,10 +2149,8 @@ function populateTriagemTable(patients) {
             <td>${classificacao}</td>
             <td><button class="btn btn-sm copy-data-btn">Copiar Dados</button></td>
         `;
-        
         triagemTableBody.appendChild(row);
     });
-
     // Adiciona listener para os botões "Copiar Dados"
     document.querySelectorAll('.copy-data-btn').forEach(button => {
         button.addEventListener('click', (e) => {
@@ -2358,16 +2158,13 @@ function populateTriagemTable(patients) {
             const nomeInput = document.getElementById('nome');
             const prontuarioInput = document.getElementById('prontuario');
             const idadeInput = document.getElementById('idade');
-
             nomeInput.value = row.dataset.nome;
             prontuarioInput.value = row.dataset.prontuario;
             idadeInput.value = row.dataset.idade;
-
             showNotification(`Dados de ${row.dataset.nome} copiados para o formulário.`, 'success');
         });
     });
 }
-
 /**
  * Função principal para buscar e atualizar a tabela de triagem.
  */
@@ -2376,23 +2173,205 @@ async function refreshTriagem() {
     const patients = await fetchTriagemData();
     populateTriagemTable(patients);
 }
+// =============================
+// ======== Pendências =========
+// =============================
+function savePendencia(pendencia) {
+    let pendencias = JSON.parse(localStorage.getItem(PENDENCIA_LS_KEY)) || [];
+    pendencias.push(pendencia);
+    localStorage.setItem(PENDENCIA_LS_KEY, JSON.stringify(pendencias));
+    renderPendenciasTable();
+}
 
-/**
- * Função principal de inicialização da página.
- */
+function renderPendenciasTable() {
+    pendenciasTableBody.innerHTML = '';
+    const pendencias = JSON.parse(localStorage.getItem(PENDENCIA_LS_KEY)) || [];
+    if (pendencias.length === 0) {
+        const emptyRow = document.createElement('tr');
+        emptyRow.innerHTML = `<td colspan="5" style="text-align: center;">Nenhuma pendência.</td>`;
+        pendenciasTableBody.appendChild(emptyRow);
+        return;
+    }
+    pendencias.forEach((p, index) => {
+        const row = document.createElement('tr');
+        row.dataset.pendenciaIndex = index;
+        row.innerHTML = `
+            <td class="tempo-restante-cell" data-timestamp="${p.timestamp}" data-tempo-alarme-ms="${p.tempoAlarmeMs}"></td>
+            <td>${p.nome}</td>
+            <td>${p.prontuario}</td>
+            <td>${p.descricao}</td>
+            <td>
+                <button class="btn success btn-sm resolver-btn" data-index="${index}">Resolver</button>
+                <button class="btn primary btn-sm load-from-pendencia-btn" data-prontuario="${p.prontuario}">Carregar Atendimento</button>
+            </td>
+        `;
+        pendenciasTableBody.appendChild(row);
+    });
+    // Adiciona evento para o botão "Resolver"
+    document.querySelectorAll('.resolver-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            swal({
+                title: "Você tem certeza?",
+                text: "Depois de resolvida, você não poderá recuperar essa pendência",
+                icon: "info",
+                buttons: {
+                    cancel: {
+                        text: "Cancelar",
+                        value: null,
+                        visible: true,
+                        className: "btn",
+                        closeModal: true,
+                    },
+                    confirm: {
+                        text: "Resolver",
+                        value: true,
+                        visible: true,
+                        className: "btn warning",
+                        closeModal: true
+                    }
+                },
+                dangerMode: false
+            }).then(function(vaiResolver) {
+                if (vaiResolver) {
+                    const index = e.target.dataset.index;
+                    let pendencias = JSON.parse(localStorage.getItem(PENDENCIA_LS_KEY));
+                    pendencias.splice(index, 1);
+                    localStorage.setItem(PENDENCIA_LS_KEY, JSON.stringify(pendencias));
+                    renderPendenciasTable();
+                    showNotification('Pendência resolvida.', 'success');
+                }
+            })
+        });
+    });
+    // Adiciona evento para o botão "Copiar Dados"
+    document.querySelectorAll('.load-from-pendencia-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => { carregarAtendimento(e) })
+    });
+}
+
+function updatePendenciaTimers() {
+    const pendencias = JSON.parse(localStorage.getItem(PENDENCIA_LS_KEY)) || [];
+    let pendenciasAtualizadas = false;
+    
+    // Loop sobre as pendências no localStorage
+    pendencias.forEach((p, index) => {
+        const agora = new Date().getTime();
+        const tempoRestanteMs = p.timestamp + p.tempoAlarmeMs - agora;
+
+        if (tempoRestanteMs <= 0 && !p.notified) {
+            alertarPendenciaExpirada(p.nome, p.descricao);
+            p.notified = true;
+            pendenciasAtualizadas = true;
+        }
+
+        // Encontre a célula correspondente na tabela usando o índice
+        const row = document.querySelector(`[data-pendencia-index="${index}"]`);
+        if (row) {
+            const cell = row.querySelector('.tempo-restante-cell');
+            let tempoTexto;
+            if (tempoRestanteMs <= 0) {
+                tempoTexto = 'EXPIRADO!';
+                row.style.backgroundColor = '#FFCCCC';
+            } else {
+                const segundos = Math.floor(tempoRestanteMs / 1000) % 60;
+                const minutos = Math.floor(tempoRestanteMs / (60 * 1000));
+                tempoTexto = `${minutos} min ${segundos} seg`;
+                row.style.backgroundColor = '';
+            }
+            cell.textContent = tempoTexto;
+        }
+    });
+
+    if (pendenciasAtualizadas) {
+        localStorage.setItem(PENDENCIA_LS_KEY, JSON.stringify(pendencias));
+    }
+}
+
+function carregarAtendimento(e) {
+    swal({
+        title: "Você tem certeza?",
+        text: "Isso irá substituir todos os dados do atendimento atual.",
+        icon: "info",
+        buttons: {
+            cancel: {
+                text: "Cancelar",
+                value: null,
+                visible: true,
+                className: "btn",
+                closeModal: true,
+            },
+            confirm: {
+                text: "Carregar",
+                value: true,
+                visible: true,
+                className: "btn primary",
+                closeModal: true
+            }
+        },
+        dangerMode: false
+    }).then(function(vaiResolver) {
+        if (vaiResolver) {
+            const prontuario = e.target.dataset.prontuario;
+            loadLocal(prontuario);
+        }
+    }); 
+} 
+
+function apagarAtendimento(savedData, key) {
+    swal({
+        title: "Você tem certeza que deseja apagar este atendimento?",
+        text: "Essa ação não poderá ser revertida.",
+        icon: "warning",
+        buttons: {
+            cancel: {
+                text: "Cancelar",
+                value: null,
+                visible: true,
+                className: "btn",
+                closeModal: true,
+            },
+            confirm: {
+                text: "Apagar",
+                value: true,
+                visible: true,
+                className: "btn error",
+                closeModal: true
+            }
+        },
+        dangerMode: true
+    }).then(function(vaiResolver) {
+        if (vaiResolver) {
+            delete savedData[key];
+            localStorage.setItem(LS_KEY, JSON.stringify(savedData));
+            renderSavedAtendimentos(); // Atualiza a tabela
+        }
+    }); 
+} 
+
+function alertarPendenciaExpirada (nome, descricao)
+{
+    swal({
+    title: "Opa! Pendência expirada",
+    text: `A pendência de ${nome} (${descricao}) expirou`,
+    icon: "info",
+    button: "Dispensar",
+});
+}
+// =============================
+// ====== Inicialização ========
+// =============================
 async function initPage() {
     startClock();
     initListeners();
     renderSavedAtendimentos();
-    //refreshTriagem();
-    //setInterval(refreshTriagem, 60000);
-
+    renderPendenciasTable();
+    updatePendenciaTimers(); // Renderiza a tabela uma vez no início
+    setInterval(updatePendenciaTimers, 1000);
     try {
         await openDB();
     } catch (e) {
         console.error('Erro na inicialização da página:', e);
     }
-
     setObstetricFieldsDisabled(nuligestaToggle.checked);
     refreshPregCalc();
     especularEvitado.dispatchEvent(new Event('change'));
@@ -2400,10 +2379,8 @@ async function initPage() {
     toqueEvitado.dispatchEvent(new Event('change'));
     tabagismoCheckbox.dispatchEvent(new Event('change'));
     drogasCheckbox.dispatchEvent(new Event('change'));
-
     if (!signaturesContainer.children.length) {
         addSignatureField();
     }
 }
-
 initPage()
