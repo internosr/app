@@ -868,7 +868,7 @@ function loadLocal(identifier) {
 // =====================================
 // ===== Controle de Paginação =====
 // =====================================
-const ITEMS_PER_PAGE = 2; // Defina quantos itens por página você quer
+const ITEMS_PER_PAGE = 10; // Defina quantos itens por página você quer
 let currentPage = 1;
 
 /**
