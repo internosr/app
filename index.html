@@ -76,11 +76,6 @@
                     </section>
                 </div>
                 <div aria-labelledby="atendimento-tab" class="tab-pane fade" id="atendimento" role="tabpanel">
-                    <div class="toolbar mt-3">
-                        <button class="btn warning" id="btn-clear">
-                            Limpar Tudo
-                        </button>
-                    </div>
                     <form autocomplete="off" id="form-prontuario">
                         <section class="card">
                             <h2 class="card-title">
@@ -1074,6 +1069,13 @@
                             </button>
                         </div>
                     </section>
+
+                    <div class="toolbar mt-3">
+                        <button class="btn warning" id="btn-clear">
+                            Limpar Tudo
+                        </button>
+                    </div>
+                
                 </div>
                 <div aria-labelledby="pendencias-tab" class="tab-pane fade" id="pendencias" role="tabpanel">
                     <section class="card">
@@ -1111,6 +1113,12 @@
                 </div>
                 <div aria-labelledby="finalizados-tab" class="tab-pane fade" id="finalizados" role="tabpanel">
                     <section class="card">
+                        <div class="form-grid">
+        <div class="form-group grid-col-span-full">
+            <label for="search-input">Pesquisar por Nome ou Prontuário</label>
+            <input type="text" id="search-input" placeholder="Digite o nome ou prontuário..."/>
+        </div>
+    </div>
                         <div class="table-container">
                             <table id="saved-atendimentos-table">
                                 <thead>

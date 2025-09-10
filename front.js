@@ -434,6 +434,8 @@ const drogasCheckbox = document.getElementById('drogas');
 const tabagismoInputDiv = document.getElementById('tabagismo-input');
 const drogasInputDiv = document.getElementById('drogas-input');
 const btnAddPendenciaForm = document.getElementById('btn-add-pendencia-form');
+const searchInput = document.getElementById('search-input');
+
 // Lógica de estado para Testes Rápidos
 const trLabels = document.querySelectorAll('.testes-rapidos .state-toggle-label');
 const trStates = ['nao_realizado', 'nao_reagente', 'reagente'];
@@ -866,7 +868,7 @@ function loadLocal(identifier) {
 // =====================================
 // ===== Controle de Paginação =====
 // =====================================
-const ITEMS_PER_PAGE = 5; // Defina quantos itens por página você quer
+const ITEMS_PER_PAGE = 2; // Defina quantos itens por página você quer
 let currentPage = 1;
 
 /**
@@ -920,22 +922,36 @@ function renderPaginationControls(totalPages, totalItems) {
 
 /**
  * Renderiza a lista de atendimentos salvos em uma tabela na interface, com paginação.
+ * @param {string} searchTerm O termo de busca para filtrar a lista (opcional).
  */
-function renderSavedAtendimentos() {
+function renderSavedAtendimentos(searchTerm = '') {
     savedTableBody.innerHTML = '';
     const savedData = JSON.parse(localStorage.getItem(LS_KEY));
-    const keys = Object.keys(savedData || {});
+    let keys = Object.keys(savedData || {});
+
+    // Lógica de filtro: Se um termo de busca for fornecido, filtra as chaves.
+    if (searchTerm.trim() !== '') {
+        const lowerCaseTerm = searchTerm.toLowerCase().trim();
+        keys = keys.filter(key => {
+            const data = savedData[key];
+            const nome = data.nome?.toLowerCase() || '';
+            const prontuario = data.prontuario?.toLowerCase() || '';
+            return nome.includes(lowerCaseTerm) || prontuario.includes(lowerCaseTerm);
+        });
+        // Reseta a página atual para 1 para mostrar os resultados do filtro
+        currentPage = 1;
+    }
+
     const totalPages = Math.ceil(keys.length / ITEMS_PER_PAGE);
 
     if (keys.length === 0) {
         const emptyRow = document.createElement('tr');
-        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">Nenhum atendimento salvo.</td>`;
+        emptyRow.innerHTML = `<td colspan="6" style="text-align: center;">Nenhum atendimento encontrado.</td>`;
         savedTableBody.appendChild(emptyRow);
-        renderPaginationControls(0, 0); // Oculta os controles
+        renderPaginationControls(0, 0);
         return;
     }
 
-    // Calcula o índice de início e fim para a página atual
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const endIndex = startIndex + ITEMS_PER_PAGE;
     const currentItems = keys.slice(startIndex, endIndex);
@@ -966,7 +982,6 @@ function renderSavedAtendimentos() {
             <td>${prontuario}</td>
             <td>${comorbidades}</td>
             <td style="line-height: 2">
-                <button class="btn btn-sm view-btn"><i class="fa fa-eye" aria-hidden="true"></i></button>
                 <button class="btn btn-sm load-btn"><i class="fa fa-folder-open" aria-hidden="true"></i></button>
                 <button class="btn btn-sm delete-btn"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                 <button class="btn warning btn-sm add-pendencia-btn"><i class="fa fa-plus-circle" aria-hidden="true"></i> Pendência</button>
@@ -978,6 +993,10 @@ function renderSavedAtendimentos() {
         });
         newRow.querySelector('.delete-btn').addEventListener('click', () => {
             apagarAtendimento(savedData, key);
+        });
+        newRow.querySelector('.add-pendencia-btn').addEventListener('click', () => {
+            const rowData = savedData[key];
+            showPendenciaModal(rowData.nome, rowData.prontuario);
         });
         savedTableBody.appendChild(newRow);
     });
@@ -1894,6 +1913,10 @@ function initListeners() {
     dumIncerta.addEventListener('change', refreshPregCalc);
     dataUsg.addEventListener('change', refreshPregCalc);
     igUsg.addEventListener('input', refreshPregCalc);
+    searchInput.addEventListener('input', (e) => {
+    const searchTerm = e.target.value;
+    renderSavedAtendimentos(searchTerm);
+});
     // Eventos de alternância de campos de vício
     tabagismoCheckbox.addEventListener('change', () => {
         tabagismoInputDiv.style.display = tabagismoCheckbox.checked ? 'flex' : 'none';
